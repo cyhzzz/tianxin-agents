@@ -27,7 +27,7 @@ pwd                      # 必须能看到 install.py。看不到就 cd 到仓�
 ls install.py
 python --version         # 或 python3 --version；没有 Python 就记下来
 # 技能散在业务线目录下，要递归找（根目录直接 ls 是找不到的）
-find . -name SKILL.md -not -path './.git/*' | sort    # 应看到六条
+find . -name SKILL.md -not -path './.git/*' | sort    # 应看到七条
 ```
 
 同时查一下这台机器上已有的 skill 目录：
@@ -54,24 +54,25 @@ ls -d .workbuddy/skills 2>/dev/null
 先看清仓库的分层，再报给用户。**不要展开讲原理**：
 
 ```
-仓库分三层，共六个技能：
+仓库分三层，共七个技能：
 
 公用能力（三条，跨业务线都用）
 1. 天信文档与报告 —— 出 Word / PDF / 网页报告和演示，带天信品牌格式
 2. 天信实务知识库 —— 12 张会计审计实务判断卡
 3. 陈版主实务问答 —— 检索视野论坛的实务答疑和准则原文
 
-业务线（五条，已建两条）
+业务线（五条，已建三条）
 4. 天信审计底稿 —— 审计计划 / 风险评估 / 四程序 / 抽样 / 报告质控 / 底稿索引
 5. 天信税务申报 —— 算税 / 申报 / 勾稽 / 风险自查 / 发票审查
-   代理记账、企业咨询、评估造价三条线仍是骨架，
+6. 天信代账作业 —— 建账 / 票据 / 凭证 / 月结 / 报表 / 申报 / 交接（弹性编排）
+   企业咨询、评估造价两条线仍是骨架，
    要建什么、缺什么材料，见各自目录下的 README.md
 
 运营（一条）
-6. 天信日报 —— 每日行业与商机情报
+7. 天信日报 —— 每日行业与商机情报
 ```
 
-**报完补一句**：五条业务线里建好了审计和税务。审计那份的底稿格式是通用框架，还没用所里真实底稿换过；代理记账、企业咨询、评估造价三条线是空的。这不是漏装，是还没建。
+**报完补一句**：五条业务线里建好了审计、税务和代理记账。审计那份的底稿格式是通用框架，还没用所里真实底稿换过；企业咨询、评估造价两条线是空的。这不是漏装，是还没建。
 
 ---
 
@@ -162,7 +163,7 @@ python install.py --expert
 
 **只在 WorkBuddy 上有效**。如果用户用的是 Claude Code、Cursor 或其他 agent，方式二不适用——直接跳到方式一或方式三，并说明原因，不要硬装。
 
-**手工版**（没有 Python 时）：把 `expert/plugin.json`、`expert/agents/*.md`、`expert/avatars/*.png` 复制到 `~/.workbuddy/plugins/marketplaces/my-experts/plugins/tianxin-office-expert/` 对应位置，再把技能目录复制进该目录的 `skills/`，最后手工在 `~/.workbuddy/plugins/marketplaces/my-experts/.codebuddy-plugin/marketplace.json` 的 `plugins` 数组里加一条。详细步骤见 `docs/03-专家包安装.md`。
+**手工版**（没有 Python 时）：把 `专家/plugin.json`、`专家/agents/*.md`、`专家/avatars/*.png` 复制到 `~/.workbuddy/plugins/marketplaces/my-experts/plugins/tianxin-office-expert/` 对应位置，再把技能目录复制进该目录的 `skills/`，最后手工在 `~/.workbuddy/plugins/marketplaces/my-experts/.codebuddy-plugin/marketplace.json` 的 `plugins` 数组里加一条。详细步骤见 `docs/03-专家包安装.md`。
 
 ---
 
@@ -207,7 +208,7 @@ python install.py --verify
 
 它会逐个报告：目录在不在、`SKILL.md` 在不在、frontmatter 的 name/description 能不能解析、技能自带的脚本依赖是否满足。
 
-看到六个对勾才算装完（下面是一台已装好的机器上的真实输出）：
+看到七个对勾才算装完（下面是一台已装好的机器上的真实输出）：
 
 ```
   ✓ tianxin-shiwu-kb  tianxin-shiwu-kb · 12 张能力卡
@@ -215,6 +216,7 @@ python install.py --verify
   ✓ chenyiwei-bbs  chenyiwei-bbs
   ✓ 天信审计底稿  天信审计底稿 · 7 份 references
   ✓ 天信税务申报  天信税务申报 · 5 份 references
+  ✓ 天信代账作业  天信代账作业 · 13 份 references
   ✓ tianxin-daily-brief  tianxin-daily-brief · 8 份 references
 ```
 

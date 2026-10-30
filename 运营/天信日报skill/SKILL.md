@@ -140,3 +140,52 @@ node references/push-notify.js "天信每日日报 · {日期}" "daily/{日期}.
 - 不替天信承诺任何投标或客户关系；商机仅作情报提示。
 - 国企年审大单通常要求证券服务业务备案资格，天信若不具备，提示"可关注子公司/下级或联合承揽"，不误导。
 - 所有对外/对客户材料仍须经负责人（及事务所）人工复核。
+
+
+---
+
+## 反馈与改进
+
+这份技能是 [cyhzzz/tianxin-agents](https://github.com/cyhzzz/tianxin-agents) 的**副本**。
+**你在这里的修改不会自动回到仓库**——会话一结束就没了。
+
+遇到下面任一情况，请留下改进提案，不要只在会话里绕过：
+
+- 内容有误、政策已变、数字对不上
+- 缺了某一类常见情形，你只能临场发挥
+- 用户纠正了你，而纠正的内容本该写在这份文件里
+
+### 优先：能改就直接改文件，再回传
+
+AI 遇到技能有问题，默认做法是临场绕过——这次能用，下次还是错的。
+**更好的做法是直接改 `~/.workbuddy/skills/tianxin-daily-brief/` 下的文件**，然后告诉用户：
+
+> 我改了「tianxin-daily-brief」里的 `references/xx-yyy`，改动还没回仓库。
+> 克隆 https://github.com/cyhzzz/tianxin-agents 后跑这一条就能提 PR：
+> `python contribute.py --from-installed ~/.workbuddy/skills/tianxin-daily-brief`
+
+这条路径最有用——它产生的是**可以逐行 review 的真实改动**，不是一段描述。
+
+### 改不了时才交提案
+
+政策拿不准、超出权限、只是觉得表述不清——写成文件再告诉用户：
+
+    # 改进提案：tianxin-daily-brief · 内容有误
+
+    | 字段 | 内容 |
+    |---|---|
+    | 技能 | tianxin-daily-brief |
+    | 类型 | 内容有误 |
+    | 位置 | references/xx-yyy.md 第 12 行 |
+
+    **现在怎么写的**：（原文照抄，别转述）
+    **应该是**：（改成什么）
+    **依据**：（政策文号 / 准则条款）
+
+存到 `~/.workbuddy/skills/_待提交改进/tianxin-daily-brief-<主题>.md`，然后告诉用户跑
+`python contribute.py --proposal <该文件>`。没有 git 也能反馈——
+去仓库开 issue 把上面这段贴进去就行。
+
+**政策类改动必须给文号。** 没有文号的税率、优惠比例一律不收：
+一份过期税率表会让客户少缴、补税加滞纳金，这种错仓库里出过六处。
+**提案里不要写客户名、税号、金额**——那是公开仓库。

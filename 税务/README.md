@@ -31,7 +31,7 @@
 |---|---|---|
 | `tax-filing-specialist` | 五类税种计算方法、累计预扣法、年终奖择优、税费汇总表模板 | `02` + SKILL.md §五 |
 | `compliance-auditor` | 税务合规七查、发票合规七类、七个风险指标阈值 | `04` + `05` |
-| `tax-compliance-engine/references/tax-rates.md` | 税率速查骨架 | `01`（**全部重新核实**） |
+| 外部专家包 `~/.workbuddy/.../tax-compliance-engine/references/tax-rates.md` | 税率速查骨架 | `01`（**全部重新核实**） |
 | 主理人的弹性编排思路 | 按客户手里有什么决定从哪一步进 | SKILL.md §二 算税链 |
 
 **没提取的（不属于税务线）**：
