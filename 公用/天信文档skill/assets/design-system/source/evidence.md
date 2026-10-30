@@ -14,7 +14,7 @@
 | `tianxin-cpa-website-gh-pages/` | Static export of the above | The exact CSS `tokens.css` style block (the `index-*.css` bundle) |
 | 内部 brand deck (referenced) | Print PDFs, report cover templates | Section-divider use, dark-hero treatment, tabular numerals in financial reports |
 
-The bundled CSS in the GH-Pages export (`assets/index-*.css`) was the
+The bundled CSS in the GH-Pages export (the site's built `index-*.css`, not in this repo) was the
 primary token source. It declares the full `:root` block for the brand
 on a Tailwind v4 / shadcn-style cascade. The `scanned.html` file in
 this folder is the trimmed HTML from the GH-Pages export.
@@ -53,8 +53,8 @@ this folder is the trimmed HTML from the GH-Pages export.
 --radius: 0;  /* global sharp-corner commitment */
 ```
 
-> Full source block in `source/scanned.html` (the original `<style>`
-> extract) and `source/tokens.source.json` (machine-readable mirror).
+> Full source block in `scanned.html` (same directory, the original `<style>`
+> extract) and `tokens.source.json` (same directory, machine-readable mirror).
 
 ---
 

@@ -268,7 +268,7 @@ python scripts/md2deck.py --input 汇报.md --output 汇报-deck.html \
 
 ## 字体为什么用宋体而不是品牌规范里的思源
 
-`brand-spec.md` 写正文用 Noto Sans SC，那是给屏幕定的。Word 文档要发给客户、交到政府部门、打印装订归档，字体必须保底——目标机器没有思源会静默回退，排版就散了。所以：
+`references/00-品牌规范.md` 写正文用 Noto Sans SC，那是给屏幕定的。Word 文档要发给客户、交到政府部门、打印装订归档，字体必须保底——目标机器没有思源会静默回退，排版就散了。所以：
 
 - **印刷文档**：宋体正文 + 黑体标题 + Times New Roman 数字
 - **屏幕物料**：思源宋体 / 思源黑体

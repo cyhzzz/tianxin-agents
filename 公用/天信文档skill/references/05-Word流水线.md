@@ -100,7 +100,7 @@ def clear_body_keep_sectpr(doc):
 
 ## 字体为什么不用思源
 
-`brand-spec.md` 规定正文 Noto Sans SC，那是屏幕物料的标准。Word 文档的终点是客户电脑、政务系统、打印店，字体缺失会静默回退，行宽和分页全变。
+`references/00-品牌规范.md` 规定正文 Noto Sans SC，那是屏幕物料的标准。Word 文档的终点是客户电脑、政务系统、打印店，字体缺失会静默回退，行宽和分页全变。
 
 所以印刷文档用：宋体正文 + 黑体标题 + Times New Roman 数字。品牌感靠颜色、留白、细线维持。
 
