@@ -244,6 +244,11 @@ def resolve(target, src_rel):
         hits = [r for r in all_files_cache() if r.endswith('/' + target)]
         if len(hits) == 1:
             return hits[0]
+        # 多匹配但结构相同 —— 每个业务线技能下都有一份 上游/README.md，
+        # 文档里写「上游/README.md」是在泛指"本技能自己那份"，不是断链。
+        # 判据收紧到「最后两段路径完全一致」，避免把写错的文件名也放过。
+        if hits and len({'/'.join(h.split('/')[-2:]) for h in hits}) == 1:
+            return hits[0]
     return None
 
 
@@ -560,48 +565,46 @@ def check_inbox(rep):
 
 # ── 10. 上游原文只读性 ──────────────────────────────────
 
-# SOURCE.md 里的校验和清单长这样：| `skills/xxx/SKILL.md` | 185 | `40fd4cf722cb9625` |
-UPSTREAM_HASH_RE = re.compile(r'^\|\s*`([^`]+)`\s*\|\s*(\d+)\s*\|\s*`([0-9a-f]{16})`\s*\|')
+# 上游 README 里的校验和表长这样：
+# | `finance-3-凭证编制.md` | `skills/journal-entry-prep/SKILL.md` | 185 | `40fd4cf722cb9625` | 直接可用 |
+UPSTREAM_HASH_RE = re.compile(
+    r'^\|\s*`([^`]+)`\s*\|[^|]*\|\s*(\d+)\s*\|\s*`([0-9a-f]{16})`\s*\|')
 
 
-def upstream_packages():
-    """[(技能相对路径, 包目录名, 包绝对路径)]，各业务线 references/上游/ 下的一级子目录"""
+def upstream_dirs():
+    """[(技能相对路径, 上游目录绝对路径)] —— 技能根下与 references/ 平级的 上游/"""
     out = []
     for _, rel in find_skills():
-        base = os.path.join(HERE, rel, 'references', '上游')
-        if not os.path.isdir(base):
-            continue
-        for pkg in sorted(os.listdir(base)):
-            p = os.path.join(base, pkg)
-            if os.path.isdir(p):
-                out.append((rel, pkg, p))
+        p = os.path.join(HERE, rel, '上游')
+        if os.path.isdir(p):
+            out.append((rel, p))
     return out
 
 
 def check_upstream(rep):
-    """上游原文必须与 SOURCE.md 记的校验和对得上。
+    """上游原文必须与 上游/README.md 记的校验和对得上。
 
     收原文的目的是"一个字都不丢"，那原文就得真的一个字都没变。
     只读写在文档里没人执行，这里做成机械约束：改一个字校验和就炸，
     偷偷加文件清单里没有。
     """
-    pkgs = upstream_packages()
-    if not pkgs:
+    dirs = upstream_dirs()
+    if not dirs:
         rep.info('还没收录上游原文')
         return
 
-    for skill_rel, pkg, path in pkgs:
-        tag = f'{skill_rel}/references/上游/{pkg}'
-        src = os.path.join(path, 'SOURCE.md')
+    for skill_rel, path in dirs:
+        tag = f'{skill_rel}/上游'
+        src = os.path.join(path, 'README.md')
         if not os.path.isfile(src):
-            rep.err(f'{tag} 缺 SOURCE.md —— 没有来源、版本、许可、适用性，'
+            rep.err(f'{tag} 缺 README.md —— 没有来源、版本、许可、适用性，'
                     f'这份原文以后没人敢用，也不知道该不该信')
             continue
 
         txt = open(src, encoding='utf-8').read()
-        for kw in ('许可', '抓取日期', '适用性'):
+        for kw in ('许可', '抓取日期', '用法'):
             if kw not in txt:
-                rep.err(f'{tag}/SOURCE.md 没写「{kw}」')
+                rep.err(f'{tag}/README.md 没写「{kw}」')
 
         declared = {}
         for line in txt.splitlines():
@@ -609,8 +612,8 @@ def check_upstream(rep):
             if m:
                 declared[m.group(1)] = (int(m.group(2)), m.group(3))
         if not declared:
-            rep.err(f'{tag}/SOURCE.md 没有校验和清单（形如 '
-                    f'| `路径` | 行数 | `sha256前16位` |）。'
+            rep.err(f'{tag}/README.md 没有校验和清单（形如 '
+                    f'| `文件` | `上游原名` | 行数 | `sha256前16位` | 用法 |）。'
                     f'原文被改过也发现不了，等于没收')
             continue
 
@@ -620,13 +623,13 @@ def check_upstream(rep):
             for fn in fns:
                 ap = os.path.join(dp, fn)
                 rp = os.path.relpath(ap, path).replace(os.sep, '/')
-                if rp != 'SOURCE.md':
+                if rp != 'README.md':
                     actual[rp] = ap
 
         before = len(rep.errors)
         for rp, (n, h) in sorted(declared.items()):
             if rp not in actual:
-                rep.err(f'{tag}：SOURCE.md 记了 {rp}，目录里没有')
+                rep.err(f'{tag}：README.md 记了 {rp}，目录里没有')
                 continue
             ap = actual[rp]
             if hashlib.sha256(open(ap, 'rb').read()).hexdigest()[:16] != h:
@@ -636,11 +639,64 @@ def check_upstream(rep):
             if got != n:
                 rep.warn(f'{tag}/{rp} 行数与清单不符（记 {n}，实际 {got}）')
         for rp in sorted(set(actual) - set(declared)):
-            rep.err(f'{tag}/{rp} 不在 SOURCE.md 清单里。'
+            rep.err(f'{tag}/{rp} 不在 README.md 清单里。'
                     f'往上游目录塞文件，等于偷偷改上游')
 
         if len(rep.errors) == before:
             rep.ok(f'{tag}：{len(declared)} 个文件与校验和一致，无越界改动')
+
+
+# ── 11. 技能自包含 ──────────────────────────────────────
+
+# 仓库里的业务线目录。技能内部若以这些为路径起点，就是跨技能引用。
+LINE_DIRS = {'公用', '审计', '税务', '代理记账', '企业咨询', '评估造价', '运营', 'docs', '专家'}
+
+
+def check_self_contained(rep):
+    """技能必须能独立装走：内部引用不能指向技能目录之外。
+
+    技能装到别人机器的 ~/.workbuddy/skills/<name>/ 之后，仓库里兄弟业务线的目录
+    全都不存在。写「税务/天信税务申报skill/references/01」在客户机器上是死链，
+    AI 打不开只会临场发挥——比没写更糟，因为看起来有依据。
+
+    只查两类特征，误报少：
+      · 路径首段是业务线目录名
+      · 以 ../ 开头（跳出技能根）
+    """
+    bad_skills = 0
+    for name, rel in find_skills():
+        root = os.path.join(HERE, rel)
+        hits = []
+        for dp, dns, fns in os.walk(root):
+            dns[:] = [d for d in dns if not d.startswith('.')]
+            for fn in fns:
+                if not fn.endswith('.md'):
+                    continue
+                ap = os.path.join(dp, fn)
+                src = os.path.relpath(ap, HERE).replace(os.sep, '/')
+                try:
+                    txt = open(ap, encoding='utf-8').read()
+                except OSError:
+                    continue
+                for tk in re.findall(r'`([^`\n]+)`', txt):
+                    tk = tk.strip()
+                    if not tk.endswith(PATH_EXT):
+                        continue
+                    if tk.split('/')[0] in LINE_DIRS or tk.startswith('../'):
+                        hits.append((src, tk))
+
+        if hits:
+            bad_skills += 1
+            rep.err(f'{name} 不能独立装走：{len(hits)} 处引用指向技能目录之外')
+            for src, tk in hits[:6]:
+                rep.err(f'    {src} → {tk}')
+            if len(hits) > 6:
+                rep.err(f'    …还有 {len(hits) - 6} 处')
+        else:
+            rep.ok(f'{name} 自包含（无跨技能引用）')
+
+    if bad_skills:
+        rep.info('改法：能自己做完的写全，做不了的写清转给谁——别写"去读某某技能"')
 
 
 # ── main ────────────────────────────────────────────────
@@ -676,6 +732,9 @@ def main():
 
     hr('10. 上游原文只读性')
     check_upstream(rep)
+
+    hr('11. 技能自包含')
+    check_self_contained(rep)
 
     hr()
     if rep.errors:

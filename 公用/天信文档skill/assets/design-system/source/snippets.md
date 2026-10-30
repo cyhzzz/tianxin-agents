@@ -7,7 +7,7 @@
 
 ## 1. The original `:root` block (verbatim)
 
-From `../tianxin-cpa-website-gh-pages/assets/index-B-jeETty.css`, the
+From the website repo's compiled CSS (tianxin-cpa-website-gh-pages, not in this repo), the
 `--font-family` declaration is followed by the brand's full
 `--brand-*` and structural `--bg / --fg / --border` declarations,
 plus the geometry commitment:
