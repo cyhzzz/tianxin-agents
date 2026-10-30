@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tianxin CPA · 字体预览</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/logo-horizontal-color.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    @import "../tokens.css";
+    *,*::before,*::after{box-sizing:border-box}html,body{margin:0;padding:0}
+    body{font-family:var(--font-body);font-size:var(--text-base);line-height:var(--leading-body);color:var(--fg);background:var(--bg);font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
+    .wrap{max-width:var(--container-max);margin:0 auto;padding:var(--space-12) var(--container-gutter-desktop)}
+    .eyebrow{font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;color:var(--fg-2);margin-bottom:var(--space-2)}
+    .divider{width:48px;height:3px;background:var(--gold);margin-bottom:var(--space-4)}
+    h1{font-size:var(--text-2xl);letter-spacing:var(--tracking-display);line-height:var(--leading-tight);margin:0 0 var(--space-3)}
+    .lead{max-width:60ch;color:var(--fg-2);margin-bottom:var(--space-8)}
+    .row{display:grid;grid-template-columns:200px 1fr;gap:var(--space-5);padding:var(--space-5) 0;border-top:1px solid var(--border);align-items:baseline}
+    .row:first-of-type{border-top:0}
+    .label{font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:var(--tracking-eyebrow);color:var(--fg-2);text-transform:uppercase}
+    .label .sz{display:block;font-size:13px;color:var(--fg);margin-top:4px;text-transform:none;letter-spacing:0}
+    .display{font-size:var(--text-2xl);line-height:1.05;letter-spacing:var(--tracking-display);font-weight:600}
+    .headline{font-size:var(--text-xl);line-height:1.15;letter-spacing:-0.02em;font-weight:600}
+    .title{font-size:var(--text-lg);line-height:1.3;letter-spacing:-0.01em;font-weight:600}
+    .body{font-size:var(--text-base);line-height:1.6}
+    .label14{font-size:var(--text-sm);line-height:1.4;font-weight:500;letter-spacing:0.02em}
+    .small{font-size:var(--text-xs);line-height:1.5;letter-spacing:0.01em;color:var(--fg-2)}
+    .serif{font-family:var(--font-display);font-style:italic;font-size:28px;letter-spacing:0.02em}
+    .back{font-size:var(--text-sm);color:var(--accent);text-decoration:none;margin-bottom:var(--space-4);display:inline-block}
+    .w{display:inline-block;width:120px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <a class="back" href="../components.html">← 返回 components.html</a>
+    <div class="divider"></div>
+    <div class="eyebrow">PREVIEW · TYPOGRAPHY</div>
+    <h1>天信 · 字体系统</h1>
+    <p class="lead">思源黑体简体为骨、思源宋体简体为睛。Body 15px 单一基线，三档字重 (400/500/600)，tabular-nums 全局开启。</p>
+
+    <div class="row">
+      <div class="label">DISPLAY<span class="sz">56px / -0.03em / 600</span></div>
+      <div class="display">专业 · 严谨 · 值得托付</div>
+    </div>
+    <div class="row">
+      <div class="label">HEADLINE<span class="sz">32px / -0.02em / 600</span></div>
+      <div class="headline">服务条款与执业承诺</div>
+    </div>
+    <div class="row">
+      <div class="label">TITLE<span class="sz">22px / -0.01em / 600</span></div>
+      <div class="title">财务报表审计</div>
+    </div>
+    <div class="row">
+      <div class="label">BODY<span class="sz">15px / 1.6 / 400</span></div>
+      <div class="body">天台天信会计师事务所创立于 2001 年，专注为本地中小企业、行政事业单位提供审计、税务、评估、咨询等一站式专业服务。报告扉页使用思源宋体。</div>
+    </div>
+    <div class="row">
+      <div class="label">LABEL<span class="sz">14px / 0.02em / 500</span></div>
+      <div class="label14">立即咨询 · 获取方案</div>
+    </div>
+    <div class="row">
+      <div class="label">SMALL<span class="sz">12px / 1.5 / 400</span></div>
+      <div class="small">2024 年 · 浙江省台州市天台县赤城大厦 5 楼 · +86-576-83886633</div>
+    </div>
+    <div class="row">
+      <div class="label">SERIF<span class="sz">28px / italic / 400</span></div>
+      <div class="serif">「信以立所 · 谨以执业」</div>
+    </div>
+
+    <h2 style="font-size:18px;margin:var(--space-8) 0 var(--space-4);font-weight:600">字重（仅三档）</h2>
+    <div style="display:grid;gap:var(--space-2)">
+      <div><span class="w label">400 · REGULAR</span><span style="font-weight:400">正文 · 通知 · 合同条款</span></div>
+      <div><span class="w label">500 · MEDIUM</span><span style="font-weight:500">UI 标签 · 按钮 · 导航</span></div>
+      <div><span class="w label">600 · SEMIBOLD</span><span style="font-weight:600">标题 · 强调 · 关键数据</span></div>
+    </div>
+  </div>
+</body>
+</html>

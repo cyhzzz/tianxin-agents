@@ -1,0 +1,351 @@
+/* ============================================================
+   天信演示 deck · 横向翻页
+   ------------------------------------------------------------
+   与 guizang 那套的区别：没有 WebGL 背景、没有入场动效、没有杂志风/瑞士风
+   两套主题。客户会议室的电脑可能很旧，任何持续运行的 canvas 或
+   transform 动画都会掉帧 —— 掉帧的演示比没有演示更糟。
+
+   视觉：白底 + navy 结构色 + 金色点睛（单页 ≤2 处）+ 0 圆角。
+   ============================================================ */
+
+:root {
+  --navy: #1D3A5E;
+  --blue: #0F62FE;
+  --gold: #B8860B;
+  --fg:   #161616;
+  --muted:#525252;
+  --faint:#8A8A8A;
+  --rule: #E0E0E0;
+  --ice:  #F4F4F4;
+
+  --sans:  "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
+  --serif: "Noto Serif SC", "Songti SC", "SimSun", serif;
+  --mono:  "JetBrains Mono", "Consolas", monospace;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0; padding: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #111;
+  font-family: var(--sans);
+  color: var(--fg);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 舞台：16:9 居中，四周留黑边 */
+.stage {
+  position: fixed; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.deck {
+  position: relative;
+  width: min(100vw, calc(100vh * 16 / 9));
+  height: min(100vh, calc(100vw * 9 / 16));
+  overflow: hidden;
+  background: #fff;
+}
+.track {
+  display: flex;
+  height: 100%;
+  transition: transform .38s cubic-bezier(.4, 0, .2, 1);
+  will-change: transform;
+}
+@media (prefers-reduced-motion: reduce) {
+  .track { transition: none; }
+}
+
+/* ── 单页 ───────────────────────────────────────────── */
+.slide {
+  flex: 0 0 100%;
+  height: 100%;
+  padding: 7% 8%;
+  display: flex;
+  flex-direction: column;
+  /* 标题与正文作为一个整体垂直居中。只居中正文会让标题孤零零挂在页顶、
+     中间空出一大块。safe 保证内容超长时退回顶部，不裁掉开头。 */
+  justify-content: safe center;
+  position: relative;
+  overflow: hidden;
+}
+
+.slide-title {
+  font-family: var(--sans);
+  font-size: clamp(22px, 3.2vw, 42px);
+  font-weight: 600;
+  line-height: 1.34;
+  letter-spacing: -0.015em;
+  color: var(--navy);
+  margin: 0 0 4vh;
+  max-width: 20em;
+}
+.slide-title::before {
+  content: "";
+  display: block;
+  width: 2.4vw; min-width: 26px; height: 3px;
+  background: var(--gold);
+  margin-bottom: 2.4vh;
+}
+
+.slide-body {
+  flex: 0 1 auto;
+  min-height: 0;
+  font-family: var(--serif);
+  font-size: clamp(14px, 1.55vw, 21px);
+  line-height: 1.85;
+  color: var(--fg);
+  overflow: hidden;
+}
+.slide-body p { margin: 0 0 1.4vh; }
+.slide-body strong { font-weight: 700; }
+
+.slide-body ul, .slide-body ol { margin: 0 0 1.8vh; padding-left: 1.4em; }
+.slide-body li { margin-bottom: .9vh; }
+.slide-body ul { list-style: none; padding-left: 0; }
+.slide-body ul > li { position: relative; padding-left: 1.1em; }
+.slide-body ul > li::before {
+  content: "";
+  position: absolute; left: 0; top: .78em;
+  width: 6px; height: 1px; background: var(--faint);
+}
+
+blockquote {
+  margin: 0;
+  padding-left: 1.2em;
+  border-left: 2px solid var(--rule);
+  color: var(--muted);
+  font-size: 1.15em;
+  line-height: 1.75;
+}
+
+/* 金句页：引用就是主角，要压得住标题 */
+.quote-slide blockquote {
+  font-size: clamp(17px, 2.1vw, 30px);
+  line-height: 1.65;
+  padding-left: 1.3em;
+  border-left-width: 3px;
+  border-left-color: var(--navy);
+  color: var(--fg);
+}
+
+/* 页脚：所名 + 页码 */
+.slide-foot {
+  position: absolute;
+  left: 8%; right: 8%; bottom: 4.2%;
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: clamp(9px, .78vw, 11px);
+  color: var(--faint);
+  letter-spacing: .04em;
+}
+.slide-foot .no { font-family: var(--mono); }
+
+/* ── 封面 ───────────────────────────────────────────── */
+.slide.cover {
+  justify-content: center;
+  padding: 8% 10%;
+}
+.slide.cover .seal { width: 5.2vw; min-width: 52px; margin-bottom: 3.4vh; }
+.slide.cover .org {
+  font-family: var(--serif);
+  font-size: clamp(15px, 1.5vw, 21px);
+  font-weight: 700;
+  letter-spacing: .1em;
+  color: var(--navy);
+  margin-bottom: .6vh;
+}
+.slide.cover .org-en {
+  font-size: clamp(9px, .8vw, 11px);
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--faint);
+  margin-bottom: 6vh;
+}
+.slide.cover h1 {
+  font-family: var(--sans);
+  font-size: clamp(26px, 4vw, 56px);
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+  color: var(--navy);
+  margin: 0 0 2.4vh;
+  max-width: 16em;
+}
+.slide.cover .sub {
+  font-family: var(--sans);
+  font-size: clamp(12px, 1.15vw, 16px);
+  color: var(--muted);
+  line-height: 1.9;
+}
+.slide.cover .rule {
+  width: 2.6vw; min-width: 28px; height: 2px;
+  background: var(--gold);
+  margin: 5vh 0 0;
+}
+
+/* ── 章节幕 ─────────────────────────────────────────── */
+.slide.section-slide {
+  justify-content: center;
+  background: var(--ice);
+}
+.slide.section-slide h2 {
+  font-family: var(--sans);
+  font-size: clamp(24px, 3.2vw, 44px);
+  font-weight: 500;
+  color: var(--navy);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+.slide.section-slide .num {
+  font-family: var(--mono);
+  font-size: clamp(11px, .9vw, 13px);
+  color: var(--faint);
+  letter-spacing: .14em;
+  margin-bottom: 1.6vh;
+}
+
+/* ── 数据页 ─────────────────────────────────────────── */
+.kpi-row {
+  display: flex;
+  gap: 4vw;
+  margin-bottom: 3.6vh;
+  flex-wrap: wrap;
+}
+.kpi { min-width: 0; }
+.kpi .v {
+  font-family: var(--sans);
+  font-size: clamp(28px, 4vw, 54px);
+  font-weight: 600;
+  line-height: 1.05;
+  color: var(--navy);
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.kpi .v em { font-style: normal; font-size: .55em; color: var(--muted); margin-left: .1em; }
+.kpi .k {
+  font-family: var(--sans);
+  font-size: clamp(10px, .92vw, 13px);
+  color: var(--muted);
+  margin-top: .9vh;
+  letter-spacing: .02em;
+}
+.kpi.neg .v { color: #C0392B; }
+
+/* ── 表格 ───────────────────────────────────────────── */
+.slide table {
+  width: 100%;
+  margin: .8vh 0 2vh;
+  border-collapse: collapse;
+  font-family: var(--sans);
+  font-size: clamp(11px, 1.08vw, 15px);
+  line-height: 1.55;
+  border-top: 1px solid var(--navy);
+  border-bottom: 1px solid var(--navy);
+  font-variant-numeric: tabular-nums;
+}
+.slide th {
+  background: var(--ice);
+  font-weight: 600;
+  text-align: left;
+  padding: 1.1vh .8vw;
+  border-bottom: 1px solid var(--navy);
+  white-space: nowrap;
+}
+.slide td { padding: 1vh .8vw; vertical-align: top; }
+.slide tbody tr + tr td { border-top: 1px solid #F0F0F0; }
+.table-note {
+  font-family: var(--sans);
+  font-size: clamp(9px, .8vw, 11px);
+  color: var(--faint);
+  margin-top: 1.2vh;
+}
+
+/* 三级标记 */
+.mark { padding: 1px 3px; }
+.mark-fact { background: var(--ice); }
+.mark-industry { background: #EDF5FF; }
+.mark-infer { background: #FDF3DA; }
+
+/* ── 进度与控件 ─────────────────────────────────────── */
+.hud {
+  position: fixed; left: 0; right: 0; bottom: 0;
+  height: 2px; background: rgba(255,255,255,.12);
+  z-index: 30;
+}
+.hud-bar { height: 100%; width: 0; background: var(--gold); transition: width .3s; }
+
+.hint {
+  position: fixed; right: 16px; bottom: 14px;
+  font-size: 11px; color: rgba(255,255,255,.4);
+  font-family: var(--sans); letter-spacing: .04em;
+  z-index: 25; transition: opacity .4s;
+}
+.hint.hide { opacity: 0; }
+
+/* 索引 */
+.index {
+  position: fixed; inset: 0;
+  background: #0A0A0A;
+  z-index: 40;
+  display: none;
+  padding: 4vh 4vw;
+  overflow-y: auto;
+}
+.index.show { display: block; }
+.index h3 {
+  color: #fff; font-size: 13px; font-weight: 400;
+  letter-spacing: .1em; margin: 0 0 3vh; opacity: .5;
+  font-family: var(--sans);
+}
+.index-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 14px;
+}
+.index-item {
+  background: #fff; padding: 12px 14px; cursor: pointer;
+  font-size: 11px; line-height: 1.5; color: var(--muted);
+  min-height: 86px;
+  border: 2px solid transparent;
+  font-family: var(--sans);
+  transition: border-color .15s;
+}
+.index-item:hover { border-color: var(--gold); }
+.index-item b { display: block; color: var(--navy); font-size: 12px; font-weight: 600; margin-bottom: 4px; }
+.index-item .n { font-family: var(--mono); color: var(--faint); font-size: 10px; }
+
+/* ── 图表 ───────────────────────────────────────────── */
+.chart { margin: 0; }
+.chart-caption {
+  font-family: var(--sans);
+  font-size: clamp(11px, 1vw, 14px);
+  font-weight: 600; color: var(--navy);
+  margin-bottom: 1.2vh;
+}
+.chart svg { display: block; width: 100%; height: auto; max-height: 38vh; }
+.chart-source {
+  font-family: var(--sans);
+  font-size: clamp(9px, .78vw, 11px);
+  color: var(--faint);
+  margin-top: .8vh;
+}
+
+/* ── 代码块 / ASCII 架构图 ───────────────────────────── */
+pre.code-block {
+  margin: 0 0 1.6vh;
+  padding: 1.2vh 1.4vw;
+  background: #F7F7F7;
+  font-family: "Courier New", SimSun, monospace;
+  font-size: clamp(9px, .95vw, 13px);
+  line-height: 1.35;
+  white-space: pre;
+  overflow: hidden;
+}
+pre.code-block code { font: inherit; }
+
+hr {
+  border: none;
+  border-top: 1px solid var(--rule);
+  margin: 2vh 0;
+}

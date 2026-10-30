@@ -1,0 +1,67 @@
+{
+  "name": "tianxin-office-expert",
+  "version": "1.0.0",
+  "description": "Tianxin CPA Office Expert — classifies document type before producing Word, PDF or web deliverables with firm branding; gives accounting and audit practice judgments; retrieves standards and regulator penalties; generates daily industry and opportunity briefs.",
+  "author": {
+    "name": "天台天信会计师事务所",
+    "email": ""
+  },
+  "agents": [
+    "./agents/tianxin-office-expert.md"
+  ],
+  "skills": [
+    "./skills/天信文档与报告",
+    "./skills/天信日报",
+    "./skills/天信实务知识库",
+    "./skills/陈版主实务问答"
+  ],
+  "expertType": "agent",
+  "agentName": "tianxin-office-expert",
+  "displayName": {
+    "en": "Tianxin Office Expert",
+    "zh": "天信办公专家"
+  },
+  "profession": {
+    "en": "CPA Firm Documentation & Practice Specialist",
+    "zh": "天信会计师事务所·文档与实务专家"
+  },
+  "displayDescription": {
+    "en": "Document and practice assistant for Tianxin CPA: classifies the document before laying it out, judges accounting treatments against standards, retrieves authoritative Q&A, and briefs daily industry opportunities.",
+    "zh": "天信所的文档与实务助手：判性质出 Word／PDF／演示，调能力卡做会计判断，检索准则原文。"
+  },
+  "avatar": "avatars/tianxin-office-expert.png",
+  "categoryId": "08-FinanceInvestment",
+  "defaultInitPrompt": {
+    "zh": "把这份尽调稿按天信的规范出一份 Word，页眉页脚和三线表都要对。",
+    "en": "Lay out this due-diligence draft as a Tianxin-branded Word file, with correct header, footer and three-line tables."
+  },
+  "plugin": "tianxin-office-expert",
+  "tags": [
+    {
+      "en": "Audit & Due Diligence Reports",
+      "zh": "审计与尽调报告"
+    },
+    {
+      "en": "Accounting Practice Judgment",
+      "zh": "会计实务判断"
+    },
+    {
+      "en": "Firm Document Production",
+      "zh": "事务所文档出版"
+    }
+  ],
+  "quickPrompts": [
+    {
+      "en": "Lay out this due-diligence draft as a Tianxin-branded Word file, with correct header, footer and three-line tables.",
+      "zh": "把这份尽调稿按天信的规范出一份 Word，页眉页脚和三线表都要对。"
+    },
+    {
+      "en": "Should this government grant go to other income or non-operating income? Walk me through CAS16.",
+      "zh": "这笔政府补助应该记在其他收益还是营业外收入？按 CAS16 帮我走一遍。"
+    },
+    {
+      "en": "What does Chen Yiwei (the forum moderator) say about the accounting treatment of equity investments with repurchase clauses?",
+      "zh": "查一下陈版主怎么说附回售条款的股权投资会计处理。"
+    }
+  ]
+}

@@ -1,0 +1,313 @@
+/* ============================================================
+   天信网页长页报告
+   ------------------------------------------------------------
+   与 A4 报告的差别：这是给人「在屏幕上读」的，不是给打印的。
+   · 无分页，滚动阅读
+   · 正文栏收窄到 720px（约 40 个汉字一行，再宽眼睛要摆头）
+   · 字号比印刷大（17px vs 10.5pt），行距 1.85
+   · 左侧常驻目录，滚动高亮当前章
+   · 表格小屏可横向滚动
+
+   视觉仍守天信品牌：0 圆角、navy 结构色、金色单屏 ≤2 处。
+   ============================================================ */
+
+:root {
+  --navy:  #1D3A5E;
+  --blue:  #0F62FE;
+  --gold:  #B8860B;
+  --fg:    #161616;
+  --muted: #525252;
+  --faint: #8A8A8A;
+  --rule:  #E0E0E0;
+  --ice:   #F4F4F4;
+  --paper: #FFFFFF;
+
+  --sans:  "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
+  --serif: "Noto Serif SC", "Songti SC", "SimSun", serif;
+  --mono:  "JetBrains Mono", "Consolas", monospace;
+
+  --measure: 720px;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--fg);
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 1.85;
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── 顶部条 ─────────────────────────────────────────── */
+.topbar {
+  position: sticky; top: 0; z-index: 20;
+  background: rgba(255,255,255,.94);
+  backdrop-filter: saturate(180%) blur(8px);
+  border-bottom: 1px solid var(--rule);
+}
+.topbar-inner {
+  max-width: 1120px; margin: 0 auto;
+  padding: 10px 32px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.topbar img { width: 132px; display: block; }
+.topbar .docno {
+  font-family: var(--mono); font-size: 12px; color: var(--faint);
+  letter-spacing: .02em;
+}
+
+/* 顶部阅读进度 */
+.progress {
+  position: absolute; left: 0; bottom: -1px; height: 2px; width: 0;
+  background: var(--navy);
+  transition: width .1s linear;
+}
+
+/* ── 主体布局 ───────────────────────────────────────── */
+.layout {
+  max-width: 1120px; margin: 0 auto;
+  padding: 56px 32px 120px;
+  display: grid;
+  grid-template-columns: 200px minmax(0, var(--measure));
+  gap: 72px;
+  justify-content: center;
+}
+
+/* 目录 */
+.toc {
+  position: sticky; top: 88px;
+  align-self: start;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+  font-family: var(--sans);
+  font-size: 13px;
+  line-height: 1.6;
+}
+.toc-title {
+  font-size: 11px; letter-spacing: .1em; color: var(--faint);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.toc a {
+  display: block;
+  padding: 5px 0 5px 10px;
+  color: var(--muted);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: color .15s, border-color .15s;
+}
+.toc a:hover { color: var(--fg); }
+.toc a.active { color: var(--navy); border-left-color: var(--navy); font-weight: 500; }
+
+/* ── 正文 ───────────────────────────────────────────── */
+.content { min-width: 0; }
+
+.doc-title {
+  font-family: var(--sans);
+  font-size: 34px; font-weight: 600; line-height: 1.35;
+  letter-spacing: -0.015em;
+  color: var(--navy);
+  margin: 0 0 8px;
+}
+.doc-meta {
+  font-family: var(--sans);
+  font-size: 13px; color: var(--faint);
+  margin-bottom: 8px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--rule);
+}
+
+h2 {
+  font-family: var(--sans);
+  font-size: 24px; font-weight: 500; line-height: 1.4;
+  color: var(--fg);
+  margin: 48px 0 16px;
+  scroll-margin-top: 88px;
+}
+h3 {
+  font-family: var(--sans);
+  font-size: 18px; font-weight: 500; line-height: 1.45;
+  color: var(--fg);
+  margin: 32px 0 10px;
+  scroll-margin-top: 88px;
+}
+h4 {
+  font-family: var(--sans);
+  font-size: 15.5px; font-weight: 500;
+  color: var(--fg);
+  margin: 28px 0 8px;
+}
+
+p { margin: 0 0 16px; }
+p + p { margin-top: 0; }
+
+/* 正文首段落款式首字放大？不做 —— 中文不用 */
+strong { font-weight: 700; }
+
+blockquote {
+  margin: 16px 0;
+  padding: 4px 0 4px 18px;
+  border-left: 2px solid var(--rule);
+  color: var(--muted);
+}
+blockquote p { margin: 0; }
+
+ul, ol { margin: 12px 0 18px; padding-left: 24px; }
+ul { list-style: none; }
+ul > li { position: relative; }
+ul > li::before {
+  content: "·"; position: absolute; left: -14px; color: var(--faint);
+}
+li { margin-bottom: 6px; }
+
+a { color: var(--blue); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+
+/* 表格 */
+.table-block { margin: 20px 0 26px; }
+.table-title {
+  font-family: var(--sans);
+  font-size: 13.5px; font-weight: 600; color: var(--navy);
+  margin: 0 0 8px;
+}
+.table-wrap { overflow-x: auto; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  line-height: 1.6;
+  border-top: 1px solid var(--navy);
+  border-bottom: 1px solid var(--navy);
+  min-width: 480px;
+}
+th {
+  background: var(--ice);
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 13px;
+  text-align: left;
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--navy);
+  white-space: nowrap;
+}
+td { padding: 9px 12px; vertical-align: top; }
+tbody tr + tr td { border-top: 1px solid #F0F0F0; }
+.table-source {
+  font-size: 12.5px; color: var(--faint); margin: 6px 0 0;
+  font-family: var(--sans);
+}
+
+figure { margin: 24px 0 28px; }
+figure img { width: 100%; display: block; border: 1px solid var(--rule); }
+figcaption {
+  font-family: var(--sans);
+  font-size: 12.5px; color: var(--faint);
+  margin-top: 8px; text-align: center;
+}
+
+/* 三级标记 */
+.mark { padding: 1px 3px; }
+.mark-fact { background: var(--ice); }
+.mark-industry { background: #EDF5FF; }
+.mark-infer { background: #FDF3DA; }
+
+/* 章节标记：每个 h2 上方一条 3px 金条（品牌规范 §6.5 的印章感签名）。
+   全长页每章一个，一屏内最多看到 1–2 个，不违反「单屏金色 ≤2 处」。 */
+.content h2::before {
+  content: "";
+  display: block;
+  width: 36px; height: 3px;
+  background: var(--gold);
+  margin-bottom: 14px;
+}
+
+/* 页脚 */
+.doc-footer {
+  max-width: 1120px; margin: 0 auto;
+  padding: 32px; border-top: 1px solid var(--rule);
+  font-family: var(--sans); font-size: 12px; color: var(--faint);
+  display: flex; justify-content: space-between; gap: 16px;
+}
+
+/* 回到顶部 */
+.to-top {
+  position: fixed; right: 28px; bottom: 28px;
+  width: 40px; height: 40px;
+  border: 1px solid var(--rule); background: #fff;
+  color: var(--muted); font-size: 16px; cursor: pointer;
+  display: none; align-items: center; justify-content: center;
+  font-family: var(--sans);
+}
+.to-top.show { display: flex; }
+.to-top:hover { border-color: var(--navy); color: var(--navy); }
+
+/* ── 窄屏 ───────────────────────────────────────────── */
+@media (max-width: 1000px) {
+  .layout { grid-template-columns: minmax(0, 1fr); gap: 0; padding: 32px 20px 88px; }
+  .toc { display: none; }
+  .doc-title { font-size: 26px; }
+  h2 { font-size: 21px; margin-top: 48px; }
+  h3 { font-size: 17px; }
+  body { font-size: 16px; line-height: 1.8; }
+  .topbar-inner { padding: 8px 20px; }
+  .topbar img { width: 108px; }
+}
+
+/* ── 打印：退回 A4 单栏 ─────────────────────────────── */
+@media print {
+  @page { size: A4; margin: 25mm 26mm 25mm 28mm; }
+  body { font-size: 10.5pt; line-height: 1.75; }
+  .topbar, .toc, .to-top, .progress { display: none !important; }
+  .layout { display: block; max-width: none; padding: 0; }
+  .doc-title { font-size: 24px; }
+  h2 { font-size: 18px; break-after: avoid; margin-top: 18pt; }
+  h3 { font-size: 14px; break-after: avoid; }
+  .table-block, figure { break-inside: avoid; }
+  table { min-width: 0; font-size: 9pt; }
+  thead { display: table-header-group; }
+  .content h2::before { display: none; }
+  a { color: inherit; text-decoration: none; }
+}
+
+/* ── 图表 ───────────────────────────────────────────── */
+.chart { margin: 24px 0 28px; }
+.chart-caption {
+  font-family: var(--sans);
+  font-size: 13.5px; font-weight: 600; color: var(--navy);
+  margin-bottom: 10px;
+}
+.chart svg { display: block; width: 100%; height: auto; }
+.chart-source {
+  font-family: var(--sans);
+  font-size: 12.5px; color: var(--faint);
+  margin-top: 8px;
+}
+@media print {
+  .chart { break-inside: avoid; }
+}
+
+/* ── 代码块 / ASCII 架构图 ───────────────────────────── */
+pre.code-block {
+  margin: 20px 0 24px;
+  padding: 14px 16px;
+  background: #F7F7F7;
+  border: 1px solid var(--rule);
+  font-family: "Courier New", SimSun, monospace;
+  font-size: 12.5px;
+  line-height: 1.05;
+  white-space: pre;
+  overflow-x: auto;
+}
+pre.code-block code { font: inherit; }
+
+hr {
+  border: none;
+  border-top: 1px solid var(--rule);
+  margin: 32px 0;
+}

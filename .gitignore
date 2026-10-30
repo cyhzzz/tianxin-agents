@@ -1,0 +1,46 @@
+# ─────────────────────────────────────────────────────
+# 这个仓库是天信 skill 的发布源，不是整个「天信本身」目录的备份。
+# 宣传片、官网、培训手册体积大或另有仓库，一律不进这里。
+# ─────────────────────────────────────────────────────
+
+# 非技能目录
+天信宣传片/
+tianxin-cpa-website-gh-pages/
+培训/
+tianxin-skills/
+
+# 本机工作区配置
+.workbuddy/
+
+# 本机密钥，绝不入库
+**/push-secrets.json
+.env
+*.local.md
+
+# 技能运行时产物（脚本可重新生成）
+天信日报skill/daily/
+# examples 只留 .md 源和一份成品 PDF 示范；其余产物脚本可重新生成
+天信文档skill/examples/*.docx
+天信文档skill/examples/*.html
+天信文档skill/examples/*.png
+
+# 打包产物
+expert/*.zip
+*.zip
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# Node
+node_modules/
+
+# 编辑器与系统
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp

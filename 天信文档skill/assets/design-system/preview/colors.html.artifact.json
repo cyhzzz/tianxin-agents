@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "kind": "html",
+  "title": "tianxin-cpa/preview/colors.html",
+  "entry": "tianxin-cpa/preview/colors.html",
+  "renderer": "html",
+  "status": "complete",
+  "exports": [
+    "html",
+    "pdf",
+    "zip"
+  ],
+  "createdAt": "2026-06-26T06:24:25.252Z",
+  "updatedAt": "2026-06-26T06:24:25.252Z",
+  "metadata": {
+    "inferred": true,
+    "reconciled": true
+  }
+}

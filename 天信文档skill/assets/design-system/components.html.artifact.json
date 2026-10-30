@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "kind": "html",
+  "title": "tianxin-cpa/components.html",
+  "entry": "tianxin-cpa/components.html",
+  "renderer": "html",
+  "status": "complete",
+  "exports": [
+    "html",
+    "pdf",
+    "zip"
+  ],
+  "createdAt": "2026-06-26T06:22:10.564Z",
+  "updatedAt": "2026-06-26T06:22:10.564Z",
+  "metadata": {
+    "inferred": true,
+    "reconciled": true
+  }
+}

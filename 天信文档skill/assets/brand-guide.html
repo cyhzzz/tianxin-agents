@@ -1,0 +1,1470 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>天台天信会计师事务所 · 品牌设计规范</title>
+  <link rel="icon" type="image/svg+xml" href="./brand/logo-horizontal-color.png" />
+  <meta name="description" content="天台天信会计师事务所（TIANXIN CPA）品牌设计规范——颜色、字体、标志、组件与文案声音的基线参考。" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    /* =========================================================
+       Design tokens —— 直接 bind 到 Open Design 的 design system
+       ========================================================= */
+    :root {
+      /* 品牌色 */
+      --brand-navy:        #00338D;
+      --brand-blue:        #0F62FE;
+      --brand-sky:         #4589FF;
+      --brand-gold:        #B8860B;
+      --brand-gold-hover:  #D4A017;
+      --brand-ice:         #F4F4F4;
+
+      /* 中性 */
+      --bg:                #FFFFFF;
+      --fg:                #161616;
+      --muted:             #F4F4F4;
+      --muted-fg:          #525252;
+      --border:            #E0E0E0;
+      --border-hover:      #E8E8E8;
+
+      /* 语义 */
+      --success:           #24A148;
+      --warning:           #B8860B;
+      --danger:            #DA1E28;
+      --info:              #0F62FE;
+
+      /* 暗色变体 */
+      --hero-bg:           #161616;
+      --hero-fg:           #FFFFFF;
+      --hero-border:       #262626;
+
+      /* 字体 */
+      --font-sans:  "Noto Sans SC", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+      --font-serif: "Noto Serif SC", "Source Han Serif SC", Georgia, "Times New Roman", "STSong", "SimSun", serif;
+      --font-mono:  ui-monospace, "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+
+      /* 字号 */
+      --fs-display: 56px;
+      --fs-headline: 32px;
+      --fs-title:    22px;
+      --fs-body:     15px;
+      --fs-label:    14px;
+      --fs-small:    12px;
+
+      /* 间距 */
+      --space-xs:   8px;
+      --space-sm:  12px;
+      --space-md:  16px;
+      --space-lg:  24px;
+      --space-xl:  32px;
+      --space-2xl: 40px;
+      --space-3xl: 48px;
+      --space-4xl: 64px;
+      --space-5xl: 80px;
+
+      /* 圆角 —— 全局 0 */
+      --radius: 0;
+
+      /* 容器 */
+      --container: 1280px;
+      --gutter: 24px;
+
+      /* 阴影 */
+      --shadow-card: none;
+      --shadow-popover: 0 8px 24px rgba(0, 0, 0, 0.12);
+
+      /* 动效 */
+      --ease: cubic-bezier(0.4, 0, 0.2, 1);
+      --dur-fast: 0.15s;
+      --dur-normal: 0.2s;
+    }
+
+    /* =========================================================
+       Base
+       ========================================================= */
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-sans);
+      font-size: var(--fs-body);
+      line-height: 1.6;
+      color: var(--fg);
+      background: var(--bg);
+      font-feature-settings: "tnum" 1, "kern" 1;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
+    img, svg { display: block; max-width: 100%; }
+    a { color: var(--brand-blue); text-decoration: none; }
+    a:hover { text-decoration: underline; text-underline-offset: 3px; }
+    ::selection { background: var(--brand-navy); color: #fff; }
+
+    /* 排版基线 */
+    h1, h2, h3, h4 { margin: 0; font-weight: 600; line-height: 1.2; letter-spacing: -0.02em; }
+    p { margin: 0; }
+    code, .mono { font-family: var(--font-mono); font-size: 0.92em; }
+    .small { font-size: var(--fs-small); color: var(--muted-fg); }
+
+    /* =========================================================
+       Layout primitives
+       ========================================================= */
+    .container {
+      max-width: var(--container);
+      margin: 0 auto;
+      padding: 0 var(--gutter);
+    }
+    .section {
+      padding: var(--space-5xl) 0;
+      border-top: 1px solid var(--border);
+    }
+    .section:first-of-type { border-top: 0; }
+    .section-num {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: var(--fs-small);
+      letter-spacing: 0.06em;
+      color: var(--brand-gold);
+      margin-bottom: var(--space-sm);
+    }
+    .section-title {
+      font-size: var(--fs-headline);
+      letter-spacing: -0.02em;
+      margin-bottom: var(--space-md);
+    }
+    .section-lead {
+      max-width: 60ch;
+      color: var(--muted-fg);
+      font-size: var(--fs-body);
+      line-height: 1.7;
+      margin-bottom: var(--space-3xl);
+    }
+    .divider {
+      width: 48px;
+      height: 3px;
+      background: var(--brand-gold);
+      margin-bottom: var(--space-lg);
+    }
+    .eyebrow {
+      font-family: var(--font-mono);
+      font-size: var(--fs-small);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted-fg);
+    }
+
+    /* =========================================================
+       Header / Nav
+       ========================================================= */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+    }
+    .site-header .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 72px;
+    }
+    .site-brand {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+    }
+    .site-brand img { height: 36px; width: auto; }
+    .site-brand .name {
+      font-weight: 600;
+      font-size: 15px;
+      letter-spacing: 0.02em;
+      line-height: 1.2;
+    }
+    .site-brand .name small {
+      display: block;
+      font-size: 11px;
+      font-weight: 400;
+      letter-spacing: 0.1em;
+      color: var(--muted-fg);
+      text-transform: uppercase;
+    }
+    .site-nav { display: flex; gap: var(--space-xl); }
+    .site-nav a {
+      color: var(--fg);
+      font-size: var(--fs-label);
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+    .site-nav a:hover { color: var(--brand-blue); text-decoration: none; }
+
+    /* =========================================================
+       Hero
+       ========================================================= */
+    .hero {
+      background: var(--hero-bg);
+      color: var(--hero-fg);
+      padding: var(--space-5xl) 0;
+    }
+    .hero .container {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: var(--space-4xl);
+      align-items: center;
+    }
+    .hero-eyebrow {
+      font-family: var(--font-mono);
+      font-size: var(--fs-small);
+      letter-spacing: 0.04em;
+      color: var(--brand-gold);
+      text-transform: uppercase;
+      margin-bottom: var(--space-lg);
+    }
+    .hero h1 {
+      font-size: var(--fs-display);
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      margin-bottom: var(--space-lg);
+    }
+    .hero h1 .zh { display: block; }
+    .hero h1 .en {
+      display: block;
+      font-family: var(--font-serif);
+      font-size: 28px;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      color: rgba(255, 255, 255, 0.6);
+      margin-top: var(--space-sm);
+    }
+    .hero-tagline {
+      font-size: 17px;
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.8);
+      max-width: 36ch;
+      margin-bottom: var(--space-xl);
+    }
+    .hero-meta {
+      display: flex;
+      gap: var(--space-2xl);
+      padding-top: var(--space-lg);
+      border-top: 1px solid var(--hero-border);
+    }
+    .hero-meta .stat .num {
+      font-size: 28px;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      color: #fff;
+    }
+    .hero-meta .stat:first-child .num {
+      color: var(--brand-gold);
+    }
+    .hero-meta .stat .label {
+      font-size: var(--fs-small);
+      color: rgba(255, 255, 255, 0.5);
+      letter-spacing: 0.08em;
+    }
+    .hero-logo {
+      background: #fff;
+      padding: var(--space-4xl);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      aspect-ratio: 4 / 3;
+    }
+    .hero-logo img { max-width: 80%; height: auto; }
+
+    /* =========================================================
+       Brand identity block
+       ========================================================= */
+    .identity-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      border: 1px solid var(--border);
+    }
+    .identity-cell {
+      padding: var(--space-xl) var(--space-2xl);
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .identity-cell:nth-child(2n) { border-right: 0; }
+    .identity-cell:nth-last-child(-n+2) { border-bottom: 0; }
+    .identity-cell .label {
+      font-family: var(--font-mono);
+      font-size: var(--fs-small);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted-fg);
+      margin-bottom: var(--space-sm);
+    }
+    .identity-cell .value {
+      font-size: 17px;
+      font-weight: 500;
+      color: var(--fg);
+    }
+    .identity-cell .value small {
+      display: block;
+      font-size: var(--fs-small);
+      font-weight: 400;
+      color: var(--muted-fg);
+      margin-top: 2px;
+    }
+
+    /* =========================================================
+       Logo system
+       ========================================================= */
+    .logo-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      border: 1px solid var(--border);
+    }
+    .logo-cell {
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-2xl);
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+    .logo-cell:nth-child(3n) { border-right: 0; }
+    .logo-cell:nth-last-child(-n+3) { border-bottom: 0; }
+    .logo-cell .caption {
+      position: absolute;
+      bottom: var(--space-md);
+      left: var(--space-md);
+      right: var(--space-md);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      color: var(--muted-fg);
+      text-transform: uppercase;
+    }
+    .logo-cell img { max-width: 70%; max-height: 70%; object-fit: contain; }
+    .bg-white { background: #fff; }
+    .bg-ice  { background: var(--brand-ice); }
+    .bg-navy { background: var(--brand-navy); }
+
+    .logo-rules {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-xl);
+      margin-top: var(--space-3xl);
+    }
+    .logo-rule {
+      border: 1px solid var(--border);
+      padding: var(--space-xl);
+    }
+    .logo-rule h4 {
+      font-size: 14px;
+      font-family: var(--font-mono);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--brand-gold);
+      margin-bottom: var(--space-md);
+    }
+    .logo-rule ul { padding: 0; margin: 0; list-style: none; }
+    .logo-rule li {
+      font-size: var(--fs-body);
+      line-height: 1.7;
+      padding-left: var(--space-md);
+      position: relative;
+    }
+    .logo-rule li::before {
+      content: "×";
+      color: var(--danger);
+      position: absolute;
+      left: 0;
+      font-weight: 600;
+    }
+    .logo-rule.do li::before { content: "✓"; color: var(--success); }
+
+    /* =========================================================
+       Color system
+       ========================================================= */
+    .color-group { margin-bottom: var(--space-4xl); }
+    .color-group:last-child { margin-bottom: 0; }
+    .color-group h3 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: var(--space-md);
+    }
+    .color-group .group-desc {
+      font-size: var(--fs-body);
+      color: var(--muted-fg);
+      max-width: 60ch;
+      margin-bottom: var(--space-xl);
+    }
+    .swatch-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 0;
+      border: 1px solid var(--border);
+    }
+    .swatch {
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+    }
+    .swatch .chip {
+      height: 120px;
+      width: 100%;
+    }
+    .swatch .meta {
+      padding: var(--space-md) var(--space-lg);
+    }
+    .swatch .token {
+      font-family: var(--font-mono);
+      font-size: var(--fs-small);
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: var(--fg);
+      margin-bottom: 4px;
+    }
+    .swatch .values {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--muted-fg);
+      line-height: 1.5;
+    }
+    .swatch .usage {
+      font-size: var(--fs-small);
+      color: var(--muted-fg);
+      margin-top: var(--space-sm);
+      line-height: 1.5;
+    }
+
+    /* =========================================================
+       Typography
+       ========================================================= */
+    .type-row {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: var(--space-xl);
+      padding: var(--space-xl) 0;
+      border-top: 1px solid var(--border);
+      align-items: baseline;
+    }
+    .type-row:first-child { border-top: 0; }
+    .type-row .meta-label {
+      font-family: var(--font-mono);
+      font-size: var(--fs-small);
+      letter-spacing: 0.08em;
+      color: var(--muted-fg);
+    }
+    .type-row .meta-label .size {
+      display: block;
+      font-size: 13px;
+      color: var(--fg);
+      margin-top: 4px;
+    }
+    .type-display { font-size: var(--fs-display); line-height: 1.05; letter-spacing: -0.03em; font-weight: 600; }
+    .type-headline { font-size: var(--fs-headline); line-height: 1.15; letter-spacing: -0.02em; font-weight: 600; }
+    .type-title { font-size: var(--fs-title); line-height: 1.3; letter-spacing: -0.01em; font-weight: 600; }
+    .type-body { font-size: var(--fs-body); line-height: 1.6; }
+    .type-label { font-size: var(--fs-label); line-height: 1.4; font-weight: 500; }
+    .type-small { font-size: var(--fs-small); line-height: 1.5; letter-spacing: 0.01em; color: var(--muted-fg); }
+    .type-serif {
+      font-family: var(--font-serif);
+      font-style: italic;
+      letter-spacing: 0.02em;
+    }
+
+    .weight-row {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: var(--space-xl);
+      padding: var(--space-lg) 0;
+      border-top: 1px solid var(--border);
+      align-items: center;
+    }
+    .weight-row:first-child { border-top: 0; }
+
+    /* =========================================================
+       Spacing & layout
+       ========================================================= */
+    .spacing-bar {
+      display: flex;
+      align-items: flex-end;
+      gap: var(--space-md);
+      padding: var(--space-xl) 0;
+      border-top: 1px solid var(--border);
+    }
+    .spacing-bar:first-of-type { border-top: 0; }
+    .space-item { display: flex; flex-direction: column; align-items: center; gap: var(--space-sm); }
+    .space-item .block { background: var(--brand-navy); }
+    .space-item .label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--muted-fg);
+      text-align: center;
+    }
+
+    .do-dont-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-xl);
+      margin-top: var(--space-2xl);
+    }
+
+    /* =========================================================
+       Components
+       ========================================================= */
+    .component-row {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: var(--space-2xl);
+      padding: var(--space-2xl) 0;
+      border-top: 1px solid var(--border);
+      align-items: start;
+    }
+    .component-row:first-child { border-top: 0; }
+    .component-row .label {
+      font-family: var(--font-mono);
+      font-size: var(--fs-small);
+      letter-spacing: 0.06em;
+      color: var(--muted-fg);
+      text-transform: uppercase;
+    }
+    .component-row .label .name {
+      display: block;
+      font-size: 16px;
+      color: var(--fg);
+      margin-bottom: var(--space-xs);
+      font-family: var(--font-sans);
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-sm);
+      font-family: var(--font-sans);
+      font-size: var(--fs-label);
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      line-height: 1;
+      padding: 14px 32px;
+      border: 0;
+      cursor: pointer;
+      transition: background var(--dur-normal) var(--ease);
+      text-decoration: none;
+    }
+    .btn:hover { text-decoration: none; }
+    .btn-primary { background: var(--brand-navy); color: #fff; }
+    .btn-primary:hover { background: var(--brand-blue); }
+    .btn-gold { background: var(--brand-gold); color: #fff; }
+    .btn-gold:hover { background: var(--brand-gold-hover); }
+    .btn-outline { background: transparent; color: var(--brand-blue); border: 1px solid var(--brand-blue); }
+    .btn-outline:hover { background: var(--brand-blue); color: #fff; }
+    .btn-ghost { background: transparent; color: var(--fg); border: 1px solid var(--border); }
+    .btn-ghost:hover { background: var(--muted); }
+    .btn-dark-outline {
+      background: transparent;
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+    .btn-dark-outline:hover { background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.7); }
+
+    .tag {
+      display: inline-block;
+      padding: 4px 12px;
+      font-size: var(--fs-small);
+      font-weight: 400;
+      letter-spacing: 0.32px;
+      line-height: 1.5;
+    }
+    .tag-blue { color: var(--brand-blue); background: #EDF5FF; }
+    .tag-gold { color: var(--brand-gold); background: #FEF7E0; }
+    .tag-navy { color: var(--brand-navy); background: #EDF5FF; }
+
+    .example-card {
+      border: 1px solid var(--border);
+      padding: var(--space-xl);
+      max-width: 360px;
+      transition: background var(--dur-normal) var(--ease);
+    }
+    .example-card:hover { background: var(--border-hover); }
+    .example-card .tag { margin-bottom: var(--space-md); }
+    .example-card h4 {
+      font-size: var(--fs-title);
+      font-weight: 600;
+      margin-bottom: var(--space-sm);
+    }
+    .example-card p {
+      font-size: var(--fs-body);
+      color: var(--muted-fg);
+      line-height: 1.6;
+    }
+
+    .form-field {
+      max-width: 360px;
+    }
+    .form-field label {
+      display: block;
+      font-size: var(--fs-label);
+      font-weight: 500;
+      margin-bottom: var(--space-sm);
+    }
+    .form-field input, .form-field textarea {
+      width: 100%;
+      height: 40px;
+      padding: 0 12px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      font: inherit;
+      color: var(--fg);
+      outline: none;
+      transition: border-color var(--dur-normal) var(--ease), box-shadow var(--dur-normal) var(--ease);
+    }
+    .form-field textarea { height: auto; padding: 12px; }
+    .form-field input:focus, .form-field textarea:focus {
+      border-color: var(--brand-blue);
+      box-shadow: 0 0 0 2px rgba(15, 98, 254, 0.2);
+    }
+    .form-field .help {
+      font-size: var(--fs-small);
+      color: var(--muted-fg);
+      margin-top: 6px;
+    }
+
+    .divider-sample {
+      height: 3px;
+      background: var(--brand-gold);
+      width: 48px;
+    }
+
+    /* =========================================================
+       Voice
+       ========================================================= */
+    .voice-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      border: 1px solid var(--border);
+    }
+    .voice-cell {
+      padding: var(--space-xl) var(--space-2xl);
+      border-right: 1px solid var(--border);
+    }
+    .voice-cell:nth-child(2n) { border-right: 0; }
+    .voice-cell .tag-row {
+      margin-bottom: var(--space-md);
+    }
+    .voice-cell .do-copy {
+      font-size: 17px;
+      font-weight: 500;
+      color: var(--fg);
+      margin-bottom: var(--space-sm);
+    }
+    .voice-cell .dont-copy {
+      font-size: 17px;
+      font-weight: 500;
+      color: var(--muted-fg);
+      text-decoration: line-through;
+      text-decoration-color: var(--danger);
+      text-decoration-thickness: 1.5px;
+    }
+    .voice-cell .why {
+      font-size: var(--fs-small);
+      color: var(--muted-fg);
+      line-height: 1.5;
+      margin-top: var(--space-sm);
+    }
+
+    /* =========================================================
+       Anti-slop callout
+       ========================================================= */
+    .anti-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-md);
+      margin-top: var(--space-xl);
+    }
+    .anti-item {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-md);
+      padding: var(--space-md) var(--space-lg);
+      background: var(--muted);
+    }
+    .anti-item .icon {
+      width: 24px; height: 24px;
+      flex-shrink: 0;
+      display: grid; place-items: center;
+      color: var(--danger);
+      font-weight: 700;
+      font-size: 18px;
+      line-height: 1;
+    }
+    .anti-item .text {
+      font-size: var(--fs-body);
+      line-height: 1.5;
+    }
+    .anti-item code {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      background: #fff;
+      padding: 1px 6px;
+    }
+
+    /* =========================================================
+       Footer
+       ========================================================= */
+    .site-footer {
+      background: var(--hero-bg);
+      color: var(--hero-fg);
+      padding: var(--space-4xl) 0 var(--space-2xl);
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr;
+      gap: var(--space-3xl);
+      padding-bottom: var(--space-3xl);
+      border-bottom: 1px solid var(--hero-border);
+    }
+    .footer-brand img { height: 40px; margin-bottom: var(--space-md); filter: brightness(0) invert(1); }
+    .footer-brand p {
+      font-size: var(--fs-body);
+      color: rgba(255, 255, 255, 0.6);
+      max-width: 32ch;
+      line-height: 1.6;
+    }
+    .footer-col h5 {
+      font-size: var(--fs-small);
+      font-family: var(--font-mono);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--brand-gold);
+      margin-bottom: var(--space-md);
+    }
+    .footer-col ul { list-style: none; padding: 0; margin: 0; }
+    .footer-col li { margin-bottom: var(--space-sm); font-size: var(--fs-body); color: rgba(255, 255, 255, 0.7); }
+    .footer-col li a { color: rgba(255, 255, 255, 0.7); }
+    .footer-col li a:hover { color: #fff; }
+    .footer-bottom {
+      padding-top: var(--space-xl);
+      display: flex;
+      justify-content: space-between;
+      font-size: var(--fs-small);
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    /* =========================================================
+       Responsive
+       ========================================================= */
+    @media (max-width: 1024px) {
+      .hero .container { grid-template-columns: 1fr; }
+      .hero-logo { aspect-ratio: 3 / 2; }
+      .logo-grid { grid-template-columns: repeat(2, 1fr); }
+      .logo-cell:nth-child(3n) { border-right: 1px solid var(--border); }
+      .logo-cell:nth-child(2n) { border-right: 0; }
+      .logo-cell:nth-last-child(-n+3) { border-bottom: 1px solid var(--border); }
+      .logo-cell:nth-last-child(-n+2) { border-bottom: 0; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 768px) {
+      :root { --fs-display: 40px; --fs-headline: 26px; }
+      .site-nav { display: none; }
+      .section { padding: var(--space-4xl) 0; }
+      .identity-grid, .logo-grid, .voice-grid, .logo-rules, .do-dont-grid, .anti-grid {
+        grid-template-columns: 1fr;
+      }
+      .identity-cell, .logo-cell, .voice-cell { border-right: 0; border-bottom: 1px solid var(--border); }
+      .identity-cell:last-child, .logo-cell:last-child, .voice-cell:last-child { border-bottom: 0; }
+      .type-row, .weight-row, .component-row { grid-template-columns: 1fr; gap: var(--space-md); }
+      .footer-grid { grid-template-columns: 1fr; }
+      .footer-bottom { flex-direction: column; gap: var(--space-sm); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===================== HEADER ===================== -->
+  <header class="site-header">
+    <div class="container">
+      <div class="site-brand">
+        <img src="./brand/logo-horizontal-color.png" alt="天台天信会计师事务所 logo" />
+        <div class="name">
+          天信品牌规范
+          <small>BRAND GUIDELINES · v1.0</small>
+        </div>
+      </div>
+      <nav class="site-nav">
+        <a href="#identity">识别</a>
+        <a href="#logo">标志</a>
+        <a href="#color">色彩</a>
+        <a href="#type">字体</a>
+        <a href="#space">版式</a>
+        <a href="#components">组件</a>
+        <a href="#voice">声音</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ===================== HERO ===================== -->
+  <section class="hero">
+    <div class="container">
+      <div>
+        <div class="hero-eyebrow">天台天信会计师事务所 · 品牌设计规范</div>
+        <h1>
+          <span class="zh">专业 · 严谨 · 值得托付</span>
+          <span class="en">TIANXIN CPA · EST. 2001</span>
+        </h1>
+        <p class="hero-tagline">
+          本规范提取自生产站点，定义所有品牌物料（落地页、海报、报告封面、宣传册、社交卡片）的设计基线。导入 Open Design 时，把 <code>:root</code> 内的 token 直接 bind 到 design system 即可。
+        </p>
+        <div class="hero-meta">
+          <div class="stat"><div class="num">2001</div><div class="label">创立年份</div></div>
+          <div class="stat"><div class="num">6</div><div class="label">业务条线</div></div>
+          <div class="stat"><div class="num">24</div><div class="label">执业年数</div></div>
+          <div class="stat"><div class="num">0</div><div class="label">圆角</div></div>
+        </div>
+      </div>
+      <div class="hero-logo">
+        <img src="./brand/logo-horizontal-color.png" alt="天台天信会计师事务所主 logo" />
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 01 品牌识别 ===================== -->
+  <section class="section" id="identity">
+    <div class="container">
+      <div class="divider"></div>
+      <div class="section-num">01 / 品牌识别</div>
+      <h2 class="section-title">天台天信会计师事务所</h2>
+      <p class="section-lead">
+        二十四年本土执业经验的天台县事务所，主营审计验资、资产评估、税务服务、代理记账、财务咨询、工程造价。本节列出品牌在所有物料中应当一致使用的基础信息。
+      </p>
+      <div class="identity-grid">
+        <div class="identity-cell">
+          <div class="label">全称</div>
+          <div class="value">天台天信会计师事务所</div>
+        </div>
+        <div class="identity-cell">
+          <div class="label">英文名 / Alternate</div>
+          <div class="value">TIANXIN CPA<small>TIAN XIN · 台州</small></div>
+        </div>
+        <div class="identity-cell">
+          <div class="label">创立时间</div>
+          <div class="value">2001-04-17<small>已执业 24 年</small></div>
+        </div>
+        <div class="identity-cell">
+          <div class="label">业务范围</div>
+          <div class="value">审计验资 · 资产评估 · 税务服务 · 代理记账 · 财务咨询 · 工程造价</div>
+        </div>
+        <div class="identity-cell">
+          <div class="label">服务区域</div>
+          <div class="value">天台县及周边地区<small>浙江省台州市</small></div>
+        </div>
+        <div class="identity-cell">
+          <div class="label">电话 / 邮箱</div>
+          <div class="value">+86-576-83886633<small>457897313@qq.com</small></div>
+        </div>
+        <div class="identity-cell">
+          <div class="label">地址</div>
+          <div class="value">赤城街道赤城大厦 5 楼<small>天台县 · 浙江省</small></div>
+        </div>
+        <div class="identity-cell">
+          <div class="label">品牌域名</div>
+          <div class="value">tianxin-cpa.cn</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 02 标志系统 ===================== -->
+  <section class="section" id="logo">
+    <div class="container">
+      <div class="divider"></div>
+      <div class="section-num">02 / 标志系统</div>
+      <h2 class="section-title">唯一标志，按场景缩放</h2>
+      <p class="section-lead">
+        全品牌仅交付一份 <code>logo.svg</code>——矢量、官方、可在任何尺寸下保持锐利。深色背景场景通过 CSS <code>filter</code> 反白得到反白版，尺寸与场景靠 CSS 控制，不另存文件。
+      </p>
+
+      <div class="logo-grid">
+        <div class="logo-cell bg-white">
+          <img src="./brand/logo-horizontal-color.png" alt="logo · 白色背景" />
+          <div class="caption">默认 · 白色背景</div>
+        </div>
+        <div class="logo-cell bg-ice">
+          <img src="./brand/logo-horizontal-color.png" alt="logo · 浅中性背景" />
+          <div class="caption">浅中性背景</div>
+        </div>
+        <div class="logo-cell bg-navy">
+          <img src="./brand/logo-horizontal-color.png" alt="logo · 深色背景（反白）" style="filter: brightness(0) invert(1);" />
+          <div class="caption" style="color: rgba(255,255,255,0.6);">深色背景 · filter 反白</div>
+        </div>
+        <div class="logo-cell bg-white">
+          <img src="./brand/logo-horizontal-color.png" alt="logo · 中等尺寸（页眉）" style="max-width: 50%;" />
+          <div class="caption">中等尺寸 · 页眉 / 卡片</div>
+        </div>
+        <div class="logo-cell bg-white">
+          <img src="./brand/logo-horizontal-color.png" alt="logo · 小尺寸（favicon）" style="max-width: 28%;" />
+          <div class="caption">小尺寸 · favicon / 头像</div>
+        </div>
+        <div class="logo-cell bg-navy">
+          <img src="./brand/logo-horizontal-color.png" alt="logo · 大尺寸深色场景" style="filter: brightness(0) invert(1); max-width: 80%;" />
+          <div class="caption" style="color: rgba(255,255,255,0.6);">大尺寸 · hero / 封皮</div>
+        </div>
+      </div>
+
+      <div class="logo-rules">
+        <div class="logo-rule do">
+          <h4>使用准则</h4>
+          <ul>
+            <li>仅交付一份 <code>logo.svg</code>，不另外保存 PNG / JPG 变体</li>
+            <li>深色背景用 CSS <code>filter: brightness(0) invert(1);</code> 反白</li>
+            <li>页眉场景最小宽度 32px；卡片 / 封皮 80–120px</li>
+            <li>favicon 场景 16 / 32 / 48px，使用同一份 SVG 缩放</li>
+            <li>周围保留 logo 高度 × 0.5 的安全空间</li>
+          </ul>
+        </div>
+        <div class="logo-rule">
+          <h4>使用禁令</h4>
+          <ul>
+            <li>禁止把 SVG 导出为 PNG / JPG 重新分发</li>
+            <li>禁止拉伸、压缩、倾斜、旋转 logo</li>
+            <li>禁止改变 logo 内的颜色与笔画粗细</li>
+            <li>禁止把 logo 放在低对比度背景上</li>
+            <li>禁止给 logo 加阴影、描边、其他滤镜</li>
+            <li>禁止把 logo 文字部分单独抽出来用</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 03 色彩系统 ===================== -->
+  <section class="section" id="color">
+    <div class="container">
+      <div class="divider"></div>
+      <div class="section-num">03 / 色彩系统</div>
+      <h2 class="section-title">深蓝为骨，金色为睛</h2>
+      <p class="section-lead">
+        品牌主色取自 IBM Carbon Design 体系的深蓝/亮蓝组合——传达「机构、可靠、合同感」；金色仅作为「点睛 / 权威」信号，不承担可点击 / 链接语义。所有色值已转写为 OKLch，可直接 bind 到 design system。
+      </p>
+
+      <div class="color-group">
+        <h3>品牌色</h3>
+        <p class="group-desc">主色用于 CTA、关键标识、品牌资产。深蓝用于静态权威场景（页眉、底色），亮蓝用于动态可交互场景（按钮 hover、链接）。</p>
+        <div class="swatch-grid">
+          <div class="swatch">
+            <div class="chip" style="background: #00338D;"></div>
+            <div class="meta">
+              <div class="token">--brand-navy</div>
+              <div class="values">#00338D<br>oklch(30.5% 0.155 264)</div>
+              <div class="usage">主色 · 页眉 · 重要标题 · 暗底文字</div>
+            </div>
+          </div>
+          <div class="swatch">
+            <div class="chip" style="background: #0F62FE;"></div>
+            <div class="meta">
+              <div class="token">--brand-blue</div>
+              <div class="values">#0F62FE<br>oklch(54% 0.225 257)</div>
+              <div class="usage">行动色 · 主按钮 · 链接 · 焦点环</div>
+            </div>
+          </div>
+          <div class="swatch">
+            <div class="chip" style="background: #4589FF;"></div>
+            <div class="meta">
+              <div class="token">--brand-sky</div>
+              <div class="values">#4589FF<br>oklch(63% 0.180 257)</div>
+              <div class="usage">次色 · 辅助链接 · hover 高亮</div>
+            </div>
+          </div>
+          <div class="swatch">
+            <div class="chip" style="background: #B8860B;"></div>
+            <div class="meta">
+              <div class="token">--brand-gold</div>
+              <div class="values">#B8860B<br>oklch(63% 0.130 80)</div>
+              <div class="usage">点睛 · 分隔条 · 重要数据 · 不超过 2 处/屏</div>
+            </div>
+          </div>
+          <div class="swatch">
+            <div class="chip" style="background: #D4A017;"></div>
+            <div class="meta">
+              <div class="token">--brand-gold-hover</div>
+              <div class="values">#D4A017<br>oklch(70% 0.150 80)</div>
+              <div class="usage">金色 hover 态 · 略提亮即可</div>
+            </div>
+          </div>
+          <div class="swatch">
+            <div class="chip" style="background: #F4F4F4; border-bottom: 1px solid #E0E0E0;"></div>
+            <div class="meta">
+              <div class="token">--brand-ice</div>
+              <div class="values">#F4F4F4<br>oklch(95% 0 0)</div>
+              <div class="usage">弱化背景 · 卡片底 · 浅中性替代纯白</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="color-group">
+        <h3>中性色</h3>
+        <p class="group-desc">主文字 `#161616`（≈ 18.7:1 对比度）、副文字 `#525252`、描边 `#E0E0E0`、弱化背景 `#F4F4F4`——构成清晰的四级层次。</p>
+        <div class="swatch-grid">
+          <div class="swatch">
+            <div class="chip" style="background: #FFFFFF; border-bottom: 1px solid #E0E0E0;"></div>
+            <div class="meta">
+              <div class="token">--bg</div>
+              <div class="values">#FFFFFF<br>oklch(100% 0 0)</div>
+              <div class="usage">页面背景</div>
+            </div>
+          </div>
+          <div class="swatch">
+            <div class="chip" style="background: #161616;"></div>
+            <div class="meta">
+              <div class="token">--fg</div>
+              <div class="values">#161616<br>oklch(15% 0 0)</div>
+              <div class="usage">主文字</div>
+            </div>
+          </div>
+          <div class="swatch">
+            <div class="chip" style="background: #525252;"></div>
+            <div class="meta">
+              <div class="token">--muted-fg</div>
+              <div class="values">#525252<br>oklch(40% 0 0)</div>
+              <div class="usage">副文字 · 说明</div>
+            </div>
+          </div>
+          <div class="swatch">
+            <div class="chip" style="background: #E0E0E0;"></div>
+            <div class="meta">
+              <div class="token">--border</div>
+              <div class="values">#E0E0E0<br>oklch(89% 0 0)</div>
+              <div class="usage">描边 · 分隔线</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="color-group">
+        <h3>语义色</h3>
+        <p class="group-desc">成功 / 警告 / 错误 / 信息——用于表单校验、状态提示、报告场景。警示 / 警告复用品牌金，保持视觉系统的克制。</p>
+        <div class="swatch-grid">
+          <div class="swatch">
+            <div class="chip" style="background: #24A148;"></div>
+            <div class="meta">
+              <div class="token">--success</div>
+              <div class="values">#24A148<br>oklch(60% 0.180 145)</div>
+              <div class="usage">成功 · 通过 · 已完成</div>
+            </div>
+          </div>
+          <div class="swatch">
+            <div class="chip" style="background: #B8860B;"></div>
+            <div class="meta">
+              <div class="token">--warning</div>
+              <div class="values">#B8860B<br>oklch(63% 0.130 80)</div>
+              <div class="usage">警告 · 待处理 · 提示</div>
+            </div>
+          </div>
+          <div class="swatch">
+            <div class="chip" style="background: #DA1E28;"></div>
+            <div class="meta">
+              <div class="token">--danger</div>
+              <div class="values">#DA1E28<br>oklch(58% 0.220 25)</div>
+              <div class="usage">错误 · 风险 · 删除</div>
+            </div>
+          </div>
+          <div class="swatch">
+            <div class="chip" style="background: #0F62FE;"></div>
+            <div class="meta">
+              <div class="token">--info</div>
+              <div class="values">#0F62FE<br>oklch(54% 0.225 257)</div>
+              <div class="usage">信息 · 注释 · 二级链接</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="color-group">
+        <h3>暗色变体</h3>
+        <p class="group-desc">仅用于网站 hero、报告扉页、合同封皮、名片背面。金色在两种背景下都可读，无须切换。</p>
+        <div class="swatch-grid">
+          <div class="swatch">
+            <div class="chip" style="background: #161616;"></div>
+            <div class="meta">
+              <div class="token">--hero-bg</div>
+              <div class="values">#161616<br>oklch(15% 0 0)</div>
+              <div class="usage">深色 hero 背景</div>
+            </div>
+          </div>
+          <div class="swatch">
+            <div class="chip" style="background: #FFFFFF;"></div>
+            <div class="meta">
+              <div class="token">--hero-fg</div>
+              <div class="values">#FFFFFF<br>oklch(100% 0 0)</div>
+              <div class="usage">深色 hero 文字</div>
+            </div>
+          </div>
+          <div class="swatch">
+            <div class="chip" style="background: #262626;"></div>
+            <div class="meta">
+              <div class="token">--hero-border</div>
+              <div class="values">#262626<br>oklch(20% 0 0)</div>
+              <div class="usage">深色描边</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 04 字体 ===================== -->
+  <section class="section" id="type">
+    <div class="container">
+      <div class="divider"></div>
+      <div class="section-num">04 / 字体系统</div>
+      <h2 class="section-title">思源黑体为骨，思源宋体点睛</h2>
+      <p class="section-lead">
+        中文环境以 Noto Sans SC（思源黑体简体）为主——笔画清晰、信息密度高、机构感强。Noto Serif SC（思源宋体简体）仅在 hero 引言、报告扉页、印章等「带官方气」的场景作为装饰。
+      </p>
+
+      <div class="type-row">
+        <div class="meta-label">DISPLAY<span class="size">56px / -0.03em</span></div>
+        <div class="type-display">专业财税服务</div>
+      </div>
+      <div class="type-row">
+        <div class="meta-label">HEADLINE<span class="size">32px / -0.02em</span></div>
+        <div class="type-headline">服务条款与承诺</div>
+      </div>
+      <div class="type-row">
+        <div class="meta-label">TITLE<span class="size">22px / -0.01em</span></div>
+        <div class="type-title">审计验资报告</div>
+      </div>
+      <div class="type-row">
+        <div class="meta-label">BODY<span class="size">15px / 1.6</span></div>
+        <div class="type-body">天台天信会计师事务所创立于 2001 年，专注为本地中小企业、行政事业单位提供审计、税务、评估、咨询等一站式专业服务。</div>
+      </div>
+      <div class="type-row">
+        <div class="meta-label">LABEL<span class="size">14px / 0.02em</span></div>
+        <div class="type-label">立即咨询 · 获取方案</div>
+      </div>
+      <div class="type-row">
+        <div class="meta-label">SMALL<span class="size">12px / 1.5</span></div>
+        <div class="type-small">2024 年 · 浙江省台州市天台县赤城大厦 5 楼</div>
+      </div>
+
+      <h3 style="margin-top: var(--space-4xl); margin-bottom: var(--space-md); font-size: 18px; font-weight: 600;">字重（仅三档）</h3>
+      <div class="weight-row">
+        <div class="meta-label">400 · Regular</div>
+        <div class="type-body" style="font-weight: 400;">正文 · 通知 · 合同条款</div>
+      </div>
+      <div class="weight-row">
+        <div class="meta-label">500 · Medium</div>
+        <div class="type-body" style="font-weight: 500;">UI 标签 · 按钮 · 导航</div>
+      </div>
+      <div class="weight-row">
+        <div class="meta-label">600 · Semibold</div>
+        <div class="type-body" style="font-weight: 600;">标题 · 强调 · 关键数据</div>
+      </div>
+
+      <h3 style="margin-top: var(--space-4xl); margin-bottom: var(--space-md); font-size: 18px; font-weight: 600;">衬线装饰（慎用）</h3>
+      <div class="type-row">
+        <div class="meta-label">SERIF<span class="size">宋体 · 引言</span></div>
+        <div class="type-serif" style="font-size: 28px;">「信以立所 · 谨以执业」</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 05 间距与版式 ===================== -->
+  <section class="section" id="space">
+    <div class="container">
+      <div class="divider"></div>
+      <div class="section-num">05 / 间距与版式</div>
+      <h2 class="section-title">8 进制间距 · 0 圆角 · 1px 描边</h2>
+      <p class="section-lead">
+        事务所场景的「方」=「正式、机构、合同感」。所有元素圆角 0、阴影仅用于 popover / modal、卡片靠 1px 描边 + 间距建立层级。间距 8 进制，保证视觉节奏与栅格对齐。
+      </p>
+
+      <h3 style="margin-bottom: var(--space-lg); font-size: 18px; font-weight: 600;">间距尺度</h3>
+      <div class="spacing-bar">
+        <div class="space-item"><div class="block" style="width: 8px; height: 8px;"></div><div class="label">xs · 8</div></div>
+        <div class="space-item"><div class="block" style="width: 12px; height: 12px;"></div><div class="label">sm · 12</div></div>
+        <div class="space-item"><div class="block" style="width: 16px; height: 16px;"></div><div class="label">md · 16</div></div>
+        <div class="space-item"><div class="block" style="width: 24px; height: 24px;"></div><div class="label">lg · 24</div></div>
+        <div class="space-item"><div class="block" style="width: 32px; height: 32px;"></div><div class="label">xl · 32</div></div>
+        <div class="space-item"><div class="block" style="width: 40px; height: 40px;"></div><div class="label">2xl · 40</div></div>
+        <div class="space-item"><div class="block" style="width: 48px; height: 48px;"></div><div class="label">3xl · 48</div></div>
+        <div class="space-item"><div class="block" style="width: 64px; height: 64px;"></div><div class="label">4xl · 64</div></div>
+        <div class="space-item"><div class="block" style="width: 80px; height: 80px;"></div><div class="label">5xl · 80</div></div>
+      </div>
+
+      <div class="do-dont-grid">
+        <div>
+          <h4 style="font-family: var(--font-mono); font-size: var(--fs-small); letter-spacing: 0.16em; text-transform: uppercase; color: var(--success); margin-bottom: var(--space-md);">✓ 正确</h4>
+          <div class="example-card" style="margin: 0; max-width: 100%;">
+            <span class="tag tag-navy">审计验资</span>
+            <h4>财务报表审计</h4>
+            <p>出具符合国家审计准则的审计报告，应用于工商年检、税务申报、银行授信等场景。</p>
+          </div>
+        </div>
+        <div>
+          <h4 style="font-family: var(--font-mono); font-size: var(--fs-small); letter-spacing: 0.16em; text-transform: uppercase; color: var(--danger); margin-bottom: var(--space-md);">× 错误</h4>
+          <div style="border: 1px solid var(--border); border-left: 4px solid var(--brand-blue); border-radius: 12px; padding: var(--space-xl); background: var(--bg); max-width: 100%;">
+            <span style="display: inline-block; background: #EDF5FF; color: var(--brand-blue); padding: 4px 12px; font-size: 12px; border-radius: 12px; margin-bottom: var(--space-md);">🚀 审计验资</span>
+            <h4 style="font-size: 22px; font-weight: 600; margin-bottom: var(--space-sm);">财务报表审计</h4>
+            <p style="font-size: 15px; color: var(--muted-fg); line-height: 1.6;">出具符合国家审计准则的审计报告，应用于工商年检、税务申报、银行授信等场景。</p>
+          </div>
+          <p class="small" style="margin-top: var(--space-sm);">× 使用 emoji 装饰 · × 圆角 12px · × 左侧色条 — 全部属于 AI 味模板痕迹</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 06 组件 ===================== -->
+  <section class="section" id="components">
+    <div class="container">
+      <div class="divider"></div>
+      <div class="section-num">06 / 组件基线</div>
+      <h2 class="section-title">按钮、卡片、标签、表单</h2>
+      <p class="section-lead">
+        所有组件共用「0 圆角 + 1px 描边 + 12-32 padding + 600 字重 + 14px 字号」的基线节奏。Hover 仅切换背景色，不位移、不缩放、不加阴影——避免任何「弹性装饰」破坏机构感。
+      </p>
+
+      <div class="component-row">
+        <div class="label"><span class="name">按钮 · 主行动</span>PRIMARY / GOLD / OUTLINE / GHOST</div>
+        <div style="display: flex; flex-wrap: wrap; gap: var(--space-md); align-items: center;">
+          <button class="btn btn-primary">立即咨询</button>
+          <button class="btn btn-gold">获取方案</button>
+          <button class="btn btn-outline">查看详情</button>
+          <button class="btn btn-ghost">取消</button>
+        </div>
+      </div>
+
+      <div class="component-row">
+        <div class="label"><span class="name">按钮 · 深色背景</span>DARK OUTLINE</div>
+        <div style="background: var(--hero-bg); padding: var(--space-2xl); display: flex; gap: var(--space-md); flex-wrap: wrap;">
+          <button class="btn btn-primary">立即咨询</button>
+          <button class="btn btn-dark-outline">下载报告</button>
+        </div>
+      </div>
+
+      <div class="component-row">
+        <div class="label"><span class="name">标签 · 业务分类</span>TAG / BLUE · GOLD · NAVY</div>
+        <div style="display: flex; flex-wrap: wrap; gap: var(--space-md); align-items: center;">
+          <span class="tag tag-navy">审计验资</span>
+          <span class="tag tag-navy">资产评估</span>
+          <span class="tag tag-gold">税务服务</span>
+          <span class="tag tag-navy">代理记账</span>
+          <span class="tag tag-blue">财务咨询</span>
+          <span class="tag tag-navy">工程造价</span>
+        </div>
+      </div>
+
+      <div class="component-row">
+        <div class="label"><span class="name">卡片 · 服务</span>SERVICE CARD</div>
+        <div class="example-card">
+          <span class="tag tag-navy">审计验资</span>
+          <h4>财务报表审计</h4>
+          <p>出具符合国家审计准则的审计报告，应用于工商年检、税务申报、银行授信等场景。</p>
+        </div>
+      </div>
+
+      <div class="component-row">
+        <div class="label"><span class="name">表单 · 文本输入</span>INPUT / TEXTAREA</div>
+        <div class="form-field" style="display: flex; flex-direction: column; gap: var(--space-lg);">
+          <div>
+            <label>企业名称</label>
+            <input type="text" placeholder="天台县某有限公司" />
+          </div>
+          <div>
+            <label>咨询内容</label>
+            <textarea rows="3" placeholder="请简要说明您的需求，如审计报告出具、税务咨询等"></textarea>
+            <div class="help">我们会在 1 个工作日内与您联系</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="component-row">
+        <div class="label"><span class="name">分隔条</span>SECTION DIVIDER</div>
+        <div>
+          <div class="divider-sample"></div>
+          <p class="small" style="margin-top: var(--space-sm);">48px × 3px · 金色 · 每个章节标题前的「印章感」签名</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 07 文案声音 ===================== -->
+  <section class="section" id="voice">
+    <div class="container">
+      <div class="divider"></div>
+      <div class="section-num">07 / 文案声音</div>
+      <h2 class="section-title">严谨、克制、可托付</h2>
+      <p class="section-lead">
+        不卖弄、不煽情、不互联网黑话。短句优先，主谓宾清晰。第二人称优先用「您」。数字一律用千分位 + 两位小数。下面是常见场景的推荐 vs 不推荐对比。
+      </p>
+
+      <div class="voice-grid">
+        <div class="voice-cell">
+          <div class="tag-row"><span class="tag tag-navy">行动</span></div>
+          <div class="do-copy">立即咨询 · 获取方案</div>
+          <div class="dont-copy">马上试试 · 戳我一下</div>
+          <div class="why">事务所场景用「咨询 / 方案」比「试试 / 戳」更正式、更有承诺感。</div>
+        </div>
+        <div class="voice-cell">
+          <div class="tag-row"><span class="tag tag-gold">信任</span></div>
+          <div class="do-copy">二十四年本土执业经验</div>
+          <div class="dont-copy">20 年+ 经验 · 最强事务所</div>
+          <div class="why">不用「+」号，不用「最强」类绝对化用语，用具体数字与事实说话。</div>
+        </div>
+        <div class="voice-cell">
+          <div class="tag-row"><span class="tag tag-navy">服务</span></div>
+          <div class="do-copy">审计验资 · 资产评估 · 税务服务</div>
+          <div class="dont-copy">一站式财税管家 · 您身边的财税专家</div>
+          <div class="why">把服务条列出来比包装成「管家 / 专家」更可信——客户知道买的是什么。</div>
+        </div>
+        <div class="voice-cell">
+          <div class="tag-row"><span class="tag tag-navy">时间</span></div>
+          <div class="do-copy">创立于 2001 年</div>
+          <div class="dont-copy">始于 2001 · 与您同行 24 个春秋</div>
+          <div class="why">平实陈述事实比煽情叙述更匹配机构气质。</div>
+        </div>
+        <div class="voice-cell">
+          <div class="tag-row"><span class="tag tag-navy">数字</span></div>
+          <div class="do-copy">¥1,286,500.00</div>
+          <div class="dont-copy">128 万 · 1.28M · ¥128w+</div>
+          <div class="why">金额必须用千分位 + 两位小数，强制等宽数字。报告场景额外使用大写金额栏。</div>
+        </div>
+        <div class="voice-cell">
+          <div class="tag-row"><span class="tag tag-navy">承诺</span></div>
+          <div class="do-copy">1 个工作日内回复</div>
+          <div class="dont-copy">极速响应 · 7×24 在线</div>
+          <div class="why">给出可量化的承诺，比夸张用语更能建立信任。</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 08 设计禁区 ===================== -->
+  <section class="section" id="no-go">
+    <div class="container">
+      <div class="divider"></div>
+      <div class="section-num">08 / 设计禁区</div>
+      <h2 class="section-title">这些做法在所有物料中禁止</h2>
+      <p class="section-lead">
+        为了把「AI 味模板」挡在门外，所有品牌物料在交付前必须通过以下检查。违反任一项的稿件需重做。
+      </p>
+
+      <div class="anti-grid">
+        <div class="anti-item">
+          <div class="icon">×</div>
+          <div class="text">禁止以 <code>#6366f1</code> 系列紫色作为主色或链接色（这是最常见的 AI 默认色）。</div>
+        </div>
+        <div class="anti-item">
+          <div class="icon">×</div>
+          <div class="text">禁止紫 → 蓝渐变作为背景（trust-gradient 是 AI 味第二特征）。</div>
+        </div>
+        <div class="anti-item">
+          <div class="icon">×</div>
+          <div class="text">禁止任何 ≥ 4px 的 <code>border-radius</code>——全品牌统一 0 圆角。</div>
+        </div>
+        <div class="anti-item">
+          <div class="icon">×</div>
+          <div class="text">禁止 emoji（✨🚀🎯⚡🔥💡）作为图标或装饰——使用单色线性 SVG。</div>
+        </div>
+        <div class="anti-item">
+          <div class="icon">×</div>
+          <div class="text">禁止「带左侧色条的圆角卡片」——这是 AI 仪表盘模板的典型痕迹。</div>
+        </div>
+        <div class="anti-item">
+          <div class="icon">×</div>
+          <div class="text">禁止装饰性光晕、模糊背景、blob SVG、暖米色 / 桃色 / 粉色页面底。</div>
+        </div>
+        <div class="anti-item">
+          <div class="icon">×</div>
+          <div class="text">禁止单屏超过 2 处金色 <code>--brand-gold</code>——金色只点睛，不渲染。</div>
+        </div>
+        <div class="anti-item">
+          <div class="icon">×</div>
+          <div class="text">禁止字号 ≤ 11px（脚注最小 12px）、禁止 <code>font-weight: 700</code>（最多 600）。</div>
+        </div>
+        <div class="anti-item">
+          <div class="icon">×</div>
+          <div class="text">禁止 Inter / Roboto / Arial 单独作为 display 字体（必须配 Noto Serif SC）。</div>
+        </div>
+        <div class="anti-item">
+          <div class="icon">×</div>
+          <div class="text">禁止「+」「...」作为标题文案，禁止「10× faster」「99.9% uptime」式无源数据。</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <img src="./brand/logo-horizontal-color.png" alt="天台天信会计师事务所" />
+          <p>本土执业二十四年的天台县会计师事务所，提供审计、税务、评估、咨询等一站式专业服务。</p>
+        </div>
+        <div class="footer-col">
+          <h5>联系方式</h5>
+          <ul>
+            <li>+86-576-83886633</li>
+            <li>457897313@qq.com</li>
+            <li>tianxin-cpa.cn</li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h5>地址</h5>
+          <ul>
+            <li>浙江省台州市天台县</li>
+            <li>赤城街道赤城大厦 5 楼</li>
+            <li>邮编 317200</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div>© 2001–2026 天台天信会计师事务所 · TIANXIN CPA</div>
+        <div>品牌设计规范 v1.0 · 由 Open Design 提取生成</div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Smooth scroll for nav anchors
+    document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+      a.addEventListener('click', function (e) {
+        var id = a.getAttribute('href').slice(1);
+        var target = document.getElementById(id);
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+
+    // Nav active state on scroll
+    var navLinks = Array.prototype.slice.call(document.querySelectorAll('.site-nav a'));
+    var sections = navLinks
+      .map(function (a) { return document.getElementById(a.getAttribute('href').slice(1)); })
+      .filter(Boolean);
+    function onScroll() {
+      var y = window.scrollY + 120;
+      var current = null;
+      sections.forEach(function (s) {
+        if (s.offsetTop <= y) current = s.id;
+      });
+      navLinks.forEach(function (a) {
+        var active = a.getAttribute('href').slice(1) === current;
+        a.style.color = active ? 'var(--brand-blue)' : '';
+      });
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  </script>
+</body>
+</html>

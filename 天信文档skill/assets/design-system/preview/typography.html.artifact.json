@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "kind": "html",
+  "title": "tianxin-cpa/preview/typography.html",
+  "entry": "tianxin-cpa/preview/typography.html",
+  "renderer": "html",
+  "status": "complete",
+  "exports": [
+    "html",
+    "pdf",
+    "zip"
+  ],
+  "createdAt": "2026-06-26T06:24:25.263Z",
+  "updatedAt": "2026-06-26T06:24:25.263Z",
+  "metadata": {
+    "inferred": true,
+    "reconciled": true
+  }
+}

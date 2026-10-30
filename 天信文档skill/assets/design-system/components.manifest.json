@@ -1,0 +1,131 @@
+{
+  "schemaVersion": 1,
+  "format": "od-components-manifest/v1",
+  "generatedAt": "2026-06-26T00:00:00.000Z",
+  "source": {
+    "componentsHtml": "components.html",
+    "tokensCss": "tokens.css"
+  },
+  "components": [
+    {
+      "id": "logo",
+      "title": "Logo",
+      "selector": ".logo",
+      "variants": ["default", "dark"],
+      "tokenRefs": ["--accent-deep", "--bg"],
+      "notes": "Single asset assets/logo.svg. Dark variant uses CSS filter."
+    },
+    {
+      "id": "btn-primary",
+      "title": "Primary button",
+      "selector": ".btn-primary",
+      "variants": ["default", "hover", "active"],
+      "tokenRefs": ["--accent-deep", "--accent", "--accent-active"],
+      "notes": "Rests on --accent-deep; hover lifts to --accent; press drops to --accent-active."
+    },
+    {
+      "id": "btn-gold",
+      "title": "Gold action button",
+      "selector": ".btn-gold",
+      "variants": ["default", "hover"],
+      "tokenRefs": ["--gold", "--gold-hover"],
+      "notes": "Reserved for 关键行动 (e.g. 预约咨询). Max 1 per screen."
+    },
+    {
+      "id": "btn-outline",
+      "title": "Outline button",
+      "selector": ".btn-outline",
+      "variants": ["default", "hover"],
+      "tokenRefs": ["--accent", "--bg"],
+      "notes": "Secondary CTA. Hover fills accent."
+    },
+    {
+      "id": "btn-ghost",
+      "title": "Ghost button",
+      "selector": ".btn-ghost",
+      "variants": ["default", "hover"],
+      "tokenRefs": ["--fg", "--border", "--surface"],
+      "notes": "Tertiary / dismiss action."
+    },
+    {
+      "id": "btn-dark-outline",
+      "title": "Dark-scene outline button",
+      "selector": ".btn-dark-outline",
+      "variants": ["default", "hover"],
+      "tokenRefs": ["--fg", "--accent-on"],
+      "notes": "Use on --bg: #161616 hero / footer."
+    },
+    {
+      "id": "card-service",
+      "title": "Service card",
+      "selector": ".card",
+      "variants": ["default", "hover"],
+      "tokenRefs": ["--border", "--border-soft", "--bg", "--fg", "--fg-2"],
+      "notes": "Border-led containment, no shadow. Hover: --border-soft fill."
+    },
+    {
+      "id": "tag-navy",
+      "title": "Tag (navy)",
+      "selector": ".tag.tag-navy",
+      "variants": ["default"],
+      "tokenRefs": ["--accent-deep", "#EDF5FF"],
+      "notes": "Service type / industry label."
+    },
+    {
+      "id": "tag-blue",
+      "title": "Tag (blue)",
+      "selector": ".tag.tag-blue",
+      "variants": ["default"],
+      "tokenRefs": ["--accent", "#EDF5FF"],
+      "notes": "Service type / status label."
+    },
+    {
+      "id": "tag-gold",
+      "title": "Tag (gold)",
+      "selector": ".tag.tag-gold",
+      "variants": ["default"],
+      "tokenRefs": ["--gold", "#FEF7E0"],
+      "notes": "Authority / important label. Counts toward ≤2-gold rule."
+    },
+    {
+      "id": "input-text",
+      "title": "Text input",
+      "selector": ".form-field input",
+      "variants": ["default", "focus"],
+      "tokenRefs": ["--border", "--accent", "--bg", "--fg", "--muted"],
+      "notes": "1px border, 0 radius, 40px tall, 2px focus ring at --accent."
+    },
+    {
+      "id": "input-textarea",
+      "title": "Textarea",
+      "selector": ".form-field textarea",
+      "variants": ["default", "focus"],
+      "tokenRefs": ["--border", "--accent", "--bg", "--fg", "--muted"],
+      "notes": "Same border rules as input. Inner padding 12px."
+    },
+    {
+      "id": "divider-section",
+      "title": "Section divider",
+      "selector": ".divider",
+      "variants": ["default"],
+      "tokenRefs": ["--gold"],
+      "notes": "3px × 48px gold bar. Required above every section title."
+    },
+    {
+      "id": "hero",
+      "title": "Hero (dark)",
+      "selector": ".hero",
+      "variants": ["default"],
+      "tokenRefs": ["--bg", "--fg", "--accent-on", "--border-soft", "--gold"],
+      "notes": "Ink-black background, single gold accent on 创立年份 stat only."
+    },
+    {
+      "id": "footer",
+      "title": "Footer (dark)",
+      "selector": ".site-footer",
+      "variants": ["default"],
+      "tokenRefs": ["--bg", "--fg", "--accent-on", "--border-soft", "--gold"],
+      "notes": "Same dark surface as hero. Logo via filter invert."
+    }
+  ]
+}

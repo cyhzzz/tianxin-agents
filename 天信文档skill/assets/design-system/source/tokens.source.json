@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "format": "tianxin-cpa-source-tokens/v1",
+  "extractedAt": "2026-06-26T00:00:00.000Z",
+  "source": {
+    "type": "production-css",
+    "url": "tianxin-cpa.cn",
+    "compiled": "tianxin-cpa-website-gh-pages/assets/index-*.css"
+  },
+  "tokens": {
+    "color.brand": {
+      "--brand-navy":       { "value": "#00338D", "oklch": "oklch(30.5% 0.155 264)", "role": "static authority / dark anchor" },
+      "--brand-blue":       { "value": "#0F62FE", "oklch": "oklch(54% 0.225 257)",  "role": "primary action / link / focus" },
+      "--brand-sky":        { "value": "#4589FF", "oklch": "oklch(63% 0.180 257)",  "role": "secondary link / hover" },
+      "--brand-gold":       { "value": "#B8860B", "oklch": "oklch(63% 0.130 80)",   "role": "authority stamp / warning" },
+      "--brand-gold-hover": { "value": "#D4A017", "oklch": "oklch(70% 0.150 80)",   "role": "gold hover" },
+      "--brand-ice":        { "value": "#F4F4F4", "oklch": "oklch(95% 0 0)",        "role": "soft card field" }
+    },
+    "color.neutral": {
+      "--bg":                { "value": "#FFFFFF", "oklch": "oklch(100% 0 0)",       "role": "page bg" },
+      "--fg":                { "value": "#161616", "oklch": "oklch(15% 0 0)",        "role": "primary text" },
+      "--muted":             { "value": "#F4F4F4", "oklch": "oklch(95% 0 0)",        "role": "muted bg" },
+      "--muted-fg":          { "value": "#525252", "oklch": "oklch(40% 0 0)",        "role": "secondary text" },
+      "--border":            { "value": "#E0E0E0", "oklch": "oklch(89% 0 0)",        "role": "divider / card edge" },
+      "--border-hover":      { "value": "#E8E8E8", "oklch": "oklch(91% 0 0)",        "role": "card hover field" }
+    },
+    "color.semantic": {
+      "--success": { "value": "#24A148", "oklch": "oklch(60% 0.180 145)", "role": "pass / 完成" },
+      "--warning": { "value": "#B8860B", "oklch": "oklch(63% 0.130 80)",  "role": "待处理 / reuses gold" },
+      "--danger":  { "value": "#DA1E28", "oklch": "oklch(58% 0.220 25)",  "role": "fail / risk" },
+      "--info":    { "value": "#0F62FE", "oklch": "oklch(54% 0.225 257)", "role": "info / reuses blue" }
+    },
+    "color.dark": {
+      "--hero-bg":     { "value": "#161616", "oklch": "oklch(15% 0 0)", "role": "hero/footer bg" },
+      "--hero-fg":     { "value": "#FFFFFF", "oklch": "oklch(100% 0 0)", "role": "hero/footer text" },
+      "--hero-border": { "value": "#262626", "oklch": "oklch(20% 0 0)", "role": "hero/footer hairline" }
+    },
+    "font": {
+      "--font-sans":  "Noto Sans SC, Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial, sans-serif",
+      "--font-serif": "Noto Serif SC, Source Han Serif SC, Georgia, Times New Roman, STSong, SimSun, serif"
+    },
+    "radius": { "--radius": "0" }
+  }
+}

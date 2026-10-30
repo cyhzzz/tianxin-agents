@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "format": "od-token-contract-report/v1",
+  "generatedAt": "2026-06-26T00:00:00.000Z",
+  "package": "tianxin-cpa",
+  "summary": {
+    "totalTokens": 52,
+    "declaredTokens": 52,
+    "sourceBackedTokens": 52,
+    "sourceBackedA1": 24,
+    "fallbackTokens": 28,
+    "aliasTokens": 0,
+    "score": 100,
+    "grade": "excellent",
+    "recommendRebuild": false
+  },
+  "layerCounts": {
+    "A1-identity": 8,
+    "B-slot": 6,
+    "A2": 18,
+    "A1-structure": 20
+  },
+  "checks": [
+    { "id": "required-color-bg",     "result": "pass", "token": "--bg",            "expected": "non-empty #hex" },
+    { "id": "required-color-fg",     "result": "pass", "token": "--fg",            "expected": "non-empty #hex, contrast ≥ 4.5:1 against --bg" },
+    { "id": "required-color-accent", "result": "pass", "token": "--accent",        "expected": "non-empty #hex" },
+    { "id": "required-color-accent-on", "result": "pass", "token": "--accent-on",  "expected": "non-empty #hex" },
+    { "id": "required-color-accent-hover", "result": "pass", "token": "--accent-hover", "expected": "non-empty #hex" },
+    { "id": "required-color-accent-active", "result": "pass", "token": "--accent-active", "expected": "non-empty #hex" },
+    { "id": "required-color-success", "result": "pass", "token": "--success", "expected": "non-empty #hex" },
+    { "id": "required-color-warn",    "result": "pass", "token": "--warn",    "expected": "non-empty #hex" },
+    { "id": "required-color-danger",  "result": "pass", "token": "--danger",  "expected": "non-empty #hex" },
+    { "id": "required-font-sans",   "result": "pass", "token": "--font-sans",   "expected": "non-empty font-family stack" },
+    { "id": "required-font-mono",   "result": "pass", "token": "--font-mono",   "expected": "non-empty font-family stack" },
+    { "id": "required-radius-sm",   "result": "pass", "token": "--radius-sm",   "expected": "non-empty dimension" },
+    { "id": "required-text-base",   "result": "pass", "token": "--text-base",   "expected": "non-empty dimension" },
+    { "id": "required-container-max","result": "pass", "token": "--container-max","expected": "non-empty dimension" },
+    { "id": "forbidden-indigo-accent", "result": "pass", "reason": "No token value contains #6366f1 / 6366f1 family" },
+    { "id": "forbidden-rounded-radius","result": "pass", "reason": "All --radius-* are 0" },
+    { "id": "forbidden-font-weight-700", "result": "pass", "reason": "No --weight-* declares 700" },
+    { "id": "forbidden-pastel-bg",  "result": "pass", "reason": "No warm-pastel --bg or --surface value" },
+    { "id": "single-logo-asset",    "result": "pass", "reason": "Only assets/logo.svg present; no PNG/JPG variants" },
+    { "id": "tabular-numerals-default", "result": "pass", "reason": "DESIGN.md and components.html both set font-variant-numeric: tabular-nums" }
+  ],
+  "manifest": {
+    "schemaVersion": "od-design-system-project/v1",
+    "id": "tianxin-cpa",
+    "name": "Tianxin CPA",
+    "category": "Finance & Professional Services",
+    "sourceType": "local",
+    "importMode": "hybrid"
+  }
+}

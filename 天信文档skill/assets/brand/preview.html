@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>天信 logo 资产验收</title>
+<style>
+  :root{
+    --navy:#00338D; --blue:#0F62FE; --gold:#B8860B;
+    --fg:#161616; --muted:#525252; --border:#E0E0E0; --ice:#F4F4F4;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:#fff;color:var(--fg);
+       font-family:"Noto Sans SC","Microsoft YaHei","PingFang SC",sans-serif;
+       font-size:13px;line-height:1.6;font-feature-settings:"tnum" 1;}
+  .wrap{max-width:900px;margin:0 auto;padding:32px 24px 64px}
+  h1{font-size:20px;font-weight:600;margin:0 0 4px}
+  .sub{color:var(--muted);font-size:12px;margin-bottom:28px}
+  .sec{margin-bottom:28px}
+  .sec>h2{font-size:13px;font-weight:600;margin:0 0 10px;padding-bottom:6px;
+          border-bottom:1px solid var(--border)}
+  .row{display:flex;gap:16px;flex-wrap:wrap;align-items:center}
+  .cell{border:1px solid var(--border);padding:16px;flex:1;min-width:180px}
+  .cell.dark{background:#161616;border-color:#262626}
+  .cell.ice{background:var(--ice)}
+  .cap{font-size:11px;color:var(--muted);margin-top:8px}
+  .cell.dark .cap{color:#8d8d8d}
+  img{display:block;max-width:100%}
+
+  .sheet{width:210mm;background:#fff;border:1px solid var(--border);
+         padding:0 26mm;margin-bottom:12px}
+  .hdr{display:flex;align-items:flex-end;justify-content:space-between;
+       padding-top:18mm;padding-bottom:4mm;border-bottom:0.5pt solid var(--navy)}
+  .hdr img{width:40mm}
+  .docno{font-size:8pt;color:var(--muted);letter-spacing:.02em;padding-bottom:1mm}
+  .body-txt{font-size:10.5pt;line-height:1.9;color:var(--fg);padding:10mm 0}
+  .ftr{text-align:center;font-size:8pt;color:var(--muted);padding:6mm 0 10mm}
+
+  .cover{background:#161616;padding:24mm 26mm;color:#fff}
+  .cover img.seal{width:24mm;margin-bottom:8mm}
+  .cover .cn{font-family:"Noto Serif SC","Source Han Serif SC","SimSun",serif;
+             font-size:20pt;font-weight:700;letter-spacing:.06em;margin-bottom:4mm}
+  .cover .en{font-size:8pt;letter-spacing:.16em;color:#a8c8ff;text-transform:uppercase}
+  .cover .rule{width:12mm;height:2px;background:var(--gold);margin-top:8mm}
+
+  .fam{border:1px solid var(--border);padding:18px}
+  .fam .item{padding:10px 0;border-bottom:1px solid #F0F0F0}
+  .fam .item:last-child{border-bottom:none}
+  .fam .item img{width:78mm}
+  .fam .lab{font-size:11px;color:var(--muted);margin-bottom:6px}
+  .fam .item.pending .lab{color:#DA1E28}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>天信 logo 资产验收</h1>
+  <div class="sub">印章取自官网原图，横版由「印章 + 中文全称 + 英文」重新排版（思源宋体 700 / 中文字高为印章 0.46 倍 / 英文字距上限 0.20em）。请逐项确认。</div>
+
+  <div class="sec">
+    <h2>1 · 横版彩色（透明底）</h2>
+    <div class="row">
+      <div class="cell"><img src="./logo-horizontal-color.png" alt="横版彩色"><div class="cap">logo-horizontal-color.png · 2148×374 · 比例 1:5.74</div></div>
+      <div class="cell ice"><img src="./logo-horizontal-color.png" alt="浅灰底"><div class="cap">浅灰底对照（#F4F4F4）</div></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h2>2 · 印章方标（透明底）</h2>
+    <div class="row">
+      <div class="cell"><img src="./seal-mark-color.png" alt="印章" style="width:120px"><div class="cap">seal-mark-color.png · 182×186</div></div>
+      <div class="cell ice"><img src="./seal-mark-navy.png" alt="印章单色" style="width:120px"><div class="cap">seal-mark-navy.png · 单色印刷用</div></div>
+      <div class="cell dark"><img src="./seal-mark-white.png" alt="印章反白" style="width:120px"><div class="cap">seal-mark-white.png · 深底反白</div></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h2>3 · 单色与反白（横版）</h2>
+    <div class="row">
+      <div class="cell"><img src="./logo-horizontal-navy.png" alt="单色"><div class="cap">logo-horizontal-navy.png · 单色印刷 / 传真</div></div>
+      <div class="cell dark"><img src="./logo-horizontal-white.png" alt="反白"><div class="cap">logo-horizontal-white.png · 深底封面</div></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h2>4 · 页眉模拟（A4，logo 宽 40mm）</h2>
+    <div class="sheet">
+      <div class="hdr">
+        <img src="./logo-horizontal-color.png" alt="页眉 logo">
+        <div class="docno">天信咨字〔2026〕第 012 号</div>
+      </div>
+      <div class="body-txt">
+        受贵公司委托，我们对浙江×××有限公司截至 2026 年 9 月 30 日的财务状况进行了尽职调查。本报告基于委托方提供的资料及我们执行的核查程序形成，供管理层决策参考。
+      </div>
+      <div class="ftr">— 1 —</div>
+    </div>
+    <div class="cap">40mm 宽时整体高 6.96mm、中文高 3.04mm（约 8.6pt）。页眉：左 logo、右报告编号 8pt、下方 0.5pt navy 细线；页脚居中页码。</div>
+  </div>
+
+  <div class="sec">
+    <h2>5 · 深底封面模拟</h2>
+    <div class="sheet" style="padding:0;border:none">
+      <div class="cover">
+        <img class="seal" src="./seal-mark-white.png" alt="封面印章">
+        <div class="cn">天台天信会计师事务所</div>
+        <div class="en">Tianxin Certified Public Accountants</div>
+        <div class="rule"></div>
+      </div>
+    </div>
+    <div class="cap">封面主标题用印章标 24mm + 衬线大字，不复用横版（横版在封面尺寸下文字太细）。深底小面积场景直接用 logo-horizontal-white。</div>
+  </div>
+
+  <div class="sec">
+    <h2>6 · 品牌群结构（印章共用，只换文字）</h2>
+    <div class="fam">
+      <div class="item">
+        <div class="lab">天台天信会计师事务所</div>
+        <img src="./logo-horizontal-color.png" alt="会计所">
+      </div>
+      <div class="item pending">
+        <div class="lab">税务师事务所 · 全称待确认，暂不套用</div>
+        <img src="./logo-horizontal-color.png" alt="占位" style="opacity:.18">
+      </div>
+      <div class="item pending">
+        <div class="lab">企业管理公司 · 全称待确认，暂不套用</div>
+        <img src="./logo-horizontal-color.png" alt="占位" style="opacity:.18">
+      </div>
+    </div>
+    <div class="cap">三行共用同一印章与同一排版参数（中文 0.46 倍、英文 0.30 倍、字距 ≤0.20em）。全称未确认前不生成第 2、3 行，避免名称错误流入物料。</div>
+  </div>
+
+  <div class="sec">
+    <h2>7 · 小尺寸与页脚</h2>
+    <div class="row">
+      <div class="cell"><img src="./seal-mark-color.png" alt="48px" style="width:48px"><div class="cap">48px</div></div>
+      <div class="cell"><img src="./seal-mark-color.png" alt="32px" style="width:32px"><div class="cap">32px</div></div>
+      <div class="cell"><img src="./seal-mark-color.png" alt="16px" style="width:16px"><div class="cap">16px</div></div>
+      <div class="cell"><img src="./logo-horizontal-color.png" alt="页脚 25mm" style="width:25mm"><div class="cap">页脚 25mm 横版</div></div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

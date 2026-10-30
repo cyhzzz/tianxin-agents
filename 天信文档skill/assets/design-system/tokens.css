@@ -1,0 +1,152 @@
+/* ─────────────────────────────────────────────────────────────────────────
+ * design-systems/tianxin-cpa/tokens.css
+ *
+ * Canonical machine-readable tokens for the Tianxin CPA brand.
+ * 品牌: 天台天信会计师事务所 (Tiantai Tianxin Accounting Firm).
+ *
+ * Pre-translates the brand prose from DESIGN.md into the standard
+ * `--bg` / `--surface` / `--fg` / `--accent` schema the Open Design
+ * lint enforces. Agents copy this `:root` block verbatim into the
+ * first <style> of every artifact they generate against this system,
+ * then reference everything via `var(--name)`.
+ *
+ * Brand-specific binding decisions worth flagging:
+ *
+ *   1. We bind --accent to --brand-blue (#0F62FE), not --brand-navy.
+ *      Navy is the institutional anchor (page header, dark-mode text),
+ *      but the action CTA on a light page is bright blue — IBM-Carbon
+ *      convention. The schema's accent contract is "action color",
+ *      so we follow the action.
+ *   2. --brand-navy is exposed as a B-slot alias (--accent-deep).
+ *      Auditors may need it for primary CTAs in dark-on-light contexts
+ *      where bright blue feels too energetic. Use sparingly.
+ *   3. --accent-hover lifts to --brand-blue (already at full strength),
+ *      and --accent-active darkens to --brand-navy. The lift-then-press
+ *      motion is the IBM-Carbon interactive rhythm.
+ *   4. --brand-gold is bound to --warn as the warning semantic. Apple
+ *      and most modern systems would pick a separate amber, but
+ *      Tianxin's brand is so gold-restrained that a second amber
+ *      would create confusion. The single-color warning also
+ *      reinforces the "gold = authority, not chrome" rule.
+ *   5. --radius: 0 globally. No sm/md/lg/pill. The signature.
+ *   6. --text-display is 56px (not 80px). The hero on a 1280px page
+ *      is 56px; we do not need an XL display tier. One display size.
+ *   7. Tracking --tracking-display is -0.03em, slightly tighter than
+ *      the schema's -0.02em default. Noto Sans SC at 56px reads better
+ *      with the extra compression.
+ *   8. Container max is 1280px (vs schema default 1024px). Local
+ *      accounting clients ship dense data tables and audit reports;
+ *      1024px is too narrow for the work this brand actually does.
+ *
+ * Keep this file additive: never invent token names not also documented
+ * in DESIGN.md or the shared schema. New Tianxin sub-brands cloning
+ * this template should overwrite values, not rename keys.
+ * ─────────────────────────────────────────────────────────────────── */
+
+:root {
+  /* ─── Surface ──────────────────────────────────────────────────── */
+  --bg: #ffffff;             /* Page default — pure white */
+  --surface: #f4f4f4;        /* --brand-ice · soft card fields, feature bands */
+  --surface-warm: #fbfbfb;   /* Lift tier — barely-warmer white, used in 1% of pages */
+
+  /* ─── Foreground ramp (3 levels — Chinese typesetting needs fewer stops) ── */
+  --fg: #161616;             /* Primary text — near-black ink */
+  --fg-2: #525252;           /* Secondary text, helper copy */
+  --muted: #8a8a8a;          /* Tertiary metadata, captions (matches muted-fg feel) */
+
+  /* ─── Border (2 levels) ─────────────────────────────────────── */
+  --border: #e0e0e0;         /* Default divider, card edge */
+  --border-soft: #e8e8e8;    /* --border-hover · card hover field */
+
+  /* ─── Accent ────────────────────────────────────────────────── */
+  --accent: #0f62fe;         /* --brand-blue · primary action, link, focus */
+  --accent-on: #ffffff;      /* Label on accent fill */
+
+  /* ─── Accent states (IBM-Carbon rhythm) ───────────────────── */
+  --accent-hover: #0f62fe;   /* At full strength already; hover swaps from navy to blue on primary CTA */
+  --accent-active: #00338d;  /* --brand-navy · press tone — drops into the deep brand anchor */
+
+  /* ─── B-slot brand anchors (exposed for special contexts) ─ */
+  --accent-deep: #00338d;    /* --brand-navy · static authority — page header, dark mode text */
+  --accent-sky: #4589ff;     /* --brand-sky · secondary link / hover highlight */
+
+  /* ─── Accent of record (the "stamp of authority") ─────────── */
+  --gold: #b8860b;           /* --brand-gold · ≤2 visible uses per screen */
+  --gold-hover: #d4a017;     /* --brand-gold-hover */
+
+  /* ─── Semantic ─────────────────────────────────────────────── */
+  --success: #24a148;        /* Audit pass / 完成 */
+  --warn:    #b8860b;        /* Reuses brand gold — single-warning policy */
+  --danger:  #da1e28;        /* Audit fail / 风险 / 删除 */
+
+  /* ─── Typography ───────────────────────────────────────────── */
+  --font-display:
+    "Noto Serif SC", "Source Han Serif SC", Georgia, "Times New Roman", STSong, SimSun, serif;
+  --font-body:
+    "Noto Sans SC", Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+  --font-sans: var(--font-body);
+  --font-mono:
+    ui-monospace, "JetBrains Mono", "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+
+  /* Type scale (px). Body baseline 15 — Noto Sans SC's metric center. */
+  --text-xs:    12px;        /* Caption, fine print, eyebrow */
+  --text-sm:    14px;        /* Control label — buttons, helper labels */
+  --text-base:  15px;        /* Body baseline — single most-used size */
+  --text-lg:    22px;        /* Card title */
+  --text-xl:    32px;        /* Section title */
+  --text-2xl:   56px;        /* Hero display — single display tier */
+
+  /* Leading envelope — tight at top, roomy at body. */
+  --leading-body:  1.50;
+  --leading-tight: 1.05;
+
+  /* Tracking — tightened for display, open for small caps. */
+  --tracking-display: -0.03em;
+  --tracking-eyebrow: 0.08em;
+
+  /* Weight (3-step, never 4). 700 is globally forbidden. */
+  --weight-regular: 400;
+  --weight-medium:  500;
+  --weight-semibold: 600;
+
+  /* ─── Spacing (8-pt grid) ──────────────────────────────────── */
+  --space-1:  8px;
+  --space-2:  12px;
+  --space-3:  16px;
+  --space-4:  24px;
+  --space-5:  32px;
+  --space-6:  40px;
+  --space-8:  48px;
+  --space-10: 64px;
+  --space-12: 80px;
+
+  /* ─── Section rhythm ───────────────────────────────────────── */
+  --section-y-desktop: 80px;
+  --section-y-tablet:  64px;
+  --section-y-phone:   40px;
+
+  /* ─── Radius — the brand signature. 0, everywhere. ──────── */
+  --radius-sm:   0;
+  --radius-md:   0;
+  --radius-lg:   0;
+  --radius-pill: 0;
+
+  /* ─── Elevation ────────────────────────────────────────────── */
+  --elev-flat:   none;
+  --elev-ring:   0 0 0 1px var(--border);
+  --elev-raised: 0 8px 24px rgba(0, 0, 0, 0.12);  /* popover / modal only */
+
+  /* ─── Focus ring ───────────────────────────────────────────── */
+  --focus-ring: 0 0 0 2px var(--accent);
+
+  /* ─── Motion ───────────────────────────────────────────────── */
+  --motion-fast:   150ms;
+  --motion-base:   200ms;
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ─── Layout ───────────────────────────────────────────────── */
+  --container-max:            1280px;
+  --container-gutter-desktop: 24px;
+  --container-gutter-tablet:  24px;
+  --container-gutter-phone:   16px;
+}

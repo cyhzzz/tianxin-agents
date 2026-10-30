@@ -1,0 +1,344 @@
+/* ============================================================
+   天信 A4 报告 · 印刷基座
+   ------------------------------------------------------------
+   分两段：
+   · 「承重」段 —— 分页规则、表格防粘连、标题防孤立。不许改，
+     改了就会复现已经踩过的坑（列粘连 / 标题落页底 / 表头不重复）。
+   · 「调味」段 —— 颜色、字体、字号。换版式只换变量，不动选择器。
+
+   与 doc-tokens.css 的关系：那边是三条轨道共用的令牌，这里是
+   报告轨道的具体实现。颜色以 doc-tokens 为准，改这边要同步。
+   ============================================================ */
+
+/* ── 调味：设计令牌 ─────────────────────────────────── */
+:root {
+  --tx-navy:  #1D3A5E;   /* 与 logo 文字实测色一致 */
+  --tx-blue:  #0F62FE;
+  --tx-gold:  #B8860B;
+  --tx-seal:  #AB393A;
+
+  --tx-fg:    #161616;
+  --tx-muted: #525252;
+  --tx-rule:  #E0E0E0;
+  --tx-ice:   #F4F4F4;
+  --tx-paper: #FFFFFF;
+
+  --tx-sans:  "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
+  --tx-serif: "Noto Serif SC", "Songti SC", "SimSun", serif;
+  --tx-mono:  "JetBrains Mono", "Consolas", monospace;
+
+  --fs-body:    10.5pt;  --lh-body:    1.75;
+  --fs-table:   9pt;     --lh-table:   1.45;
+  --fs-caption: 8pt;     --lh-caption: 1.45;
+  --fs-h1:      18pt;
+  --fs-h2:      14pt;
+  --fs-h3:      11.5pt;
+  --fs-title:   24pt;
+  --fs-cover:   30pt;
+
+  --mt: 45mm; --mb: 25mm; --ml: 28mm; --mr: 26mm;
+  --head-top: 12mm; --head-gap: 5mm;
+}
+
+/* ── 承重：页面与分页 ───────────────────────────────── */
+@page {
+  size: A4;
+  margin: var(--mt) var(--mr) var(--mb) var(--ml);
+}
+
+html, body {
+  margin: 0; padding: 0;
+  background: #ffffff;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+body {
+  font-family: var(--tx-serif);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  color: var(--tx-fg);
+  font-variant-numeric: tabular-nums;
+}
+
+/* 标题不许孤零零落在页底 */
+h1, h2, h3, h4 { break-after: avoid; page-break-after: avoid; break-inside: avoid; }
+
+/* 段落孤儿寡行 */
+p { orphans: 2; widows: 2; margin: 0 0 3pt; }
+
+/* 图表不跨页 */
+figure, .table-block { break-inside: avoid; page-break-inside: avoid; }
+
+/* 长表允许跨页，表头必须重复 */
+table { break-inside: auto; page-break-inside: auto; }
+table thead { display: table-header-group; }
+
+/* 每章新起一页 */
+.chapter { break-before: page; page-break-before: always; }
+.chapter:first-of-type { break-before: auto; page-break-before: auto; }
+
+/* 页眉：打印时 fixed 逐页重复；屏幕上退回文档流，当成纸张内的页眉 */
+.page-head {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  padding-bottom: 3pt;
+  border-bottom: 0.5pt solid var(--tx-navy);
+  font-family: var(--tx-sans);
+  font-size: var(--fs-caption);
+  color: var(--tx-muted);
+  margin-bottom: 8mm;
+}
+.page-head img { width: 40mm; display: block; }
+
+@media print {
+  /* 打印时页眉交给 Chromium 的 headerTemplate（见 scripts/html2pdf.js）。
+     实测：position:fixed 的 x 方向是对的（贴齐版心），但 y 方向不受控 ——
+     负 top 会把页眉甩到页面底部。所以只在屏幕上用这份页眉。 */
+  .page-head { display: none; }
+}
+
+/* 屏幕预览时留出纸张感，打印时去掉 */
+@media screen {
+  body { background: #8a8a8a; padding: 24px 0; }
+  .doc {
+    width: 210mm; margin: 0 auto; background: #fff;
+    padding: var(--mt) var(--mr) var(--mb) var(--ml);
+    box-shadow: 0 2px 18px rgba(0,0,0,.18);
+  }
+}
+@media print {
+  .doc { padding: 0; }
+}
+
+/* ── 调味：正文与标题 ───────────────────────────────── */
+.doc-title {
+  font-family: var(--tx-sans);
+  font-size: var(--fs-title);
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--tx-navy);
+  margin: 4mm 0 16pt;      /* 上边距给页眉细线留气口 */
+  letter-spacing: -0.01em;
+}
+
+h2 {
+  font-family: var(--tx-sans);
+  font-size: var(--fs-h1);
+  font-weight: 500;
+  line-height: 1.35;
+  color: var(--tx-fg);
+  margin: 18pt 0 10pt;
+}
+
+h3 {
+  font-family: var(--tx-sans);
+  font-size: var(--fs-h2);
+  font-weight: 500;
+  line-height: 1.35;
+  color: var(--tx-fg);
+  margin: 14pt 0 6pt;
+}
+
+h4 {
+  font-family: var(--tx-sans);
+  font-size: var(--fs-h3);
+  font-weight: 500;
+  line-height: 1.35;
+  color: var(--tx-fg);
+  margin: 10pt 0 4pt;
+}
+
+p, li { text-align: justify; }
+
+/* 正文首行缩进：只对直接跟在段落流的 p 生效，不进表格 */
+.body p { text-indent: 2em; }
+
+/* 引用块：左侧 1.5pt 灰线，用于免责与口径提示 */
+blockquote {
+  margin: 8pt 0 8pt 6pt;
+  padding-left: 8pt;
+  border-left: 1.5pt solid var(--tx-rule);
+  color: var(--tx-fg);
+}
+blockquote p { text-indent: 0; }
+
+/* 列表 */
+ul, ol { margin: 4pt 0 6pt; }
+ul { padding-left: 21pt; list-style: none; }
+ol { padding-left: 28pt; }   /* 有序编号要留出「1.」的宽度，否则顶着版心左边 */
+li { margin-bottom: 2pt; text-indent: 0; }
+ul > li { position: relative; }
+ul > li::before {
+  content: "·"; position: absolute; left: -12pt; color: var(--tx-muted);
+}
+
+/* ── 调味：表格（三线表） ───────────────────────────── */
+.table-block { margin: 6pt 0 10pt; }
+
+.table-title {
+  font-family: var(--tx-serif);
+  font-size: var(--fs-table);
+  font-weight: 700;
+  color: var(--tx-navy);
+  margin: 0 0 4pt;
+  text-indent: 0;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;          /* 长内容不撑破列宽 */
+  font-size: var(--fs-table);
+  line-height: var(--lh-table);
+  border-top: 1pt solid var(--tx-navy);
+  border-bottom: 1pt solid var(--tx-navy);
+}
+
+th {
+  background: var(--tx-ice);
+  font-weight: 700;
+  text-align: left;
+  padding: 4pt 6pt;
+  border-bottom: 0.5pt solid var(--tx-navy);
+  text-indent: 0;
+}
+
+td {
+  padding: 4pt 6pt;
+  vertical-align: top;
+  text-indent: 0;
+  word-break: break-word;       /* 防止长串英文撑破列 */
+}
+
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+.table-source {
+  font-size: var(--fs-caption);
+  color: var(--tx-muted);
+  margin: 3pt 0 0;
+  text-indent: 0;
+}
+
+/* ── 调味：图与图注 ─────────────────────────────────── */
+figure { margin: 8pt 0 10pt; }
+figure img { width: 100%; display: block; }
+figcaption {
+  font-size: var(--fs-caption);
+  color: var(--tx-muted);
+  margin-top: 3pt;
+  text-align: center;
+}
+
+/* ── 调味：三级标记 ─────────────────────────────────── */
+.mark { padding: 0 .15em; border-radius: 0; }
+.mark-fact { background: var(--tx-ice); }
+.mark-industry { background: #EDF5FF; }
+.mark-infer { background: #FDF3DA; }
+
+/* ── 调味：封面 ─────────────────────────────────────── */
+/* 高度必须留在版心内：A4 297mm − 上下边距 50mm = 247mm 内容区。
+   超一点点就会多出一张只有页眉页码的空白页。子块用绝对定位，
+   打印时比分页流里的 flex 可靠。 */
+.cover {
+  break-after: page; page-break-after: always;
+  height: 205mm;
+  position: relative;
+  overflow: hidden;
+  background: var(--tx-paper);
+}
+.cover-top { position: absolute; top: 18mm; left: 0; right: 0; }
+.cover-top .seal { width: 26mm; margin-bottom: 7mm; display: block; }
+.cover-top .cn {
+  font-family: var(--tx-serif);
+  font-size: 19pt; font-weight: 700; letter-spacing: .06em;
+  color: var(--tx-navy); margin-bottom: 3mm;
+}
+.cover-top .en {
+  font-family: var(--tx-sans);
+  font-size: 8pt; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--tx-muted);
+}
+
+.cover-mid { position: absolute; top: 88mm; left: 0; right: 0; }
+.cover-title {
+  font-family: var(--tx-sans);
+  font-size: 27pt; font-weight: 600; line-height: 1.4;
+  letter-spacing: -0.01em;
+  color: var(--tx-navy);
+}
+
+.cover-bottom { position: absolute; bottom: 10mm; left: 0; right: 0; }
+.cover-bottom .gold-rule { width: 12mm; height: 2px; background: var(--tx-gold); margin-bottom: 8mm; }
+.cover-bottom .docno {
+  font-family: var(--tx-mono); font-size: 9pt; color: var(--tx-muted);
+  letter-spacing: .02em; margin-bottom: 2mm;
+}
+.cover-bottom .date { font-family: var(--tx-sans); font-size: 10pt; color: var(--tx-muted); }
+.cover .seal { width: 24mm; margin-bottom: 10mm; }
+.cover .cn {
+  font-family: var(--tx-serif);
+  font-size: var(--fs-cover);
+  font-weight: 700;
+  letter-spacing: .06em;
+  color: var(--tx-navy);
+  margin-bottom: 4mm;
+}
+.cover .en {
+  font-family: var(--tx-sans);
+  font-size: 9pt;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--tx-muted);
+}
+.cover .gold-rule { width: 12mm; height: 2px; background: var(--tx-gold); margin: 10mm 0; }
+.cover .meta {
+  font-family: var(--tx-sans);
+  font-size: 10pt;
+  color: var(--tx-muted);
+  line-height: 2;
+}
+.cover .docno { font-family: var(--tx-mono); font-size: 9pt; }
+
+/* ── 图表（chart.py 生成的内联 SVG）────────────────────── */
+.chart { margin: 8pt 0 12pt; break-inside: avoid; }
+.chart-caption {
+  font-family: var(--tx-serif);
+  font-size: var(--fs-table);
+  font-weight: 700;
+  color: var(--tx-navy);
+  margin-bottom: 3pt;
+  text-indent: 0;
+}
+.chart svg { display: block; width: 100%; height: auto; }
+.chart-source {
+  font-size: var(--fs-caption);
+  color: var(--tx-muted);
+  margin-top: 2pt;
+  text-indent: 0;
+}
+
+/* ── 代码块 / ASCII 架构图 ─────────────────────────────────
+   等宽字体是硬要求：┌─┐│├ 这些制表符只有等宽才连得上。
+   中文用宋体（汉字正好两个半角宽），西文 Courier New。
+   white-space: pre 保住原始对齐，不换行；超宽时靠字号控制而不是折行——
+   折一次的框图就彻底看不懂了。 */
+pre.code-block {
+  margin: 8pt 0 12pt;
+  padding: 6pt 7pt;
+  background: #F7F7F7;
+  font-family: "Courier New", SimSun, monospace;
+  font-size: 7.6pt;
+  /* 必须 1.0：制表符 │ 只占满行高时才上下相接，行距一大框图就断成虚线 */
+  line-height: 1;
+  white-space: pre;
+  overflow: hidden;
+  break-inside: avoid;
+  text-indent: 0;
+}
+pre.code-block code { font: inherit; }
+
+hr {
+  border: none;
+  border-top: 0.5pt solid #D9D9D9;
+  margin: 14pt 0;
+}

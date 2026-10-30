@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tianxin CPA · 组件预览</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/logo-horizontal-color.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    @import "../tokens.css";
+    *,*::before,*::after{box-sizing:border-box}html,body{margin:0;padding:0}
+    body{font-family:var(--font-body);font-size:var(--text-base);line-height:var(--leading-body);color:var(--fg);background:var(--bg);font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
+    .wrap{max-width:var(--container-max);margin:0 auto;padding:var(--space-12) var(--container-gutter-desktop)}
+    .eyebrow{font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;color:var(--fg-2);margin-bottom:var(--space-2)}
+    .divider{width:48px;height:3px;background:var(--gold);margin-bottom:var(--space-4)}
+    h1{font-size:var(--text-2xl);letter-spacing:var(--tracking-display);line-height:var(--leading-tight);margin:0 0 var(--space-3)}
+    h2{font-size:18px;font-weight:600;margin:var(--space-8) 0 var(--space-4)}
+    .row{padding:var(--space-5) 0;border-top:1px solid var(--border);display:grid;grid-template-columns:200px 1fr;gap:var(--space-5);align-items:start}
+    .row:first-of-type{border-top:0}
+    .label{font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:var(--tracking-eyebrow);color:var(--fg-2);text-transform:uppercase}
+    .label .nm{display:block;font-size:16px;color:var(--fg);margin-bottom:var(--space-1);text-transform:none;letter-spacing:0;font-family:var(--font-body)}
+    .btn{display:inline-flex;align-items:center;gap:var(--space-2);font:600 var(--text-sm)/1 var(--font-body);letter-spacing:.02em;padding:14px var(--space-5);border:0;cursor:pointer;transition:background var(--motion-base) var(--ease-standard)}
+    .btn-primary{background:var(--accent-deep);color:#fff}
+    .btn-primary:hover{background:var(--accent)}
+    .btn-gold{background:var(--gold);color:#fff}
+    .btn-gold:hover{background:var(--gold-hover)}
+    .btn-outline{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+    .btn-outline:hover{background:var(--accent);color:#fff}
+    .btn-ghost{background:transparent;color:var(--fg);border:1px solid var(--border)}
+    .btn-ghost:hover{background:var(--surface)}
+    .tag{display:inline-block;padding:4px 12px;font-size:var(--text-xs);letter-spacing:.32px;line-height:1.5}
+    .tag-navy{color:var(--accent-deep);background:#EDF5FF}
+    .tag-blue{color:var(--accent);background:#EDF5FF}
+    .tag-gold{color:var(--gold);background:#FEF7E0}
+    .field{max-width:360px}
+    .field label{display:block;font-size:var(--text-sm);font-weight:500;margin-bottom:var(--space-2)}
+    .field input,.field textarea{width:100%;height:40px;padding:0 12px;border:1px solid var(--border);background:var(--bg);font:inherit;color:var(--fg);outline:none;transition:border-color var(--motion-base) var(--ease-standard),box-shadow var(--motion-base) var(--ease-standard)}
+    .field textarea{height:auto;padding:12px}
+    .field input:focus,.field textarea:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(15,98,254,0.2)}
+    .field .help{font-size:var(--text-xs);color:var(--fg-2);margin-top:6px}
+    .back{font-size:var(--text-sm);color:var(--accent);text-decoration:none;margin-bottom:var(--space-4);display:inline-block}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <a class="back" href="../components.html">← 返回 components.html</a>
+    <div class="divider"></div>
+    <div class="eyebrow">PREVIEW · COMPONENTS</div>
+    <h1>天信 · 组件基线</h1>
+
+    <div class="row">
+      <div class="label"><span class="nm">按钮</span>PRIMARY / GOLD / OUTLINE / GHOST</div>
+      <div style="display:flex;flex-wrap:wrap;gap:var(--space-3);align-items:center">
+        <button class="btn btn-primary">立即咨询</button>
+        <button class="btn btn-gold">获取方案</button>
+        <button class="btn btn-outline">查看详情</button>
+        <button class="btn btn-ghost">取消</button>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="label"><span class="nm">标签</span>TAG · NAVY / BLUE / GOLD</div>
+      <div style="display:flex;flex-wrap:wrap;gap:var(--space-3)">
+        <span class="tag tag-navy">审计验资</span>
+        <span class="tag tag-navy">资产评估</span>
+        <span class="tag tag-gold">税务服务</span>
+        <span class="tag tag-blue">财务咨询</span>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="label"><span class="nm">表单</span>INPUT / TEXTAREA</div>
+      <div class="field" style="display:flex;flex-direction:column;gap:var(--space-4)">
+        <div>
+          <label>企业名称</label>
+          <input type="text" placeholder="天台县某有限公司" />
+        </div>
+        <div>
+          <label>咨询内容</label>
+          <textarea rows="3" placeholder="请简要说明您的需求"></textarea>
+          <div class="help">我们会在 1 个工作日内与您联系</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="label"><span class="nm">分隔条</span>SECTION DIVIDER</div>
+      <div>
+        <div style="width:48px;height:3px;background:var(--gold)"></div>
+        <div class="help" style="margin-top:var(--space-2)">48px × 3px · 金色 · 每个章节标题前的「印章感」签名</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

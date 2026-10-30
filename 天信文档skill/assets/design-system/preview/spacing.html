@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tianxin CPA · 间距预览</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/logo-horizontal-color.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    @import "../tokens.css";
+    *,*::before,*::after{box-sizing:border-box}html,body{margin:0;padding:0}
+    body{font-family:var(--font-body);font-size:var(--text-base);line-height:var(--leading-body);color:var(--fg);background:var(--bg);font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
+    .wrap{max-width:var(--container-max);margin:0 auto;padding:var(--space-12) var(--container-gutter-desktop)}
+    .eyebrow{font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;color:var(--fg-2);margin-bottom:var(--space-2)}
+    .divider{width:48px;height:3px;background:var(--gold);margin-bottom:var(--space-4)}
+    h1{font-size:var(--text-2xl);letter-spacing:var(--tracking-display);line-height:var(--leading-tight);margin:0 0 var(--space-3)}
+    .lead{max-width:60ch;color:var(--fg-2);margin-bottom:var(--space-8)}
+    .bar{display:flex;align-items:flex-end;gap:var(--space-3);padding:var(--space-5) 0;border-top:1px solid var(--border)}
+    .bar:first-of-type{border-top:0}
+    .item{display:flex;flex-direction:column;align-items:center;gap:var(--space-2)}
+    .block{background:var(--accent-deep)}
+    .it-label{font-family:var(--font-mono);font-size:11px;color:var(--fg-2);text-align:center}
+    .ruler{border:1px dashed var(--border);padding:var(--space-5);margin-top:var(--space-8);position:relative}
+    .card{border:1px solid var(--border);padding:var(--space-5);max-width:360px;transition:background var(--motion-base) var(--ease-standard)}
+    .card:hover{background:var(--border-soft)}
+    .tag{display:inline-block;padding:4px 12px;font-size:var(--text-xs);letter-spacing:.32px;line-height:1.5;color:var(--accent-deep);background:#EDF5FF;margin-bottom:var(--space-3)}
+    .card h4{font-size:var(--text-lg);font-weight:600;margin:0 0 var(--space-2)}
+    .card p{margin:0;color:var(--fg-2);font-size:var(--text-base)}
+    .back{font-size:var(--text-sm);color:var(--accent);text-decoration:none;margin-bottom:var(--space-4);display:inline-block}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <a class="back" href="../components.html">← 返回 components.html</a>
+    <div class="divider"></div>
+    <div class="eyebrow">PREVIEW · SPACING & GEOMETRY</div>
+    <h1>天信 · 间距 / 圆角 / 卡片</h1>
+    <p class="lead">8 进制间距 · 0 圆角全局 · 1px 描边 + 间距建立层级。卡片 = 32 padding + 1px border + 0 radius，hover 仅切换 --border-soft。</p>
+
+    <h2 style="font-size:18px;margin:var(--space-6) 0 var(--space-3);font-weight:600">间距尺度</h2>
+    <div class="bar">
+      <div class="item"><div class="block" style="width:8px;height:8px"></div><div class="it-label">xs · 8</div></div>
+      <div class="item"><div class="block" style="width:12px;height:12px"></div><div class="it-label">sm · 12</div></div>
+      <div class="item"><div class="block" style="width:16px;height:16px"></div><div class="it-label">md · 16</div></div>
+      <div class="item"><div class="block" style="width:24px;height:24px"></div><div class="it-label">lg · 24</div></div>
+      <div class="item"><div class="block" style="width:32px;height:32px"></div><div class="it-label">xl · 32</div></div>
+      <div class="item"><div class="block" style="width:40px;height:40px"></div><div class="it-label">2xl · 40</div></div>
+      <div class="item"><div class="block" style="width:48px;height:48px"></div><div class="it-label">3xl · 48</div></div>
+      <div class="item"><div class="block" style="width:64px;height:64px"></div><div class="it-label">4xl · 64</div></div>
+      <div class="item"><div class="block" style="width:80px;height:80px"></div><div class="it-label">5xl · 80</div></div>
+    </div>
+
+    <h2 style="font-size:18px;margin:var(--space-8) 0 var(--space-3);font-weight:600">圆角（全局 0）</h2>
+    <div style="display:flex;gap:var(--space-3);align-items:center">
+      <div style="width:80px;height:48px;background:var(--accent-deep)"></div>
+      <div style="width:80px;height:48px;background:var(--accent)"></div>
+      <div style="width:80px;height:48px;background:var(--gold)"></div>
+      <div style="font-family:var(--font-mono);font-size:var(--text-xs);color:var(--fg-2)">--radius: 0</div>
+    </div>
+
+    <h2 style="font-size:18px;margin:var(--space-8) 0 var(--space-3);font-weight:600">卡片（描边而非阴影）</h2>
+    <div class="card">
+      <span class="tag">审计验资</span>
+      <h4>财务报表审计</h4>
+      <p>出具符合国家审计准则的审计报告，应用于工商年检、税务申报、银行授信等场景。</p>
+    </div>
+  </div>
+</body>
+</html>

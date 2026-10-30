@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "kind": "html",
+  "title": "tianxin-cpa/preview/spacing.html",
+  "entry": "tianxin-cpa/preview/spacing.html",
+  "renderer": "html",
+  "status": "complete",
+  "exports": [
+    "html",
+    "pdf",
+    "zip"
+  ],
+  "createdAt": "2026-06-26T06:24:25.275Z",
+  "updatedAt": "2026-06-26T06:24:25.275Z",
+  "metadata": {
+    "inferred": true,
+    "reconciled": true
+  }
+}

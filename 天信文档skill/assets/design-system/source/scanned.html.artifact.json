@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "kind": "html",
+  "title": "tianxin-cpa/source/scanned.html",
+  "entry": "tianxin-cpa/source/scanned.html",
+  "renderer": "html",
+  "status": "complete",
+  "exports": [
+    "html",
+    "pdf",
+    "zip"
+  ],
+  "createdAt": "2026-06-26T06:23:16.570Z",
+  "updatedAt": "2026-06-26T06:23:16.570Z",
+  "metadata": {
+    "inferred": true,
+    "reconciled": true
+  }
+}
