@@ -10,15 +10,25 @@
 | 上游包 | `tax-compliance-team`（企业税务合规团队：1 个组长 + 5 个专员） |
 | 作者 | CodeBuddy Teams |
 | 许可 | **上游未附许可证文件，`plugin.json` 的 license 字段为空** |
-| 抓取自 | `~/.workbuddy/plugins/marketplaces/experts/plugins/tax-compliance-team/` |
-| 抓取日期 | 2026-10-31 |
-| 抓取方式 | 文件原样复制 + 税率表按现行政策修正（仅此一处改动）；文件名扁平化 |
+| 抓取位置 | `~/.workbuddy/plugins/marketplaces/experts/plugins/tax-compliance-team/` |
+| 原始下载时间 | `2026-06-25T01:44:41Z`（取自包内 `.downloaded_at`） |
+| 收录日期 | 2026-10-31 |
+| 收录方式 | 内容原样复制 + 税率表按现行政策修正（仅此一处改动）；文件名扁平化 |
 
 > ⚠ **合规提示**：上游没有 LICENSE，法律上属"保留所有权利"。本目录**仅供天信所内使用**，
 > 不得对外分发、不得随技能公开发布。而代账线的 `finance` 包是 Apache-2.0，可以随仓库外发。
 > 这个差别要记住：两个上游的法律状态不一样。
 
-**未收录**：`avatars/*.png`（7 张，占了整包 11M 的绝大部分，与能力无关）、`.codebuddy-plugin/`（本仓库不用）、`README.md`（团队介绍，能力已在各角色文件里）。
+## 收录完整性：原包 19 个文件，收 10 个
+
+| 原包 | 收了没 | 说明 |
+|---|---|---|
+| `README.md` | ✅ `tax-0-能力总览.md` | **曾漏收，2026-10-31 补**。含 6 Phase SOP、6 个角色中文名与职责、7 类适用场景。原判断"能力已在各角色文件里"是错的——SOP 只在这份里有 |
+| `agents/` 6 个角色 | ✅ `tax-1` ~ `tax-6` | 团队总纲 + 5 个专员 |
+| `skills/tax-compliance-engine/` 3 个 | ✅ `tax-7` ~ `tax-9` | 引擎入口 + 科目表 + 税率表（已修正 7 处） |
+| `avatars/*.png` | ❌ | 7 张，共 11M，占整包九成体积。与能力无关，且公开仓库不收 |
+| `.codebuddy-plugin/plugin.json` | ❌ | 包元数据。不影响能力 |
+| `.downloaded_at` | ❌ | 时间戳，已记入上表 |
 
 ## 已修正清单（7 处）
 
@@ -40,6 +50,7 @@
 
 | 这里 | 上游原名 | 行数 | sha256 前 16 位 | 用法 |
 |---|---|---|---|---|
+| `tax-0-能力总览.md` | `README.md` | 83 | `ba12802096a24da5` | **先读这个**。中文，6 Phase SOP + 6 个角色分工，最省时间建立全貌 |
 | `tax-1-团队总纲.md` | `agents/tax-compliance-team-lead.md` | 265 | `793ba32b0ed3a15f` | 六阶段财税合规工作流总纲，**流程编排直接可用** |
 | `tax-2-申报专员.md` | `agents/tax-filing-specialist.md` | 123 | `b230f1f1e4b27601` | 增值税/企税/个税计算与申报，与税务线 `references/02` 互为印证 |
 | `tax-3-凭证会计.md` | `agents/voucher-accountant.md` | 124 | `fc4ffc30ab1f54f9` | 复式记账与期末结转，可作代账场景的交叉检查 |

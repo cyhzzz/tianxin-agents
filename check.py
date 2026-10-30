@@ -602,9 +602,13 @@ def check_upstream(rep):
             continue
 
         txt = open(src, encoding='utf-8').read()
-        for kw in ('许可', '抓取日期', '用法'):
+        for kw in ('许可', '用法'):
             if kw not in txt:
                 rep.err(f'{tag}/README.md 没写「{kw}」')
+        # 「原始下载时间」取自包内 .downloaded_at，比手记的抓取日期准；
+        # 早期写法是「抓取日期」。两者取其一即可。
+        if not any(k in txt for k in ('原始下载时间', '抓取日期')):
+            rep.err(f'{tag}/README.md 没写下载时间或抓取日期')
 
         declared = {}
         for line in txt.splitlines():
