@@ -7,17 +7,23 @@
     python check.py            # 全量检查
     python check.py --quiet    # 只报错误
 
-查八件事。都是「人眼扫一遍必漏、而且不报错」的错：
+查八项。都是「人眼扫一遍必漏、而且不报错」的错：
 
-1. Markdown 链接指向的文件不存在（含锚点、含相对路径算错一层）
-2. 正文用反引号写的路径（如 `references/01-xxx.md`）指向的文件不存在
-   这类比链接更隐蔽——它不是链接，渲染出来就是一行字，点不了也测不出
-3. 专家包 plugin.json 声明的技能，仓库里有没有；有没有重复声明
-4. 每个 SKILL.md 的 frontmatter 有没有 name / description（缺了不触发）
-5. 安装后的目录名会不会撞车（两个技能 name 相同）
-6. .gitignore 是否有效（有没有该忽略却仍在追踪的产物文件）
-7. 文档里硬编码的技能数量、命令路径是否与实际一致
-8. 每个 SKILL.md 末尾有没有「反馈与改进」节（PR 回传机制的触发器）
+  1–2. 链接与路径引用断没断
+       Markdown 链接，以及正文用反引号写的路径（如 `references/01-xxx.md`）。
+       后者比链接更隐蔽——它不是链接，渲染出来就是一行字，点不了也测不出。
+
+       判据是「git ls-files 里有没有」，不是「磁盘上有没有」。
+       区别很要紧：本仓库工作区里有一堆被 gitignore 的文件（含密钥的
+       push-secrets.json、官网源码、宣传片），扫磁盘的话这些引用在本地
+       全都"解析得到"，在别人 clone 出来的仓库里全是断链。
+
+  3.   专家包 plugin.json 声明的技能仓库里有没有、有没有重复声明、
+       tags/quickPrompts 各 3 个、描述 40–50 字、人设 frontmatter 是否同步
+  4–5. 每个 SKILL.md 的 name / description 全不全；安装名会不会撞车
+  6.   .gitignore 有没有行尾注释（不支持，会让整条规则静默失效）
+  7.   文档里硬编码的技能数量、有没有分层重构前的失效命令
+  8.   每个 SKILL.md 末尾有没有「反馈与改进」节（PR 回传机制的触发器）
 
 不依赖任何第三方库。Python 3.8+。
 """
@@ -26,6 +32,7 @@ import argparse
 import json
 import os
 import re
+import subprocess
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -153,19 +160,31 @@ _ALL_FILES = None
 
 
 def all_files_cache():
-    """仓库里所有文件的相对路径。
+    """仓库里**会被别人 clone 到**的文件的相对路径。
 
-    包含被 SKIP_DIRS 排除的目录（宣传片、官网源码等）——那些文件确实在磁盘上，
-    正文里引用它们不算断链。这里只用于解析，不用于检查。
+    用 `git ls-files` 而不是扫磁盘。这个区别要紧：本机的仓库工作区里有
+    一堆被 .gitignore 排除的文件（宣传片、官网源码、push-secrets.json），
+    扫磁盘的话，指向它们的引用在本地"解析得到"，在别人 clone 出来的
+    仓库里却不存在——自检会在我这台机器上全过，在别人那边报断链。
+    检查标准必须是"仓库里有什么"，不是"我磁盘上有什么"。
     """
     global _ALL_FILES
-    if _ALL_FILES is None:
-        out = set()
+    if _ALL_FILES is not None:
+        return _ALL_FILES
+    out = set()
+    r = subprocess.run(['git', 'ls-files', '-z'], cwd=HERE,
+                       capture_output=True, text=True, encoding='utf-8')
+    if r.returncode == 0 and r.stdout.strip():
+        out = {x for x in r.stdout.split('\0') if x}
+    else:
         for dp, dns, fns in os.walk(HERE):
-            dns[:] = [d for d in dns if d not in ('.git', 'node_modules', '__pycache__')]
+            dns[:] = [d for d in dns if d not in SKIP_DIRS and not d.startswith('.')]
+            dns[:] = [d for d in dns
+                      if os.path.relpath(os.path.join(dp, d), HERE)
+                      .replace(os.sep, '/') not in SKIP_PATHS]
             for fn in fns:
                 out.add(os.path.relpath(os.path.join(dp, fn), HERE).replace(os.sep, '/'))
-        _ALL_FILES = out
+    _ALL_FILES = out
     return _ALL_FILES
 
 
@@ -198,9 +217,20 @@ def resolve(target, src_rel):
     if os.path.dirname(src_rel):
         bases.append(os.path.dirname(os.path.dirname(src_rel)))
     bases.append('')
+    # 判据必须与 all_files_cache 一致：只认仓库里的文件，不认磁盘上的。
+    # 混用两套标准会让含密钥的本地配置（push-secrets.json 这种）在我这儿
+    # "解析得到"、在别人 clone 出来的仓库里却是断链——自检本地全过，别人报错。
+    cache = all_files_cache()
     for b in bases:
         cand = os.path.normpath(os.path.join(b, target)).replace(os.sep, '/')
-        if os.path.exists(os.path.join(HERE, cand)):
+        if cand in cache:
+            return cand
+        # 指向目录的链接（[docs/](docs/)）是合法的——git 只记录文件，
+        # 所以这里认「目录下有被跟踪的文件」而不是「目录在缓存里」
+        d = os.path.join(HERE, cand)
+        if os.path.isdir(d) and any(
+                os.path.relpath(os.path.join(dp, fn), HERE).replace(os.sep, '/') in cache
+                for dp, dns, fns in os.walk(d) for fn in fns):
             return cand
 
     # 兜底：仓库内唯一后缀匹配（限含目录分隔符的片段路径）

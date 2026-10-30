@@ -67,7 +67,7 @@ node references/check-dashboard.js daily/{日期}.html     # 机械自检 6 项
 node references/push-notify.js "天信每日日报 · {日期}" "daily/{日期}.html"   # 三通道实推
 ```
 
-- 凭证：`PUSHPLUS_TOKEN` 环境变量优先；否则 `references/push-secrets.json`（`.gitignore` 已排除，绝不入库）。
+- 凭证：`PUSHPLUS_TOKEN` 环境变量优先；否则 `push-secrets.json`（本目录，`.gitignore` 已排除，绝不入库）。
 - 改动推送逻辑：**先改 `references/推送规范.md`，再改 `push-notify.js`**。
 
 ---

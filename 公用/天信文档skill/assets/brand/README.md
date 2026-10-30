@@ -1,7 +1,7 @@
 # 天信 logo 资产包
 
 > 生成 2026-10-30，v2（补中文全称）。供 Word 文档、PDF 报告、网页演示三条轨道共用。
-> 上游源文件：`tianxin-cpa-website-gh-pages/assets/logo_hori_full.png`（官网仓库，本仓库不含）（2200×600，RGB 无透明通道，含淡网格背景）
+> 上游源文件：`../tianxin-cpa-website-gh-pages/assets/logo_hori_full.png`（官网仓库，不在本仓库内）（2200×600，RGB 无透明通道，含淡网格背景）
 
 ## 一、资产清单
 

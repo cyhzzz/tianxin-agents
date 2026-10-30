@@ -1,6 +1,6 @@
 # pushplus 推送配置（公开示例 · 不含真实 token）
 
-> 本文件为公开仓库模板，真实 token 见本地 `references/push-secrets.json`（gitignore，不入库）。
+> 本文件为公开仓库模板，真实 token 见本地 `push-secrets.json`（与本文件同目录，gitignore，不入库）。
 > 云端 agent 请将 token 设为环境变量 `PUSHPLUS_TOKEN`。
 
 ## 接口
