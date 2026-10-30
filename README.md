@@ -5,13 +5,13 @@
 > **不想读文档？** 把这句话粘给任何能跑命令的 AI，它会替你装好：
 >
 > ```
-> 克隆 https://github.com/cyhzzz/tianxin-agents 到本地，进仓库根目录读 START-HERE.md，按里面的三选一让我挑一种装法装好，装完跑 python install.py --verify 验收。
+> 克隆 https://github.com/cyhzzz/tianxin-agents 到本地，进仓库根目录读 START-HERE.md，按里面的默认方式把全部技能装到本机全局，装完跑 python install.py --verify 验收，最后告诉我另外两种装法分别在什么时候该换成。
 > ```
 >
 > 更多说法（对方不能跑命令、已想好装哪种、只想先看看）见 [`一句话启用.md`](一句话启用.md)。
 
 > **如果你是读到这个仓库的 AI**，不要急着解释这个仓库是什么。
-> 先读 [`START-HERE.md`](START-HERE.md)，它会告诉你怎么判断环境、怎么让用户三选一、怎么落地。
+> 先读 [`START-HERE.md`](START-HERE.md)，它会告诉你怎么判断环境、默认该装成哪种、怎么落地。
 
 ---
 
@@ -65,16 +65,27 @@
 
 ---
 
-## 三种启用方式，选一个
+## 三种启用方式：默认装全局
 
-| | 方式一 · 全局技能 | 方式二 · 专家包 | 方式三 · 项目级 |
+**不给参数就装全局**（方式一）——所有目录、所有对话都能用，覆盖绝大多数情况：
+
+```bash
+python install.py
+```
+
+另外两种按需换：
+
+| | 方式一 · 全局技能 **(默认)** | 方式二 · 专家包 | 方式三 · 项目级 |
 |---|---|---|---|
-| **适合** | 一个人用，所有项目都要 | 想要一个固定入口：打开就是「天信办公专家」 | 一个客户 / 一个项目专用 |
+| **命令** | `python install.py` | `python install.py --expert` | `python install.py --project <目录>` |
+| **什么时候换** | —— | 想要固定入口，打开就是「天信办公专家」 | 只想在某一个项目里用 |
 | **装到哪** | `~/.workbuddy/skills/` | `~/.workbuddy/plugins/marketplaces/my-experts/plugins/` | `<项目>/.workbuddy/skills/` |
 | **装几个** | 仓库里全部技能 | 只装 `plugin.json` 声明的 | 仓库里全部技能 |
 | **生效范围** | 这台机器上所有对话 | 被选为该专家的每一个会话 | 那个目录下的对话 |
+| **限制** | 无 | 只对 WorkBuddy 有效 | 每个项目装一遍 |
 
-**不确定选哪个**：想要固定入口、不想记触发词 → 方式二。想在任何对话里都能用 → 方式一。给某个客户单独配 → 方式三。
+三种方式装的是同一批技能，差别只在生效范围。全局装完再装专家包也不冲突
+（专家包里是副本，两者共用同一份仓库）。
 
 详细步骤见 [`docs/01-三种启用方式.md`](docs/01-三种启用方式.md)。
 
@@ -91,19 +102,24 @@ cd tianxin-agents
 python install.py --list          # 看有哪些技能、装到哪
 ```
 
-然后按你的选择跑其中一条：
+然后这条就够了（默认装到本机全局）：
 
 ```bash
-python install.py --global                    # 方式一
-python install.py --expert                    # 方式二
-python install.py --project /path/to/项目      # 方式三
+python install.py
+```
+
+要换成另外两种就加参数：
+
+```bash
+python install.py --expert                    # 装成 WorkBuddy 专家
+python install.py --project /path/to/项目      # 只装进某个项目
 ```
 
 验证：
 
 ```bash
-python install.py --verify
-python install.py --verify --project /path/to/项目
+python install.py --verify                            # 验收全局
+python install.py --verify --project /path/to/项目     # 验收项目级
 ```
 
 它会逐个报告：目录在不在、`SKILL.md` 在不在、frontmatter 能不能解析、references / cards / 脚本齐不齐，顺带看一眼专家包装没装。

@@ -549,16 +549,18 @@ def main():
     ap = argparse.ArgumentParser(
         description='天信办公专家安装器',
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog='一次只用一个模式。例子：\n'
-               '  python install.py --list\n'
-               '  python install.py --global\n'
-               '  python install.py --project D:/客户/正山堂\n'
-               '  python install.py --expert\n'
-               '  python install.py --verify',
+        epilog='不写模式就默认装全局（方式一），这是大多数人的选择。\n'
+               '例子：\n'
+               '  python install.py                      默认：装到本机全局\n'
+               '  python install.py --expert             装成 WorkBuddy 专家\n'
+               '  python install.py --project D:/客户/某某尽调项目\n'
+               '  python install.py --list               先看有什么\n'
+               '  python install.py --verify             验收',
     )
     g = ap.add_mutually_exclusive_group(required=False)
     g.add_argument('--list', action='store_true', help='看仓库里有什么、装到哪')
-    g.add_argument('--global', dest='global_scope', action='store_true', help='装到本机全局')
+    g.add_argument('--global', dest='global_scope', action='store_true',
+                   help='装到本机全局（默认方式，不写任何模式就是它）')
     g.add_argument('--project', metavar='DIR', help='装到某个项目目录')
     g.add_argument('--expert', action='store_true',
                    help='装成 WorkBuddy 专家：一个专家挂 plugin.json 声明的全部技能')
@@ -579,8 +581,17 @@ def main():
         except Exception:
             pass
 
+    # 没给任何模式 = 默认装全局。
+    # 早先这里报「至少给一个模式」，但实测下来九成的人就是要装全局——
+    # 先卡一道问「你想装哪种」，多数人只会回一句「随便/都行」，白问。
+    # 改成默认全局，把另外两种作为选项说出来，想换的人自己会换。
     if not any([args.list, args.global_scope, args.project, args.expert, args.verify]):
-        ap.error('至少给一个模式：--list / --global / --project / --expert / --verify')
+        args.global_scope = True
+        out(f'{C_DIM}没指定装法，默认装到本机全局（方式一）：'
+            f'所有目录、所有对话都能用。{C_OFF}')
+        out(f'{C_DIM}另外两种：--expert（装成 WorkBuddy 专家） / '
+            f'--project <目录>（只装进某个项目）{C_OFF}')
+        out()
 
     if args.verify:
         sys.exit(cmd_verify(args))
