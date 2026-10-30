@@ -309,6 +309,22 @@ def cmd_from_installed(args):
     finish(branch, f'改进：{name}（来自安装副本的 {len(changed)} 处改动）')
 
 
+# 提案放太久就会变成死目录：提的人看不到回音，后来的人更不想提。
+STALE_DAYS = 30
+
+
+def proposal_age_days(fname):
+    """从文件名开头的日期算提案搁了多久。解析不出来返回 None。"""
+    m = re.match(r'(\d{4})-(\d{2})-(\d{2})', fname)
+    if not m:
+        return None
+    try:
+        d = datetime(*(int(x) for x in m.groups())).date()
+    except ValueError:
+        return None
+    return (datetime.now().date() - d).days
+
+
 def cmd_list(args):
     d = os.path.join(HERE, INBOX)
     if not os.path.isdir(d):
@@ -318,13 +334,34 @@ def cmd_list(args):
     if not fs:
         out(f'{C_DIM}暂无待处理提案{C_OFF}')
         return 0
+
     out(f'{C_BOLD}{INBOX}/ 共 {len(fs)} 份{C_OFF}')
+    stale = 0
     for f in fs:
-        p = os.path.join(d, f)
-        txt = open(p, encoding='utf-8').read()
+        txt = open(os.path.join(d, f), encoding='utf-8').read()
         skill = (re.search(r'\|\s*技能\s*\|\s*(.+?)\s*\|', txt) or [None, '?'])[1]
         typ = (re.search(r'\|\s*类型\s*\|\s*(.+?)\s*\|', txt) or [None, '?'])[1]
-        out(f'  {skill:<16} {typ:<10} {f}')
+        age = proposal_age_days(f)
+        if age is None:
+            when = ''
+        elif age == 0:
+            when = '今天'
+        elif age < 30:
+            when = f'{age} 天前'
+        else:
+            when = f'{age} 天前'
+            stale += 1
+        flag = f'  {C_WARN}⚠ 超过 {STALE_DAYS} 天没处理{C_OFF}' \
+            if (age or 0) >= STALE_DAYS else ''
+        out(f'  {skill:<16} {typ:<10} {when:<10} {f}{flag}')
+
+    if stale:
+        out()
+        out(f'{C_WARN}{stale} 份提案超过 {STALE_DAYS} 天没处理。{C_OFF}')
+        out(f'{C_DIM}放着不管，这个目录就会变成死目录——提的人看不到回音，'
+            f'后来的人更不想提。{C_OFF}')
+        out(f'{C_DIM}处理一份的办法：采纳就改到技能里然后删掉提案文件；'
+            f'不采纳就删掉并在 PR 里说明理由。{C_OFF}')
     return 0
 
 

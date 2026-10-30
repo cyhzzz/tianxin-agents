@@ -7,7 +7,7 @@
     python check.py            # 全量检查
     python check.py --quiet    # 只报错误
 
-查八项。都是「人眼扫一遍必漏、而且不报错」的错：
+查九项。都是「人眼扫一遍必漏、而且不报错」的错：
 
   1–2. 链接与路径引用断没断
        Markdown 链接，以及正文用反引号写的路径（如 `references/01-xxx.md`）。
@@ -24,6 +24,7 @@
   6.   .gitignore 有没有行尾注释（不支持，会让整条规则静默失效）
   7.   文档里硬编码的技能数量、有没有分层重构前的失效命令
   8.   每个 SKILL.md 末尾有没有「反馈与改进」节（PR 回传机制的触发器）
+  9.   待处理改进/ 里的提案有没有放成死目录（超过 30 天提醒）
 
 不依赖任何第三方库。Python 3.8+。
 """
@@ -506,6 +507,46 @@ def check_feedback_block(rep, skills):
         rep.ok(f'{len(skills)} 个技能都带改进回传触发器')
 
 
+# ── 9. 待处理提案 ───────────────────────────────────────
+
+def check_inbox(rep):
+    """待处理提案有没有放成死目录。
+
+    提案是以 PR 形式进来的，所以不会悄悄堆积——PR 有通知。
+    真正的风险是**PR 合并了、提案文件却留在目录里没删**，
+    以及提案多了以后看不出哪些是新的。
+    """
+    d = os.path.join(HERE, '待处理改进')
+    files = []
+    if os.path.isdir(d):
+        files = sorted(f for f in os.listdir(d) if f != 'README.md')
+    if not files:
+        rep.ok('待处理改进/ 是空的（没有未消化的提案）')
+        return
+
+    from datetime import datetime as _dt
+    stale = []
+    for f in files:
+        m = re.match(r'(\d{4})-(\d{2})-(\d{2})', f)
+        if not m:
+            continue
+        try:
+            age = (_dt.now().date() - _dt(*(int(x) for x in m.groups())).date()).days
+        except ValueError:
+            continue
+        if age >= 30:
+            stale.append((age, f))
+
+    if stale:
+        for age, f in sorted(stale, reverse=True):
+            rep.warn(f'提案搁了 {age} 天：待处理改进/{f}')
+        rep.warn(f'{len(stale)} 份提案超过 30 天没处理。放着不管这个目录就死了——'
+                 f'提的人看不到回音，后来的人更不想提。'
+                 f'采纳就改到技能里并删掉文件，不采纳就删掉并在 PR 里说明理由。')
+    else:
+        rep.ok(f'待处理改进/ 有 {len(files)} 份提案，都没超期')
+
+
 # ── main ────────────────────────────────────────────────
 
 def main():
@@ -533,6 +574,9 @@ def main():
 
     hr('8. 改进回传触发器')
     check_feedback_block(rep, skills or [])
+
+    hr('9. 待处理提案')
+    check_inbox(rep)
 
     hr()
     if rep.errors:
