@@ -11,9 +11,9 @@
   ],
   "skills": [
     "./skills/天信文档与报告",
-    "./skills/天信日报",
-    "./skills/天信实务知识库",
-    "./skills/陈版主实务问答"
+    "./skills/tianxin-daily-brief",
+    "./skills/tianxin-shiwu-kb",
+    "./skills/chenyiwei-bbs"
   ],
   "expertType": "agent",
   "agentName": "tianxin-office-expert",

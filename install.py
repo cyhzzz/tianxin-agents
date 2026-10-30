@@ -375,8 +375,11 @@ def cmd_expert(args):
                 shutil.copy2(os.path.join(s, fn), os.path.join(d, fn))
             out(f'  {C_OK}✓{C_OFF} {sub}/  {C_DIM}{len(os.listdir(s))} 个文件{C_OFF}')
 
-    # 3) 技能
+    # 3) 技能。--force 时先清空 —— 否则上一版装过、这一版改名的技能会留成僵尸目录：
+    #    目录在、plugin.json 不指它，看着像装好了，实际是死文件。
     skills_dest = os.path.join(dest, 'skills')
+    if args.force and os.path.isdir(skills_dest):
+        shutil.rmtree(skills_dest)
     os.makedirs(skills_dest, exist_ok=True)
     n_skill = 0
     for name, s, _ in list_skill_dirs():
@@ -389,7 +392,20 @@ def cmd_expert(args):
         n_skill += 1
     out(f'  {C_OK}✓{C_OFF} skills/  {C_DIM}{n_skill} 个技能{C_OFF}')
 
-    # 4) 注册
+    # 4) 防呆：plugin.json 声明的每个技能目录都得真实存在。
+    #    源目录名（天信文档skill）和安装名（天信文档与报告）不是一回事，
+    #    这里对不上，专家装上了也带不动技能，而且 WorkBuddy 不会报错。
+    with open(src_meta, encoding='utf-8') as f:
+        declared = json.load(f).get('skills', [])
+    missing = [d for d in declared
+               if not os.path.isdir(os.path.join(dest, d.lstrip('./').replace('/', os.sep)))]
+    if missing:
+        out(f'  {C_ERR}✗{C_OFF} plugin.json 声明的技能目录不存在：')
+        for d in missing:
+            out(f'      {d}')
+        die('先修 expert/plugin.json 的 skills 路径')
+
+    # 5) 注册
     try:
         mf = register_in_marketplace(dest)
         out(f'  {C_OK}✓{C_OFF} 已注册到 {C_DIM}{mf}{C_OFF}')
