@@ -15,7 +15,8 @@
     "./skills/chenyiwei-bbs",
     "./skills/天信审计底稿",
     "./skills/天信税务申报",
-    "./skills/tianxin-daily-brief"
+    "./skills/tianxin-daily-brief",
+    "./skills/天信审计底稿"
   ],
   "expertType": "agent",
   "agentName": "tianxin-office-expert",

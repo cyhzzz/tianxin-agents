@@ -5,7 +5,7 @@
 > **不想读文档？** 把这句话粘给任何能跑命令的 AI，它会替你装好：
 >
 > ```
-> 克隆 https://github.com/cyhzzz/tianxin-agents 到本地，读 START-HERE.md，按里面的三选一让我挑一种装法装好，装完跑 --verify 验收。
+> 克隆 https://github.com/cyhzzz/tianxin-agents 到本地，进仓库根目录读 START-HERE.md，按里面的三选一让我挑一种装法装好，装完跑 python install.py --verify 验收。
 > ```
 >
 > 更多说法（对方不能跑命令、已想好装哪种、只想先看看）见 [`一句话启用.md`](一句话启用.md)。
