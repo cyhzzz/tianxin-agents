@@ -38,17 +38,17 @@ version: 1.0.0
 |---|---|---|---|
 | 1 | 弹性编排与接单判定 | `references/01` | — 天信原创 |
 | 2 | 建账与初始化 | `references/02` | `skills/finance-workflows` |
-| 3 | 票据处理与审核 | `references/03` | ⚠ 无原文（二手转述，见 §五） |
+| 3 | 票据处理与审核 | `references/03` | ⚠ 无原文（二手转述，见 §六） |
 | 4 | 凭证编制 | `references/04` | `skills/journal-entry-prep` |
 | 5 | 账户核对 | `references/05` | `skills/reconciliation` |
 | 6 | 财务报表 | `references/06` | `skills/financial-statements` · 仅方法论 |
 | 7 | 差异分析与经营解读 | `references/07` | `skills/variance-analysis` |
 | 8 | 月末结账与报税节点 | `references/08` | `skills/close-management` |
 | 9 | 税务申报 | `references/09` | 内部桥接「天信税务申报」 |
-| 10 | 工商办理 | `references/10` | ⚠ 无原文（二手转述，见 §五） |
+| 10 | 工商办理 | `references/10` | ⚠ 无原文（二手转述，见 §六） |
 | 11 | 交接与年度归档 | `references/11` | — 天信原创 |
 | 12 | 鉴证配合 | `references/12` | `skills/audit-support` · 仅方法论 |
-| 13 | 政策速递与合规预警 | `references/13` | ⚠ 无原文（二手转述，见 §五） |
+| 13 | 政策速递与合规预警 | `references/13` | ⚠ 无原文（二手转述，见 §六） |
 
 ### 什么时候读上游原文
 
