@@ -314,7 +314,7 @@ def cmd_list(args):
     if not os.path.isdir(d):
         out(f'{C_DIM}暂无待处理提案{C_OFF}')
         return 0
-    fs = sorted(os.listdir(d))
+    fs = sorted(f for f in os.listdir(d) if f != 'README.md')   # 目录说明不是提案
     if not fs:
         out(f'{C_DIM}暂无待处理提案{C_OFF}')
         return 0
