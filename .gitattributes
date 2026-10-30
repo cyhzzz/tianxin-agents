@@ -1,0 +1,7 @@
+# 上游原文（各业务线 references/上游/ 下）按字节原样保存。
+#
+# Windows 上 core.autocrlf 会把 LF 换成 CRLF 再写到工作区——字节一变，
+# SOURCE.md 里的 sha256 校验和就对不上，check.py 第 10 项会炸。
+# 更要紧的是：那等于 clone 一次就悄悄改了别人的原文。
+# -text 关掉换行转换，也关掉「猜二进制」。
+**/references/上游/** -text

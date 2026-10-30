@@ -30,6 +30,7 @@
 """
 
 import argparse
+import hashlib
 import json
 import os
 import re
@@ -42,6 +43,10 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 SKIP_DIRS = {
     '.git', '.workbuddy', 'node_modules', '__pycache__',
     '天信宣传片', 'tianxin-cpa-website-gh-pages', '培训',
+    # 第三方原文（按包名+版本号放在各业务线技能的 references/上游/ 下）。
+    # 内容不归本仓库管，它的内部链接、frontmatter 一律不受本仓库规则约束。
+    # 收原文的规矩见 CONVENTIONS，检查项见 check_upstream()。
+    '上游',
 }
 
 # 按「相对根目录的完整路径」额外跳过。根目录的 天信文档skill/ 是移动时被
@@ -553,6 +558,91 @@ def check_inbox(rep):
         rep.ok(f'待处理改进/ 有 {len(files)} 份提案，都没超期')
 
 
+# ── 10. 上游原文只读性 ──────────────────────────────────
+
+# SOURCE.md 里的校验和清单长这样：| `skills/xxx/SKILL.md` | 185 | `40fd4cf722cb9625` |
+UPSTREAM_HASH_RE = re.compile(r'^\|\s*`([^`]+)`\s*\|\s*(\d+)\s*\|\s*`([0-9a-f]{16})`\s*\|')
+
+
+def upstream_packages():
+    """[(技能相对路径, 包目录名, 包绝对路径)]，各业务线 references/上游/ 下的一级子目录"""
+    out = []
+    for _, rel in find_skills():
+        base = os.path.join(HERE, rel, 'references', '上游')
+        if not os.path.isdir(base):
+            continue
+        for pkg in sorted(os.listdir(base)):
+            p = os.path.join(base, pkg)
+            if os.path.isdir(p):
+                out.append((rel, pkg, p))
+    return out
+
+
+def check_upstream(rep):
+    """上游原文必须与 SOURCE.md 记的校验和对得上。
+
+    收原文的目的是"一个字都不丢"，那原文就得真的一个字都没变。
+    只读写在文档里没人执行，这里做成机械约束：改一个字校验和就炸，
+    偷偷加文件清单里没有。
+    """
+    pkgs = upstream_packages()
+    if not pkgs:
+        rep.info('还没收录上游原文')
+        return
+
+    for skill_rel, pkg, path in pkgs:
+        tag = f'{skill_rel}/references/上游/{pkg}'
+        src = os.path.join(path, 'SOURCE.md')
+        if not os.path.isfile(src):
+            rep.err(f'{tag} 缺 SOURCE.md —— 没有来源、版本、许可、适用性，'
+                    f'这份原文以后没人敢用，也不知道该不该信')
+            continue
+
+        txt = open(src, encoding='utf-8').read()
+        for kw in ('许可', '抓取日期', '适用性'):
+            if kw not in txt:
+                rep.err(f'{tag}/SOURCE.md 没写「{kw}」')
+
+        declared = {}
+        for line in txt.splitlines():
+            m = UPSTREAM_HASH_RE.match(line.strip())
+            if m:
+                declared[m.group(1)] = (int(m.group(2)), m.group(3))
+        if not declared:
+            rep.err(f'{tag}/SOURCE.md 没有校验和清单（形如 '
+                    f'| `路径` | 行数 | `sha256前16位` |）。'
+                    f'原文被改过也发现不了，等于没收')
+            continue
+
+        actual = {}
+        for dp, dns, fns in os.walk(path):
+            dns[:] = [d for d in dns if not d.startswith('.')]
+            for fn in fns:
+                ap = os.path.join(dp, fn)
+                rp = os.path.relpath(ap, path).replace(os.sep, '/')
+                if rp != 'SOURCE.md':
+                    actual[rp] = ap
+
+        before = len(rep.errors)
+        for rp, (n, h) in sorted(declared.items()):
+            if rp not in actual:
+                rep.err(f'{tag}：SOURCE.md 记了 {rp}，目录里没有')
+                continue
+            ap = actual[rp]
+            if hashlib.sha256(open(ap, 'rb').read()).hexdigest()[:16] != h:
+                rep.err(f'{tag}/{rp} 被改过了（校验和对不上）。'
+                        f'上游原文只读——要补要改，写到 references/ 下的天信适配层')
+            got = sum(1 for _ in open(ap, encoding='utf-8', errors='ignore'))
+            if got != n:
+                rep.warn(f'{tag}/{rp} 行数与清单不符（记 {n}，实际 {got}）')
+        for rp in sorted(set(actual) - set(declared)):
+            rep.err(f'{tag}/{rp} 不在 SOURCE.md 清单里。'
+                    f'往上游目录塞文件，等于偷偷改上游')
+
+        if len(rep.errors) == before:
+            rep.ok(f'{tag}：{len(declared)} 个文件与校验和一致，无越界改动')
+
+
 # ── main ────────────────────────────────────────────────
 
 def main():
@@ -583,6 +673,9 @@ def main():
 
     hr('9. 待处理提案')
     check_inbox(rep)
+
+    hr('10. 上游原文只读性')
+    check_upstream(rep)
 
     hr()
     if rep.errors:

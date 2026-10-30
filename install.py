@@ -67,6 +67,9 @@ def expand(p):
 NON_SKILL_DIRS = {
     'docs', '专家', '培训', '天信宣传片',
     'tianxin-cpa-website-gh-pages', 'node_modules',
+    # 第三方原文。里面的 SKILL.md 是上游包的子技能，不是天信的技能，
+    # 绝不能被当成独立技能装出去。它跟着所属业务线技能整体复制即可。
+    '上游',
 }
 
 
