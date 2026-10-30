@@ -9,7 +9,7 @@
 
 ## 你要完成的事
 
-把仓库根下的四个技能目录，按用户选的方式装到某个地方，然后验证能用。
+把仓库里的技能目录，按用户选的方式装到某个地方，然后验证能用。
 
 四种方式选一种，**由用户决定，不由你决定**。
 
@@ -22,7 +22,8 @@
 ```bash
 pwd                      # 你现在在哪个目录
 python --version         # 或 python3 --version；没有 Python 就记下来
-ls -d */SKILL.md         # 确认四个技能目录都在（应看到四行）
+# 技能散在业务线目录下，要递归找（根目录直接 ls 是找不到的）
+find . -name SKILL.md -not -path './.git/*' | sort    # 应看到五条
 ```
 
 同时查一下这台机器上已有的 skill 目录：
@@ -49,22 +50,23 @@ ls -d .workbuddy/skills 2>/dev/null
 先看清仓库的分层，再报给用户。**不要展开讲原理**：
 
 ```
-仓库分三层：
+仓库分三层，共五个技能：
 
 公用能力（三条，跨业务线都用）
 1. 天信文档与报告 —— 出 Word / PDF / 网页报告和演示，带天信品牌格式
 2. 天信实务知识库 —— 12 张会计审计实务判断卡
 3. 陈版主实务问答 —— 检索视野论坛的实务答疑和准则原文
 
-运营（一条）
-4. 天信日报 —— 每日行业与商机情报
+业务线（五条，已建一条）
+4. 天信税务申报 —— 算税 / 申报 / 勾稽 / 风险自查 / 发票审查（税务线）
+   审计、代理记账、企业咨询、评估造价四条线仍是骨架，
+   要建什么、缺什么材料，见各自目录下的 README.md
 
-业务线（五条，目前是骨架，专属技能还没建）
-   审计 / 税务 / 代理记账 / 企业咨询 / 评估造价
-   每条线要建什么、缺什么材料，见各自目录下的 README.md
+运营（一条）
+5. 天信日报 —— 每日行业与商机情报
 ```
 
-**报完补一句**：业务线暂时是空的，装上去只有四条公用技能能用。这不是漏装，是还没建——建业务线技能需要所里的底稿模板和作业流程，编不出来。
+**报完补一句**：五条业务线里只有税务建好了，其余四条还是空的。这不是漏装，是还没建——建业务线技能需要所里的底稿模板和作业流程，编不出来。
 
 ---
 
@@ -77,7 +79,7 @@ ls -d .workbuddy/skills 2>/dev/null
 > **一、全局技能** —— 装到本机所有对话都能用。适合你平时都用同一个 AI 工具。
 > 　　装到：`~/.workbuddy/skills/`（或你这台机器上对应的用户级目录）
 >
-> **二、专家包** —— 装成一个 WorkBuddy 专家「天信办公专家」，四个技能挂在它下面。
+> **二、专家包** —— 装成一个 WorkBuddy 专家「天信办公专家」，`plugin.json` 声明的技能都挂在它下面。
 > 　　装到：`~/.workbuddy/plugins/marketplaces/my-experts/plugins/`
 > 　　适合想要固定入口、不想记技能触发词的人。代价：只对 WorkBuddy 有效。
 >
@@ -103,7 +105,7 @@ ls -d .workbuddy/skills 2>/dev/null
 python install.py --global
 ```
 
-它会做三件事：把四个技能目录复制到用户级 skills 目录、跳过已存在的同名技能（除非加 `--force`）、逐个校验 `SKILL.md` 的 frontmatter。
+它会做三件事：把技能目录复制到用户级 skills 目录、跳过已存在的同名技能（除非加 `--force`）、逐个校验 `SKILL.md` 的 frontmatter。
 
 注意安装后的目录名取自 `SKILL.md` 的 `name`，不是源目录名——`天信文档skill/` 装出来是 `天信文档与报告/`。
 
@@ -122,13 +124,13 @@ cp -r skills/* ~/.workbuddy/skills/
 
 ### 方式二 · 专家包（WorkBuddy 专家）
 
-这是把四个技能打包成**一个带人设的专家**，装进 WorkBuddy 的专家目录。装完用户在左侧「专家 → 我的专家」里选「天信办公专家」，点开即用。
+这是把技能打包成**一个带人设的专家**，装进 WorkBuddy 的专家目录。装完用户在左侧「专家 → 我的专家」里选「天信办公专家」，点开即用。
 
 ```bash
 python install.py --expert
 ```
 
-它做四件事：建专家目录 → 写 `plugin.json` → 复制人设与头像 → 把四个技能复制进去 → 注册到 `marketplace.json`。
+它做四件事：建专家目录 → 写 `plugin.json` → 复制人设与头像 → 把 `plugin.json` 声明的技能复制进去 → 注册到 `marketplace.json`。
 
 **注册那步最关键**。不写 `marketplace.json`，专家目录建得再完整，WorkBuddy 里也看不到。
 
@@ -139,7 +141,7 @@ python install.py --expert
 
 **只在 WorkBuddy 上有效**。如果用户用的是 Claude Code、Cursor 或其他 agent，方式二不适用——直接跳到方式一或方式三，并说明原因，不要硬装。
 
-**手工版**（没有 Python 时）：把 `expert/plugin.json`、`expert/agents/*.md`、`expert/avatars/*.png` 复制到 `~/.workbuddy/plugins/marketplaces/my-experts/plugins/tianxin-office-expert/` 对应位置，再把四个技能目录复制进该目录的 `skills/`，最后手工在 `~/.workbuddy/plugins/marketplaces/my-experts/.codebuddy-plugin/marketplace.json` 的 `plugins` 数组里加一条。详细步骤见 `docs/03-专家包安装.md`。
+**手工版**（没有 Python 时）：把 `expert/plugin.json`、`expert/agents/*.md`、`expert/avatars/*.png` 复制到 `~/.workbuddy/plugins/marketplaces/my-experts/plugins/tianxin-office-expert/` 对应位置，再把技能目录复制进该目录的 `skills/`，最后手工在 `~/.workbuddy/plugins/marketplaces/my-experts/.codebuddy-plugin/marketplace.json` 的 `plugins` 数组里加一条。详细步骤见 `docs/03-专家包安装.md`。
 
 ---
 
@@ -157,7 +159,7 @@ ls /path/to/项目
 python install.py --project /path/to/项目
 ```
 
-它会在 `<项目>/.workbuddy/skills/` 下建四个技能目录，并在 `<项目>/.workbuddy/skills/README.md` 写一份清单，说明这四个技能从哪来、怎么更新。
+它会在 `<项目>/.workbuddy/skills/` 下建技能目录，并在 `<项目>/.workbuddy/skills/README.md` 写一份清单，说明这些技能从哪来、怎么更新。
 
 如果项目里已经有 `.workbuddy/skills/`，它会**追加**而不是覆盖，遇到同名技能默认跳过。
 

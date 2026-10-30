@@ -7,7 +7,7 @@
     python install.py --list                     看仓库里有什么
     python install.py --global                   装到本机所有对话可用
     python install.py --project /path/to/dir     装到某个项目目录
-    python install.py --expert                   装成 WorkBuddy 专家（一个专家挂四个技能）
+    python install.py --expert                   装成 WorkBuddy 专家（一个专家挂全部技能）
     python install.py --verify                   检查装好了没有
 
 可选：
@@ -281,7 +281,7 @@ def cmd_install(args, global_scope):
         out()
         out(f'{C_WARN}没有任何技能被写入。{C_OFF}')
         if skipped:
-            out(f'{C_DIM}四个技能都已存在。确认是旧版就重跑并加 --force。{C_OFF}')
+            out(f'{C_DIM}技能都已存在。确认是旧版就重跑并加 --force。{C_OFF}')
         return
 
     write_manifest(dest, installed + replaced)
@@ -356,7 +356,7 @@ def cmd_expert(args):
 
     out()
     out(f'{C_BOLD}装成 WorkBuddy 专家{C_OFF}')
-    out(f'{C_DIM}一个专家「天信办公专家」，下面挂四个技能{C_OFF}')
+    out(f'{C_DIM}一个专家「天信办公专家」，下面挂仓库里的全部技能{C_OFF}')
     out(f'  目标：{dest}')
     hr()
 
@@ -430,10 +430,30 @@ def cmd_expert(args):
     out()
     out(f'{C_BOLD}怎么用{C_OFF}')
     out('  打开 WorkBuddy → 左侧「专家」→ 我的专家 → 选「天信办公专家」')
-    out('  它自带四个技能：文档与报告、实务知识库、陈版主问答、每日日报')
+    # 技能清单从 plugin.json 读，不写死——业务线会一直加
+    names = [e.rstrip('/').split('/')[-1] for e in declared]
+    out(f'  它自带 {len(names)} 个技能：{"、".join(names)}')
     out()
     out(f'{C_DIM}如果专家中心里没看到，重启 WorkBuddy 再进一次。{C_OFF}')
     out()
+
+
+def find_duplicate_skills(dest):
+    """找出同一个 name 装在多个目录名下的情形。
+
+    安装名取 SKILL.md 的 frontmatter name，但历史版本可能用中文目录名装过
+    （天信日报 / tianxin-daily-brief）。改过名之后旧目录不会自动消失，
+    结果是同一个技能两份，触发词重复，行为不可预期。
+    """
+    by_name = {}
+    for entry in os.listdir(dest):
+        d = os.path.join(dest, entry)
+        md = os.path.join(d, 'SKILL.md')
+        if os.path.isdir(d) and os.path.isfile(md):
+            n = (read_frontmatter(md).get('name') or '').strip()
+            if n:
+                by_name.setdefault(n, []).append(entry)
+    return {n: ds for n, ds in by_name.items() if len(ds) > 1}
 
 
 def cmd_verify(args):
@@ -480,6 +500,14 @@ def cmd_verify(args):
         extra = (' · ' + ' · '.join(notes)) if notes else ''
         out(f'  {C_OK}✓{C_OFF} {name}  {C_DIM}{fm["name"]}{extra}{C_OFF}')
         ok += 1
+
+    # 同名技能装了两份：历史改名留下的僵尸目录
+    dup = find_duplicate_skills(dest) if dest and os.path.isdir(dest) else {}
+    if dup:
+        out()
+        for n, dirs in dup.items():
+            out(f'  {C_WARN}⚠{C_OFF} 技能 {n} 装了 {len(dirs)} 份：{C_DIM}{"、".join(dirs)}{C_OFF}')
+        out(f'  {C_DIM}  同一技能两份会让触发词重复。保留与 name 同名的那个，其余移走。{C_OFF}')
 
     # 顺手看一眼专家包（装没装都报一声）
     exp_dir = os.path.join(expert_plugins_dir(), EXPERT_NAME)
@@ -529,7 +557,7 @@ def main():
     g.add_argument('--global', dest='global_scope', action='store_true', help='装到本机全局')
     g.add_argument('--project', metavar='DIR', help='装到某个项目目录')
     g.add_argument('--expert', action='store_true',
-                   help='装成 WorkBuddy 专家：一个专家挂四个技能')
+                   help='装成 WorkBuddy 专家：一个专家挂 plugin.json 声明的全部技能')
     # --verify 单独放：它要能配合 --project / --target 用
     ap.add_argument('--verify', action='store_true',
                     help='检查装好了没有（可配 --project 指定目录）')

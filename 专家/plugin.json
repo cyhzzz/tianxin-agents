@@ -1,7 +1,7 @@
 {
   "name": "tianxin-office-expert",
-  "version": "1.0.0",
-  "description": "Tianxin CPA Office Expert — one expert covering the firm's shared capabilities (document production, accounting practice judgment, standards retrieval, daily briefs). Business-line skills for audit, tax, bookkeeping, advisory and valuation are being added; this file declares which skills the expert loads.",
+  "version": "1.1.0",
+  "description": "Tianxin CPA Office Expert — one expert covering the firm's shared capabilities (document production, accounting practice judgment, standards retrieval, daily briefs) plus the tax business line (tax computation, filing, self-check, invoice review). Audit, bookkeeping, advisory and valuation lines are being added; this file declares which skills the expert loads.",
   "author": {
     "name": "天台天信会计师事务所",
     "email": ""
@@ -11,9 +11,10 @@
   ],
   "skills": [
     "./skills/天信文档与报告",
-    "./skills/tianxin-daily-brief",
     "./skills/tianxin-shiwu-kb",
-    "./skills/chenyiwei-bbs"
+    "./skills/chenyiwei-bbs",
+    "./skills/天信税务申报",
+    "./skills/tianxin-daily-brief"
   ],
   "expertType": "agent",
   "agentName": "tianxin-office-expert",
@@ -22,21 +23,25 @@
     "zh": "天信办公专家"
   },
   "profession": {
-    "en": "CPA Firm Documentation & Practice Specialist",
-    "zh": "天信会计师事务所·文档与实务专家"
+    "en": "CPA Firm Documentation, Practice & Tax Specialist",
+    "zh": "天信会计师事务所·文档·实务·税务"
   },
   "displayDescription": {
-    "en": "Document and practice assistant for Tianxin CPA: classifies the document before laying it out, judges accounting treatments against standards, retrieves authoritative Q&A, and briefs daily industry opportunities.",
-    "zh": "天信所的文档与实务助手：判性质出 Word／PDF／演示，调能力卡做会计判断，检索准则原文。"
+    "en": "Tianxin CPA assistant: lays out Word/PDF reports, judges accounting treatments, computes and files taxes with invoice risk checks, and retrieves authoritative Q&A.",
+    "zh": "天信所实务助手：出 Word／PDF 报告、判会计处理、算税报税、查发票与税务风险、检索准则原文。"
   },
   "avatar": "avatars/tianxin-office-expert.png",
   "categoryId": "08-FinanceInvestment",
   "defaultInitPrompt": {
-    "zh": "把这份尽调稿按天信的规范出一份 Word，页眉页脚和三线表都要对。",
-    "en": "Lay out this due-diligence draft as a Tianxin-branded Word file, with correct header, footer and three-line tables."
+    "zh": "这家小规模客户三季度普票 24 万、专票 8 万，帮我算该缴多少税、申报表怎么填。",
+    "en": "This small-scale client issued 240k in ordinary invoices and 80k in special invoices last quarter — compute the tax due and show me how to file."
   },
   "plugin": "tianxin-office-expert",
   "tags": [
+    {
+      "en": "Tax Filing & Compliance",
+      "zh": "税务申报与合规"
+    },
     {
       "en": "Audit & Due Diligence Reports",
       "zh": "审计与尽调报告"
@@ -44,24 +49,20 @@
     {
       "en": "Accounting Practice Judgment",
       "zh": "会计实务判断"
-    },
-    {
-      "en": "Firm Document Production",
-      "zh": "事务所文档出版"
     }
   ],
   "quickPrompts": [
+    {
+      "en": "This small-scale client issued 240k in ordinary invoices and 80k in special invoices last quarter — compute the tax due and show me how to file.",
+      "zh": "这家小规模客户三季度普票 24 万、专票 8 万，帮我算该缴多少税、申报表怎么填。"
+    },
     {
       "en": "Lay out this due-diligence draft as a Tianxin-branded Word file, with correct header, footer and three-line tables.",
       "zh": "把这份尽调稿按天信的规范出一份 Word，页眉页脚和三线表都要对。"
     },
     {
-      "en": "Should this government grant go to other income or non-operating income? Walk me through CAS16.",
-      "zh": "这笔政府补助应该记在其他收益还是营业外收入？按 CAS16 帮我走一遍。"
-    },
-    {
-      "en": "What does Chen Yiwei (the forum moderator) say about the accounting treatment of equity investments with repurchase clauses?",
-      "zh": "查一下陈版主怎么说附回售条款的股权投资会计处理。"
+      "en": "A client's supplier went missing — what do I do with the input VAT already deducted?",
+      "zh": "客户的一个供应商走逃了，已经抵扣的进项该怎么处理？"
     }
   ]
 }
