@@ -1,5 +1,5 @@
 # ─────────────────────────────────────────────────────
-# 这个仓库是天信 skill 的发布源，不是整个「天信本身」目录的备份。
+# 这个仓库是天信 agents 的发布源，不是整个「天信本身」目录的备份。
 # 宣传片、官网、培训手册体积大或另有仓库，一律不进这里。
 # ─────────────────────────────────────────────────────
 
@@ -7,7 +7,8 @@
 天信宣传片/
 tianxin-cpa-website-gh-pages/
 培训/
-tianxin-skills/
+天信文档skill/          # 旧路径残留（移动时被占用，重启后可手动删）
+_待删_*/
 
 # 本机工作区配置
 .workbuddy/
@@ -17,16 +18,18 @@ tianxin-skills/
 .env
 *.local.md
 
-# 技能运行时产物（脚本可重新生成）
-天信日报skill/daily/
-# examples 只留 .md 源和一份成品 PDF 示范；其余产物脚本可重新生成
-天信文档skill/examples/*.docx
-天信文档skill/examples/*.html
-天信文档skill/examples/*.png
+# 技能运行时产物（脚本可重新生成）。examples 只留 .md 与成品 PDF 示范。
+**/daily/
+**/examples/*.docx
+**/examples/*.html
+**/examples/*.png
+**/examples/*.jpg
+**/examples/*.jpeg
+# 日报的看板示例是单文件成品，有展示价值，留着
+!运营/天信日报skill/examples/*.html
 
 # 打包产物
-expert/*.zip
-*.zip
+**/*.zip
 
 # Python
 __pycache__/

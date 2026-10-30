@@ -1,7 +1,7 @@
 {
   "name": "tianxin-office-expert",
   "version": "1.0.0",
-  "description": "Tianxin CPA Office Expert — classifies document type before producing Word, PDF or web deliverables with firm branding; gives accounting and audit practice judgments; retrieves standards and regulator penalties; generates daily industry and opportunity briefs.",
+  "description": "Tianxin CPA Office Expert — one expert covering the firm's shared capabilities (document production, accounting practice judgment, standards retrieval, daily briefs). Business-line skills for audit, tax, bookkeeping, advisory and valuation are being added; this file declares which skills the expert loads.",
   "author": {
     "name": "天台天信会计师事务所",
     "email": ""

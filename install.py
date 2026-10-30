@@ -26,7 +26,7 @@ import shutil
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-EXPERT_SRC = os.path.join(HERE, 'expert')
+EXPERT_SRC = os.path.join(HERE, '专家')
 EXPERT_NAME = 'tianxin-office-expert'
 
 # 各 agent 的用户级 skills 目录，按探测优先级排列
@@ -63,32 +63,36 @@ def expand(p):
     return os.path.expanduser(os.path.expandvars(p))
 
 
-# 仓库根下这些目录不是技能，扫描时跳过
+# 这些目录不是技能仓库的一部分，递归扫描时整棵跳过
 NON_SKILL_DIRS = {
-    'docs', 'expert', '培训', '天信宣传片',
-    'tianxin-cpa-website-gh-pages', '.git', '.workbuddy',
+    'docs', '专家', '培训', '天信宣传片',
+    'tianxin-cpa-website-gh-pages', 'node_modules',
 }
 
 
 def list_skill_dirs():
-    """扫描仓库根下带 SKILL.md 的目录。
+    """递归扫描仓库里带 SKILL.md 的目录。
 
-    返回 [(安装名, 绝对路径, 源目录名)]。
+    仓库按业务线分层（公用/ 审计/ 税务/ 代理记账/ 企业咨询/ 评估造价/ 运营/），
+    技能散在这些目录下，所以必须递归。
+
+    返回 [(安装名, 绝对路径, 相对路径)]。
     安装名取 SKILL.md 的 name —— 源目录叫「天信文档skill」，装出来的必须是
     「天信文档与报告」，否则技能名跟 frontmatter 对不上，触发会出问题。
     """
     items = []
-    for name in sorted(os.listdir(HERE)):
-        if name in NON_SKILL_DIRS or name.startswith(('.', '_')):
+    for root, dirs, files in os.walk(HERE):
+        dirs[:] = [d for d in dirs
+                   if d not in NON_SKILL_DIRS and not d.startswith(('.', '_'))]
+        if 'SKILL.md' not in files:
             continue
-        p = os.path.join(HERE, name)
-        md = os.path.join(p, 'SKILL.md')
-        if not (os.path.isdir(p) and os.path.isfile(md)):
-            continue
+        md = os.path.join(root, 'SKILL.md')
         fm = read_frontmatter(md)
-        install_name = (fm.get('name') or '').strip() or name.removesuffix('skill')
-        items.append((install_name, p, name))
-    return items
+        base = os.path.basename(root)
+        install_name = (fm.get('name') or '').strip() or base.removesuffix('skill')
+        items.append((install_name, root, os.path.relpath(root, HERE).replace(os.sep, '/')))
+        dirs[:] = []          # 技能内部不会再嵌技能
+    return sorted(items, key=lambda x: x[2])
 
 
 def read_frontmatter(skill_md):
@@ -196,7 +200,7 @@ def write_manifest(dest, names):
     lines = [
         '# 天信办公专家 · 技能清单',
         '',
-        '本目录下的技能来自 https://github.com/cyhzzz/tianxin-skills',
+        '本目录下的技能来自 https://github.com/cyhzzz/tianxin-agents',
         '**不要在这里直接改**——下次同步会覆盖。要改回仓库改，再重新安装。',
         '',
         '| 技能 | 作用 |',
@@ -212,7 +216,7 @@ def write_manifest(dest, names):
         '## 更新',
         '',
         '```bash',
-        'cd tianxin-skills && git pull',
+        'cd tianxin-agents && git pull',
         'python install.py --global --force      # 或 --project <本目录>',
         '```',
     ]
@@ -375,37 +379,44 @@ def cmd_expert(args):
                 shutil.copy2(os.path.join(s, fn), os.path.join(d, fn))
             out(f'  {C_OK}✓{C_OFF} {sub}/  {C_DIM}{len(os.listdir(s))} 个文件{C_OFF}')
 
-    # 3) 技能。--force 时先清空 —— 否则上一版装过、这一版改名的技能会留成僵尸目录：
-    #    目录在、plugin.json 不指它，看着像装好了，实际是死文件。
+    # 3) 技能：**只装 plugin.json 声明的那几个**。
+    #    仓库按业务线分了 seven 个目录，全装会把还没做完的线也塞进专家。
+    with open(src_meta, encoding='utf-8') as f:
+        declared = json.load(f).get('skills', [])
+    if not declared:
+        die('plugin.json 没有声明任何 skills')
+
+    pool = {name: src for name, src, _ in list_skill_dirs()}
     skills_dest = os.path.join(dest, 'skills')
     if args.force and os.path.isdir(skills_dest):
-        shutil.rmtree(skills_dest)
+        shutil.rmtree(skills_dest)      # 不清场，改名过的技能会留成僵尸目录
     os.makedirs(skills_dest, exist_ok=True)
-    n_skill = 0
-    for name, s, _ in list_skill_dirs():
+
+    n_skill, missing = 0, []
+    for entry in declared:
+        name = entry.rstrip('/').split('/')[-1]
         if args.only and name != args.only:
+            continue
+        src = pool.get(name)
+        if not src:
+            missing.append(name)
             continue
         d = os.path.join(skills_dest, name)
         if os.path.isdir(d):
             shutil.rmtree(d)
-        shutil.copytree(s, d)
+        shutil.copytree(src, d)
         n_skill += 1
-    out(f'  {C_OK}✓{C_OFF} skills/  {C_DIM}{n_skill} 个技能{C_OFF}')
 
-    # 4) 防呆：plugin.json 声明的每个技能目录都得真实存在。
-    #    源目录名（天信文档skill）和安装名（天信文档与报告）不是一回事，
-    #    这里对不上，专家装上了也带不动技能，而且 WorkBuddy 不会报错。
-    with open(src_meta, encoding='utf-8') as f:
-        declared = json.load(f).get('skills', [])
-    missing = [d for d in declared
-               if not os.path.isdir(os.path.join(dest, d.lstrip('./').replace('/', os.sep)))]
     if missing:
-        out(f'  {C_ERR}✗{C_OFF} plugin.json 声明的技能目录不存在：')
-        for d in missing:
-            out(f'      {d}')
-        die('先修 expert/plugin.json 的 skills 路径')
+        out(f'  {C_ERR}✗{C_OFF} plugin.json 声明了但仓库里找不到：{"、".join(missing)}')
+        die('检查 expert/plugin.json 的 skills 路径，或补建对应技能')
 
-    # 5) 注册
+    out(f'  {C_OK}✓{C_OFF} skills/  {C_DIM}{n_skill} 个技能{C_OFF}')
+    if args.only:
+        out(f'  {C_WARN}⚠{C_OFF} 只装了 {args.only}，专家的人设会引用其余技能，'
+            f'完整安装去掉 --only')
+
+    # 4) 注册
     try:
         mf = register_in_marketplace(dest)
         out(f'  {C_OK}✓{C_OFF} 已注册到 {C_DIM}{mf}{C_OFF}')
