@@ -369,11 +369,17 @@ def check_skills(rep):
             rep.err(f'{rel}：frontmatter 缺 name')
         if not (fm.get('description') or '').strip():
             rep.err(f'{rel}：frontmatter 缺 description（缺了不会被自动触发）')
-        nref = len(os.listdir(os.path.join(HERE, rel, 'references'))) \
-            if os.path.isdir(os.path.join(HERE, rel, 'references')) else 0
-        nscr = len([x for x in os.listdir(os.path.join(HERE, rel, 'scripts'))
-                    if x.endswith(('.py', '.js'))]) \
-            if os.path.isdir(os.path.join(HERE, rel, 'scripts')) else 0
+        # 统计口径与 resolve() 一致：只算仓库里的文件（git ls-files），不算磁盘。
+        # 否则同一个技能在本机报「8 份 references」、在别人 clone 里报 7 份——
+        # 差的那一分是本地被 gitignore 的 push-secrets.json，它根本不会进仓库。
+        cached = {x for x in all_files_cache() if x.startswith(rel + '/')}
+        nref = len([x for x in cached
+                    if x.startswith(rel + '/references/')
+                    and x.count('/') == rel.count('/') + 2])
+        nscr = len([x for x in cached
+                    if x.startswith(rel + '/scripts/')
+                    and x.count('/') == rel.count('/') + 2
+                    and x.endswith(('.py', '.js'))])
         if nref:
             parts.append(f'{nref} 份 references')
         if nscr:
