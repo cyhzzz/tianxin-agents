@@ -11,19 +11,23 @@
 
 把仓库里的技能目录，按用户选的方式装到某个地方，然后验证能用。
 
-四种方式选一种，**由用户决定，不由你决定**。
+三种方式选一种，**由用户决定，不由你决定**。
 
 ---
 
 ## 第 0 步 · 摸清环境（不要跳过）
 
+**前提：所有命令都在仓库根目录执行**（就是含 `install.py` 和 `START-HERE.md` 的那一层）。
+clone 之后通常要 `cd tianxin-agents`。不在根目录，`find .` 和 `python install.py` 都会找不到东西。
+
 先确认三件事，再动手：
 
 ```bash
-pwd                      # 你现在在哪个目录
+pwd                      # 必须能看到 install.py。看不到就 cd 到仓库根
+ls install.py
 python --version         # 或 python3 --version；没有 Python 就记下来
 # 技能散在业务线目录下，要递归找（根目录直接 ls 是找不到的）
-find . -name SKILL.md -not -path './.git/*' | sort    # 应看到五条
+find . -name SKILL.md -not -path './.git/*' | sort    # 应看到六条
 ```
 
 同时查一下这台机器上已有的 skill 目录：
@@ -50,23 +54,24 @@ ls -d .workbuddy/skills 2>/dev/null
 先看清仓库的分层，再报给用户。**不要展开讲原理**：
 
 ```
-仓库分三层，共五个技能：
+仓库分三层，共六个技能：
 
 公用能力（三条，跨业务线都用）
 1. 天信文档与报告 —— 出 Word / PDF / 网页报告和演示，带天信品牌格式
 2. 天信实务知识库 —— 12 张会计审计实务判断卡
 3. 陈版主实务问答 —— 检索视野论坛的实务答疑和准则原文
 
-业务线（五条，已建一条）
-4. 天信税务申报 —— 算税 / 申报 / 勾稽 / 风险自查 / 发票审查（税务线）
-   审计、代理记账、企业咨询、评估造价四条线仍是骨架，
+业务线（五条，已建两条）
+4. 天信审计底稿 —— 审计计划 / 风险评估 / 四程序 / 抽样 / 报告质控 / 底稿索引
+5. 天信税务申报 —— 算税 / 申报 / 勾稽 / 风险自查 / 发票审查
+   代理记账、企业咨询、评估造价三条线仍是骨架，
    要建什么、缺什么材料，见各自目录下的 README.md
 
 运营（一条）
-5. 天信日报 —— 每日行业与商机情报
+6. 天信日报 —— 每日行业与商机情报
 ```
 
-**报完补一句**：五条业务线里只有税务建好了，其余四条还是空的。这不是漏装，是还没建——建业务线技能需要所里的底稿模板和作业流程，编不出来。
+**报完补一句**：五条业务线里建好了审计和税务。审计那份的底稿格式是通用框架，还没用所里真实底稿换过；代理记账、企业咨询、评估造价三条线是空的。这不是漏装，是还没建。
 
 ---
 
@@ -113,9 +118,25 @@ python install.py --global
 
 **手工版**（没有 Python 时）：
 
+技能散在业务线目录下，**没有一个统一的 `skills/` 目录**，所以要逐个复制，且**目标目录名要改成 `SKILL.md` 里的 `name`**：
+
 ```bash
 mkdir -p ~/.workbuddy/skills
-cp -r skills/* ~/.workbuddy/skills/
+cp -r 公用/天信文档skill         ~/.workbuddy/skills/天信文档与报告
+cp -r 公用/天信实务知识库skill    ~/.workbuddy/skills/tianxin-shiwu-kb
+cp -r 公用/陈版主实务问答skill    ~/.workbuddy/skills/chenyiwei-bbs
+cp -r 审计/天信审计底稿           ~/.workbuddy/skills/天信审计底稿
+cp -r 税务/天信税务申报skill      ~/.workbuddy/skills/天信税务申报
+cp -r 运营/天信日报skill          ~/.workbuddy/skills/tianxin-daily-brief
+```
+
+不方便手抄就用这一条，它会自己读 `name`：
+
+```bash
+find . -name SKILL.md -not -path './.git/*' | while read -r f; do
+  n=$(sed -n 's/^name: *//p' "$f" | head -1)
+  cp -r "$(dirname "$f")" "$HOME/.workbuddy/skills/$n"
+done
 ```
 
 然后把每个技能的 `SKILL.md` 打开看一眼，frontmatter 里 `name:` 和 `description:` 两行必须在。缺了 description，技能不会被自动触发。
@@ -166,8 +187,14 @@ python install.py --project /path/to/项目
 **手工版**：
 
 ```bash
-mkdir -p /path/to/项目/.workbuddy/skills
-cp -r skills/* /path/to/项目/.workbuddy/skills/
+P=/path/to/项目
+mkdir -p "$P/.workbuddy/skills"
+cp -r 公用/天信文档skill         "$P/.workbuddy/skills/天信文档与报告"
+cp -r 公用/天信实务知识库skill    "$P/.workbuddy/skills/tianxin-shiwu-kb"
+cp -r 公用/陈版主实务问答skill    "$P/.workbuddy/skills/chenyiwei-bbs"
+cp -r 审计/天信审计底稿           "$P/.workbuddy/skills/天信审计底稿"
+cp -r 税务/天信税务申报skill      "$P/.workbuddy/skills/天信税务申报"
+cp -r 运营/天信日报skill          "$P/.workbuddy/skills/tianxin-daily-brief"
 ```
 
 ---
@@ -180,14 +207,18 @@ python install.py --verify
 
 它会逐个报告：目录在不在、`SKILL.md` 在不在、frontmatter 的 name/description 能不能解析、技能自带的脚本依赖是否满足。
 
-看到这四个对勾才算装完：
+看到六个对勾才算装完（下面是一台已装好的机器上的真实输出）：
 
 ```
-✓ 天信文档与报告    SKILL.md 就位 · 10 份 references · 10 个脚本
-✓ 天信日报          SKILL.md 就位 · 需要网络
-✓ 天信实务知识库    SKILL.md 就位 · 12 张能力卡
-✓ 陈版主实务问答    SKILL.md 就位 · 需要访问 bbs.auditdog.cn
+  ✓ tianxin-shiwu-kb  tianxin-shiwu-kb · 12 张能力卡
+  ✓ 天信文档与报告  天信文档与报告 · 10 份 references · 11 个脚本
+  ✓ chenyiwei-bbs  chenyiwei-bbs
+  ✓ 天信审计底稿  天信审计底稿 · 7 份 references
+  ✓ 天信税务申报  天信税务申报 · 5 份 references
+  ✓ tianxin-daily-brief  tianxin-daily-brief · 8 份 references
 ```
+
+如果有 `⚠ 技能 xxx 装了 2 份`，说明之前用别的目录名装过，移走多余的那份。
 
 **然后做一次真实触发**，不要只看文件在不在：
 

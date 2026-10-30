@@ -1,7 +1,7 @@
 # AGENTS.md — 陈版主实务问答 Skill（天信所内赋能）
 
-> 本目录是 **陈版主实务问答** Skill 的单一物理落点，供天信（县城会计所）审计 / 会计实务答疑、准则原文与监管处罚检索使用。
-> WorkBuddy 通过 junction 加载，真实文件在 `天信本身/陈版主实务问答skill/`。
+> 本目录是 **陈版主实务问答** Skill 的单一物理落点（`天信本身/公用/` 下），供天信（县城会计所）审计 / 会计实务答疑、准则原文与监管处罚检索使用。
+> 安装由仓库根的 `install.py` 复制完成，**不是 junction**——见下方「加载方式」。
 
 ## 身份与来源（重要）
 
@@ -13,9 +13,11 @@
 
 ## 加载方式
 
-- 物理目录：`D:/AIproject/爸爸/天信本身/陈版主实务问答skill/`
-- 加载 junction：`D:/AIproject/爸爸/.workbuddy/skills/陈版主实务问答skill` → 指向上述物理目录
-- **勿删除该 junction**，否则 WorkBuddy 无法加载此 Skill（与 `天信日报skill` 同理）。
+- 源目录（开发位置，本目录）：`D:/AIproject/爸爸/天信本身/公用/陈版主实务问答skill/`
+- 安装目标：`~/.workbuddy/skills/chenyiwei-bbs/` —— **目录名取 frontmatter 的 `name`，不是源目录名**
+- 安装命令（仓库根执行）：`python install.py --global`
+- **是复制，不是 junction。** 早先的 junction 方案在 Windows 下会被文件锁卡住，已废弃。
+- 改了本目录内容后要重跑 `--global --force`——全局那份是副本，不会自动跟随。
 
 ## 能力边界（来自 SKILL.md 摘要）
 

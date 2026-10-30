@@ -509,10 +509,14 @@ def cmd_verify(args):
             out(f'  {C_WARN}⚠{C_OFF} 技能 {n} 装了 {len(dirs)} 份：{C_DIM}{"、".join(dirs)}{C_OFF}')
         out(f'  {C_DIM}  同一技能两份会让触发词重复。保留与 name 同名的那个，其余移走。{C_OFF}')
 
-    # 顺手看一眼专家包（装没装都报一声）
-    exp_dir = os.path.join(expert_plugins_dir(), EXPERT_NAME)
+    # 顺手看一眼专家包（装没装都报一声）。
+    # 查项目目录时跳过：专家是全局装的，跟某个项目目录无关，
+    # 在这里报只会让人以为「这个项目里也装了个专家」。
     out()
-    if os.path.isdir(exp_dir):
+    exp_dir = os.path.join(expert_plugins_dir(), EXPERT_NAME)
+    if args.project:
+        out(f'{C_DIM}· 专家包是全局装的，与项目目录无关，此处不检查{C_OFF}')
+    elif os.path.isdir(exp_dir):
         pj = os.path.join(exp_dir, '.codebuddy-plugin', 'plugin.json')
         nsk = 0
         sd = os.path.join(exp_dir, 'skills')
@@ -520,7 +524,7 @@ def cmd_verify(args):
             nsk = len([d for d in os.listdir(sd) if os.path.isdir(os.path.join(sd, d))])
         out(f'  {C_OK}✓{C_OFF} 专家包 天信办公专家  '
             f'{C_DIM}{nsk} 个技能 · {"元数据就位" if os.path.isfile(pj) else "缺 plugin.json"}{C_OFF}')
-    else:
+    elif not args.project:
         out(f'  {C_DIM}· 未安装 WorkBuddy 专家（需要的话跑 --expert）{C_OFF}')
 
     out()

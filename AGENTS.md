@@ -1,0 +1,142 @@
+# AGENTS.md — 天信本身（`tianxin-agents` 仓库）
+
+> 这个目录同时是两样东西：项目空间里的**「所内赋能」目录**，和 GitHub 上的**技能仓库**（`cyhzzz/tianxin-agents`）。
+> 所以规则有两条线——组织规则（这目录放什么不放什么）与工程规则（怎么加技能、怎么发布）。
+> **本文件是这一层的单一权威源。** 子技能目录各有自己的 `AGENTS.md`，只管该技能的细节，不管仓库级约定。
+
+## 1. 目录身份
+
+| | |
+|---|---|
+| 是什么 | 事务所自己的能力库：文档出版、实务判断、准则检索、税务作业、每日情报 |
+| 不是什么 | 不是客户项目。以天信名义服务的企业客户放 `../企业咨询/` |
+| 与开发的关系 | **本目录就是开发目录**。改完直接 `git commit && git push`，没有第二份副本、没有 sync 环节 |
+| 仓库 | `git@github.com:cyhzzz/tianxin-agents.git`（master） |
+
+**"没有第二份副本"是硬约定。** 曾建过 `tianxin-skills/skills/` 作为仓库镜像，靠 `sync.py` 单向同步，结果两边一分叉就说不清哪份是对的。已废弃。
+
+## 2. 仓库结构（三层）
+
+```
+天信本身/                        ← 仓库根 = 开发目录
+├── AGENTS.md                    ← 本文件（仓库级唯一权威源）
+├── README.md                    ← 给人看：有什么、怎么装
+├── START-HERE.md                ← 给 AI 看：拿到仓库后的执行说明书
+├── 一句话启用.md                 ← 可直接粘给别的 agent 的 prompt（含四种变体）
+├── install.py                   ← 安装器：--list / --global / --project / --expert / --verify
+├── LICENSE  .gitignore
+├── docs/                        ← 三种启用方式的详细步骤（5 份）
+│
+├── 公用/                        ← 跨业务线都用的能力
+│   ├── 天信文档skill/            → 装成「天信文档与报告」
+│   ├── 天信实务知识库skill/       → tianxin-shiwu-kb
+│   └── 陈版主实务问答skill/       → chenyiwei-bbs
+│
+├── 审计/                        ← 业务线（已建：底稿格式待用所里真实底稿替换）
+│   └── 天信审计底稿/             → 天信审计底稿
+├── 税务/                        ← 业务线（已建）
+│   └── 天信税务申报skill/         → 天信税务申报
+├── 代理记账/                     ← 待建（有 README 说明缺什么材料）
+├── 企业咨询/                     ← 待建
+├── 评估造价/                     ← 待建
+│
+├── 运营/
+│   └── 天信日报skill/            → tianxin-daily-brief
+│
+└── 专家/                        ← 一个专家（不是五个）
+    ├── plugin.json              ← 声明挂哪些技能，安装器照它复制并校验
+    ├── agents/tianxin-office-expert.md
+    └── avatars/tianxin-office-expert.png
+```
+
+**不进仓库的**（`.gitignore` 已排除）：`天信宣传片/`（92M）、`tianxin-cpa-website-gh-pages/`（105M，它有自己的仓库）、`培训/`、`.workbuddy/`、日报 `daily/` 产物、各技能的 docx/pdf/html 产物。
+
+## 3. 加一个新技能：改三处
+
+```
+① 在所属业务线目录下建 <名称>skill/SKILL.md
+     frontmatter 的 name 决定安装后的目录名，不取源目录名
+     例：源目录 天信文档skill/ → name: 天信文档与报告 → 装成 天信文档与报告/
+② 专家/plugin.json 的 skills 数组加一行 ./skills/<安装名>
+     不加这行，专家装上了也带不动这个技能，而且 WorkBuddy 不报错
+③ 更新三处清单：README.md、START-HERE.md、所属业务线 README.md
+     数字与技能名散落在多处，改漏了就会自相矛盾
+```
+
+**装完必须跑 `python install.py --verify`。** 它会报三件安装器不报的事：frontmatter 缺 name、缺 description（装上了但不会触发）、以及**同一技能装了两份**（历史改名留下的僵尸目录）。
+
+## 4. 安装与验证
+
+```bash
+python install.py --list          # 认出了哪些技能、各自属于哪条业务线
+python install.py --global        # 方式一：装到 ~/.workbuddy/skills/
+python install.py --expert        # 方式二：装成 WorkBuddy 专家
+python install.py --project <目录> # 方式三：装到项目级
+python install.py --verify        # 验收（可配 --project）
+```
+
+三种方式都实测通过。安装名一律取 `SKILL.md` 的 `frontmatter.name`，所以：
+- 目录叫 `天信文档skill`，装出来是 `天信文档与报告`
+- 目录叫 `天信日报skill`，装出来是 `tianxin-daily-brief`
+
+**`--force` 会先清空 `skills/` 再复制。** 只覆盖同名目录是不够的——上一版装过、这一版改名的技能会留成僵尸，看着像装好了，实际是死文件。
+
+## 5. 专家包：一个专家，不拆
+
+`专家/plugin.json` 声明挂哪些技能。目前挂 6 个（3 公用 + 审计 + 税务 + 日报）。加业务线技能时必须同步两处：`plugin.json` 的 `skills` 和 人设 `agents/*.md` 的 frontmatter。
+
+**为什么不拆成审计专家、税务专家、代账专家：** 所里 17 个人业务是交叉的，做审计的也接代账，代账的遇到报表问题要查审计准则。拆开之后，用户每次要先判断「我这个问题算哪条线」，判断错了就调不到能力。一个专家靠技能触发词自动路由，更省事。
+
+**加业务线技能时不用改人设的 `skills` 字段吗？** 要改。人设 `agents/tianxin-office-expert.md` 的 frontmatter 里有一份技能清单，`plugin.json` 里有一份，两处都要对。前者是给模型读的，后者是给安装器用的。
+
+修改后必须过校验：
+
+```bash
+python "$HOME/AppData/Local/Programs/WorkBuddy/resources/app.asar.unpacked/resources/plugins/workbuddy-builtin/skills/expert-manager/scripts/validate_expert.py" 专家
+```
+
+校验器有硬要求，不是建议：**tags 恰好 3 个、quickPrompts 恰好 3 个、displayDescription 中文 40–50 字**。给 4 个会直接报错。
+
+## 6. 子 AGENTS.md 与本文件的关系
+
+| 文件 | 管什么 |
+|---|---|
+| 本文件 | 仓库级：目录结构、加技能流程、安装发布、专家组装、红线 |
+| `公用/天信实务知识库skill/AGENTS.md` | 该技能的卡片结构与边界 |
+| `公用/陈版主实务问答skill/AGENTS.md` | 第三方来源与 API 用法、版权声明 |
+| `运营/天信日报skill/AGENTS.md` | 日报的模板、推送三通道、自检脚本 |
+
+**冲突时以本文件为准。** 子文件里的路径与加载方式如与这里不一致，是子文件过时了。
+
+## 7. 红线
+
+**工程侧**
+
+- **单一源。** 不在仓库外维护第二份技能副本；不引入单向同步工具。改完直接提交。
+- **进仓库前查敏感信息。** 客户名、手机号、邮箱、统一社会信用代码、真实 token 一律不入库。`push-secrets.json` 已被 `.gitignore` 排除——曾经差点把真实的 pushplus token 提交上去。
+- **产物不入库。** docx / pdf / html / png 能用脚本重新生成，只留 `.md` 源和少量示范件。仓库因此只有约 6 MB。
+
+**业务侧**
+
+- **没有真实材料不写业务线技能。** 审计底稿一所一样，代账流程取决于谁接单谁复核，编出来用一次就废，比不建更糟。每条待建业务线的 README 都写了需要什么材料。
+
+这条有一个已存在的例外要留意：`审计/天信审计底稿/` 是按通用审计实务编的，**不是所里真实底稿的提炼**。它的 README 里已明确标注，用之前要拿真实底稿对一遍。新建业务线技能不要重复这个做法。
+- **政策必须有文号和期限。** 税率、优惠政策、申报期限，每个数字都要能追到文件。「至 2027-12-31」意味着到期要重核，不是永久有效。2024 年就有代账客户因为生产生活性服务业加计抵减到期没停，被要求更正补税加滞纳金。
+- **不替代 CPA 判断。** AI 给框架、清单、检查项；结论和签字由人负责。重大疑难（跨境、重组、涉税刑事风险）提请合伙人复核。
+- **客户信息不外传。** 涉税数据、风险清单属商业秘密，不进示例、不进公共仓库。
+
+## 8. 踩过的坑（改这个仓库前先看一遍）
+
+| 坑 | 后果 | 正确做法 |
+|---|---|---|
+| `.gitignore` 行尾写注释 | **整行含注释被当成模式**，规则从未生效，旧目录一直没被忽略 | 注释单独一行 |
+| 改了技能位置，没改 START-HERE 的自检命令 | `ls -d */SKILL.md` 分层后在根目录匹配不到东西，AI 会误判"仓库里没有技能" | 自检命令用 `find . -name SKILL.md` 递归 |
+| 技能改名后重装，旧目录没清 | 同一技能两份，触发词重复，行为不可预期 | `--force` 清空后重装；`--verify` 会报重复 |
+| `plugin.json` 的 skills 写中文名，实际目录是 frontmatter name | 专家能打开、技能一个也加载不了，且不报错 | 一律写安装名；安装器已加校验，声明路径不存在就退出 |
+| Windows 文件锁导致 `mv`/`rm` 失败 | 目录被拆成两半，一半在旧路径一半在新路径 | 先 `git ls-tree` 对清单，合并后再删；被锁的目录加进 `.gitignore` 等重启 |
+| 硬编码"四个技能"这类数量 | 加一条业务线就全部自相矛盾 | 从 `plugin.json` 动态读 |
+| 封面的日期取"今天" | 6 月编的报告 10 月排版，封面印成 10 月 | 从正文抓「编制日期」，或显式传 `--date` |
+
+---
+
+> **上下文**：本层规则以本文件为准。跨项目偏好见 `~/.workbuddy/MEMORY.md`；项目空间整体结构见 `../.workbuddy/memory/MEMORY.md`。弃用 `CLAUDE.md`。

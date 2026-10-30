@@ -1,7 +1,7 @@
 # AGENTS.md — 天信日报skill（天台天信会计师事务所 · 所内赋能子项目）
 
 > 本目录是天信「所内赋能」的一个独立子项目：**天信每日行业与商机日报** Skill。
-> 它服务事务所自身（行业情报 + 商机捕捉 + 每日推送），**不对应某个付费客户**，归 `天信本身/`。
+> 它服务事务所自身（行业情报 + 商机捕捉 + 每日推送），**不对应某个付费客户**，归 `天信本身/运营/`。
 
 ---
 
@@ -9,11 +9,12 @@
 
 - **性质**：WorkBuddy Skill（自动化情报采集 + 三通道推送），是天信内部日常运营工具。
 - **归属**：`天信本身/`（所内赋能），非 `企业咨询/`（客户项目）。
-- **物理位置**：`D:/AIproject/爸爸/天信本身/天信日报skill/`（本目录即 git 本地仓）。
-- **加载方式**：WorkBuddy 只从 `.workbuddy/skills/` 加载 Skill，故此处通过
-  `D:/AIproject/爸爸/.workbuddy/skills/tianxin-daily-brief` 的 **目录 junction** 指回本目录。
-  **⚠️ 勿删除该 junction**，否则 Skill 消失、日报停更。
-- **版本控制**：远端 `git@github.com:cyhzzz/tianxin-daily-brief.git`（SSH）。本目录 `.git` 即仓库。
+- **物理位置**：`D:/AIproject/爸爸/天信本身/运营/天信日报skill/`。
+- **加载方式**：由仓库根的 `install.py` **复制**到 `~/.workbuddy/skills/tianxin-daily-brief/`
+ （目录名取 frontmatter 的 `name`）。**是复制，不是 junction**——早先的 junction 方案在
+ Windows 下会被文件锁卡住，已废弃。改了本目录内容后要重跑 `--global --force` 才生效。
+- **版本控制**：随 `cyhzzz/tianxin-agents` 仓库走（本目录不再有独立 `.git`）。
+ 原独立仓库 `cyhzzz/tianxin-daily-brief` 已停止更新，历史仅作存档；如已 archive 则不要再推。
 
 ---
 
@@ -42,7 +43,7 @@
 ├── daily/                    # 每日产出（html + md + latest.html）
 ├── examples/                 # 样例看板（与模板/产出分目录）
 ├── references/               # 推送规范、推送助手、自检脚本、信源清单
-└── .git/                     # 本地仓（remote: cyhzzz/tianxin-daily-brief）
+└── （无独立 .git）            # 随 cyhzzz/tianxin-agents 仓库版本控制
 ```
 
 ---

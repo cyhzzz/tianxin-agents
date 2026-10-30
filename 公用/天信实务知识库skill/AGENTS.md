@@ -1,7 +1,7 @@
 # AGENTS.md — 天信实务知识库 Skill
 
-> 本目录是「天信实务知识库」Skill 的物理落点，与「陈版主实务问答 Skill」同级，供天信审计 / 会计 / 税务实务检索与系统化判断。
-> WorkBuddy 通过 junction 加载，真实文件在 `天信本身/天信实务知识库skill/`。
+> 本目录是「天信实务知识库」Skill 的物理落点，在 `天信本身/公用/` 下，与「天信文档」「陈版主实务问答」同级，供天信审计 / 会计 / 税务实务检索与系统化判断。
+> 安装由仓库根的 `install.py` 复制完成，**不是 junction**——见下方「加载方式」。
 
 ## 结构
 
@@ -11,9 +11,11 @@
 
 ## 加载方式
 
-- 物理目录：`D:/AIproject/爸爸/天信本身/天信实务知识库skill/`
-- 加载 junction：`D:/AIproject/爸爸/.workbuddy/skills/天信实务知识库skill` → 指向上述物理目录
-- **勿删除该 junction**，否则 WorkBuddy 无法加载此 Skill（与 天信日报skill / 陈版主实务问答skill 同理）。
+- 源目录（开发位置，本目录）：`D:/AIproject/爸爸/天信本身/公用/天信实务知识库skill/`
+- 安装目标：`~/.workbuddy/skills/tianxin-shiwu-kb/` —— **目录名取 frontmatter 的 `name`，不是源目录名**
+- 安装命令（仓库根执行）：`python install.py --global`
+- **是复制，不是 junction。** 早先用 junction 指向本目录，结果 Windows 文件锁导致技能目录移不动、被拆成两半，已改为复制安装。
+- 改了本目录的内容后，要重跑 `--global --force` 才生效——全局那份是副本，不会自动跟随。
 
 ## 边界
 

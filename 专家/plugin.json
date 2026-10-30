@@ -1,7 +1,7 @@
 {
   "name": "tianxin-office-expert",
-  "version": "1.1.0",
-  "description": "Tianxin CPA Office Expert — one expert covering the firm's shared capabilities (document production, accounting practice judgment, standards retrieval, daily briefs) plus the tax business line (tax computation, filing, self-check, invoice review). Audit, bookkeeping, advisory and valuation lines are being added; this file declares which skills the expert loads.",
+  "version": "1.2.0",
+  "description": "Tianxin CPA Office Expert — one expert covering the firm's shared capabilities (document production, accounting practice judgment, standards retrieval, daily briefs) plus two business lines: audit working papers and tax filing. Bookkeeping, advisory and valuation lines are being added; this file declares which skills the expert loads.",
   "author": {
     "name": "天台天信会计师事务所",
     "email": ""
@@ -13,6 +13,7 @@
     "./skills/天信文档与报告",
     "./skills/tianxin-shiwu-kb",
     "./skills/chenyiwei-bbs",
+    "./skills/天信审计底稿",
     "./skills/天信税务申报",
     "./skills/tianxin-daily-brief"
   ],
@@ -27,8 +28,8 @@
     "zh": "天信会计师事务所·文档·实务·税务"
   },
   "displayDescription": {
-    "en": "Tianxin CPA assistant: lays out Word/PDF reports, judges accounting treatments, computes and files taxes with invoice risk checks, and retrieves authoritative Q&A.",
-    "zh": "天信所实务助手：出 Word／PDF 报告、判会计处理、算税报税、查发票与税务风险、检索准则原文。"
+    "en": "Tianxin CPA assistant: produces reports, builds audit working papers, computes and files taxes, judges accounting treatments, retrieves standards.",
+    "zh": "天信所实务助手：出报告、编审计底稿、算税报税查发票风险、判会计处理、检索准则原文。"
   },
   "avatar": "avatars/tianxin-office-expert.png",
   "categoryId": "08-FinanceInvestment",
@@ -39,16 +40,16 @@
   "plugin": "tianxin-office-expert",
   "tags": [
     {
+      "en": "Audit Working Papers",
+      "zh": "审计底稿与程序"
+    },
+    {
       "en": "Tax Filing & Compliance",
       "zh": "税务申报与合规"
     },
     {
-      "en": "Audit & Due Diligence Reports",
-      "zh": "审计与尽调报告"
-    },
-    {
-      "en": "Accounting Practice Judgment",
-      "zh": "会计实务判断"
+      "en": "Document & Practice",
+      "zh": "文档出版与实务判断"
     }
   ],
   "quickPrompts": [
