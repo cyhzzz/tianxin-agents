@@ -6,31 +6,38 @@
 
 **目录**：`代理记账/天信代账作业skill/`，frontmatter name `天信代账作业`，已挂入「天信办公专家」专家（`专家/plugin.json`）。
 
-**融合来源**：平台「记账账」财务会计专家 7 大能力模块（凭证、核对、报表、差异、结账、审计支持、总流程）+ 天信「代理记账与工商顾问」的工商税务能力，蒸馏为天信代账场景，并遵循本线「弹性编排」核心。
+**两层结构，不融合**：
 
-### 能力模块（13 个 references）
+- **上游原文** `references/上游/finance-1.0.0/` —— 平台「记账账」财务会计专家的 7 个能力模块，**2115 行原样收录，一字未改**（Apache-2.0，含 LICENSE）。来源、校验和、逐文件适用性见其中 `SOURCE.md`。
+- **天信适配层** `references/01~13/` —— 在本所怎么用：从哪进、谁复核、什么算做完。
 
-| # | 模块 | 对应 reference |
-|---|---|---|
-| 1 | 弹性编排与接单判定 | references/01 |
-| 2 | 建账与初始化 | references/02 |
-| 3 | 票据处理与审核 | references/03 |
-| 4 | 凭证编制 | references/04 |
-| 5 | 账户核对 | references/05 |
-| 6 | 财务报表 | references/06 |
-| 7 | 差异分析与经营解读 | references/07 |
-| 8 | 月末结账与报税节点 | references/08 |
-| 9 | 税务申报（桥接复用天信税务申报） | references/09 |
-| 10 | 工商办理 | references/10 |
-| 11 | 交接与年度归档 | references/11 |
-| 12 | 鉴证配合（替代 SOX，适配国内） | references/12 |
-| 13 | 政策速递与合规预警 | references/13 |
+早期做法是"读懂了再写一篇中文"，2221 行压成 498 行，丢掉了审批矩阵、复核清单、常见错误自查。现在改成原文当字典查、适配层管流程，两层不合并。
+
+### 能力模块（13 个 references + 1 包上游原文）
+
+| # | 模块 | 天信适配 | 上游原文 |
+|---|---|---|---|
+| 1 | 弹性编排与接单判定 | references/01 | — 天信原创 |
+| 2 | 建账与初始化 | references/02 | `skills/finance-workflows` |
+| 3 | 票据处理与审核 | references/03 | ⚠ 无原文（待补） |
+| 4 | 凭证编制 | references/04 | `skills/journal-entry-prep` |
+| 5 | 账户核对 | references/05 | `skills/reconciliation` |
+| 6 | 财务报表 | references/06 | `skills/financial-statements` · 仅方法论 |
+| 7 | 差异分析与经营解读 | references/07 | `skills/variance-analysis` |
+| 8 | 月末结账与报税节点 | references/08 | `skills/close-management` |
+| 9 | 税务申报（桥接天信税务申报） | references/09 | 内部桥接 |
+| 10 | 工商办理 | references/10 | ⚠ 无原文（待补） |
+| 11 | 交接与年度归档 | references/11 | — 天信原创 |
+| 12 | 鉴证配合 | references/12 | `skills/audit-support` · 仅方法论 |
+| 13 | 政策速递与合规预警 | references/13 | ⚠ 无原文（待补） |
+
+> 上游是 US GAAP / SOX 语境。`audit-support`（SOX 404 内控）与 `financial-statements`（ASC 842/606 美式报表格式）**只当方法论参考**，天信的报表格式、科目、税务口径一律以适配层为准。
 
 ### 复用关系（不重造轮子）
 
 - **税务申报（模块 9）**：直接桥接 `税务/天信税务申报skill/` 的 5 份参考（税率优惠 / 税种计算 / 申报勾稽 / 风险指标 / 发票审查），本线只做代账场景封装（哪客户、哪税种、哪期、资料齐缺）。
 - **实务判断**：复用 `公用/天信实务知识库skill` 的报表编制、职工薪酬、政府补助、资产减值、差错更正 5 张卡。
-- **科目表 / 分录模板**：复用 `tax-compliance-engine`。
+- **科目表 / 分录模板**：复用 `tax-compliance-engine`（在 `tax-compliance-team` 包里，尚未收录原文，等做税务线时一并收）
 - **审计底稿**：代账客户被审时引用 `审计/天信审计底稿/`。
 
 ## 这条线的核心是「弹性编排」
@@ -58,4 +65,4 @@
 
 - `公用/天信实务知识库skill` 里的报表编制、职工薪酬、政府补助、资产减值、差错更正 5 张卡
 - 可复用 `tax-compliance-engine` 的科目表与会计分录模板
-- 平台「记账账」专家的 7 大能力模块（已融合进本 skill）
+- 平台「记账账」专家的 7 大能力模块（2115 行原文已原样收录于 `references/上游/finance-1.0.0/`）
