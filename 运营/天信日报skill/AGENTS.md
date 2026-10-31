@@ -13,8 +13,10 @@
 - **加载方式**：由仓库根的 `install.py` **复制**到 `~/.workbuddy/skills/tianxin-daily-brief/`
  （目录名取 frontmatter 的 `name`）。**是复制，不是 junction**——早先的 junction 方案在
  Windows 下会被文件锁卡住，已废弃。改了本目录内容后要重跑 `--global --force` 才生效。
-- **版本控制**：随 `cyhzzz/tianxin-agents` 仓库走（本目录不再有独立 `.git`）。
- 原独立仓库 `cyhzzz/tianxin-daily-brief` 已停止更新，历史仅作存档；如已 archive 则不要再推。
+- **版本控制 / 双仓发布**：本目录随 `cyhzzz/tianxin-agents` 仓库走（本目录不再有独立 `.git`），**同时镜像发布到独立仓 `cyhzzz/tianxin-daily-brief`**（作为日报线上发布仓 / 每日产出归档）。
+  - 改了本目录内容后两件事都要做：① 提交 `tianxin-agents`；② 跑 `./sync-daily-brief.sh` 把 skill 子树镜像到本地 `tianxin-daily-brief` 克隆并推送 GitHub（脚本位置见本目录 `sync-daily-brief.sh`）。
+  - 本地 daily-brief 克隆位置：`爸爸/tianxin-daily-brief/`（`D:/AIproject/爸爸/tianxin-daily-brief/`）。
+  - ⚠️ 同步**只覆盖 skill 代码**（SKILL.md / references / templates / assets / examples），**不碰** daily-brief 仓里的根级 `tianxin-dashboard.html`、`日报-*.md` 与 `daily/` 产出——那些由日报生成流程另写，避免覆盖某天归档。
 
 ---
 
