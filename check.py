@@ -7,7 +7,7 @@
     python check.py            # 全量检查
     python check.py --quiet    # 只报错误
 
-查九项。都是「人眼扫一遍必漏、而且不报错」的错：
+查十二项。都是「人眼扫一遍必漏、而且不报错」的错：
 
   1–2. 链接与路径引用断没断
        Markdown 链接，以及正文用反引号写的路径（如 `references/01-xxx.md`）。
@@ -25,6 +25,9 @@
   7.   文档里硬编码的技能数量、有没有分层重构前的失效命令
   8.   每个 SKILL.md 末尾有没有「反馈与改进」节（PR 回传机制的触发器）
   9.   待处理改进/ 里的提案有没有放成死目录（超过 30 天提醒）
+  10.  上游原文与 上游/README.md 的校验和对不对得上、有没有偷加文件
+  11.  技能能不能独立装走（有没有跨业务线引用）
+  12.  10 个技能的触发词有没有撞车（完全相同 / 子串包含）——路由靠的就是它
 
 不依赖任何第三方库。Python 3.8+。
 """
@@ -712,6 +715,88 @@ def check_self_contained(rep):
         rep.info('改法：能自己做完的写全，做不了的写清转给谁——别写"去读某某技能"')
 
 
+# ── 12. 触发词不打架 ────────────────────────────────────
+
+def skill_triggers():
+    """[(安装名, {触发词})] —— 从每个 SKILL.md 的 description 里取「触发词：」一串。
+
+    description 可能是折叠块（`description: >`），所以不指望 read_frontmatter
+    逐行取值，直接在 frontmatter 原文上抓到块尾再切。
+    """
+    out = []
+    for name, rel in find_skills():
+        md = os.path.join(HERE, rel, 'SKILL.md')
+        try:
+            txt = open(md, encoding='utf-8').read()
+        except OSError:
+            continue
+        fm = txt.split('---')[1] if txt.startswith('---') else txt
+        # 只管到下一个顶层 key（version:/license:）或 frontmatter 结束，
+        # 否则会把 version 行也当成触发词
+        m = re.search(r'触发词[:：]\s*(.+?)(?=\n[A-Za-z_-]+\s*:|\n---|\Z)', fm, re.S)
+        trig = set()
+        if m:
+            for t in re.split(r'[、,，\n]', m.group(1)):
+                t = re.sub(r'\s+', '', t.strip().strip('。'))
+                if t and len(t) <= 20 and not re.search(r'[:：#`*（）()]', t):
+                    trig.add(t)
+        out.append((name, trig))
+    return out
+
+
+def check_triggers(rep):
+    """触发词是唯一的路由依据（AGENTS.md §3.2），撞车不能靠自觉。
+
+    同一个词挂在两个技能上，模型挑哪个全凭运气，用户看到的是"同一个问题
+    两次回答不一样"。包含关系更隐蔽：「报表」和「合并报表」同时存在时，
+    说「合并报表」两个都匹配。
+
+    误报是有的——业务上真有两边都沾的词。所以判据只认两条硬特征：
+      · 完全相同 → 错误
+      · 一方是另一方的子串（且短的那个 ≥3 字）→ 提醒
+    """
+    items = skill_triggers()
+    if not items:
+        return
+
+    for name, trig in items:
+        if not trig:
+            rep.warn(f'{name} 没写「触发词」。description 里没有触发词，'
+                     f'这个技能只能靠语义碰运气，装了也可能不触发')
+
+    seen = {}
+    for name, trig in items:
+        for t in trig:
+            seen.setdefault(t, []).append(name)
+
+    dup = {t: n for t, n in seen.items() if len(n) > 1}
+    for t, names in sorted(dup.items()):
+        rep.err(f'触发词「{t}」同时挂在 {len(names)} 个技能上：{"、".join(sorted(names))}。'
+                f'同一个问题会随机走一条线——按 AGENTS.md §3.2 拆开：'
+                f'做作业归业务线、查原文归检索、口径归知识库')
+
+    allt = [(t, n) for n, trig in items for t in trig]
+    near = []
+    for t1, n1 in allt:
+        for t2, n2 in allt:
+            if n1 == n2 or t1 == t2:
+                continue
+            short, long_ = (t1, t2) if len(t1) < len(t2) else (t2, t1)
+            if len(short) >= 3 and short in long_:
+                near.append((short, n1 if short == t1 else n2, long_, n2 if short == t1 else n1))
+    seen_pair = set()
+    for short, ns, long_, nl in near:
+        key = tuple(sorted([(short, ns), (long_, nl)]))
+        if key in seen_pair:
+            continue
+        seen_pair.add(key)
+        rep.warn(f'触发词「{short}」（{ns}）是「{long_}」（{nl}）的子串：'
+                 f'说后者时两个都命中。要么把短词写具体，要么在 description 边界句里说清谁让谁')
+
+    if not dup and not near:
+        rep.ok(f'{len(items)} 个技能的触发词互不重叠（无完全相同、无子串包含）')
+
+
 # ── main ────────────────────────────────────────────────
 
 def main():
@@ -748,6 +833,9 @@ def main():
 
     hr('11. 技能自包含')
     check_self_contained(rep)
+
+    hr('12. 触发词不打架')
+    check_triggers(rep)
 
     hr()
     if rep.errors:
