@@ -136,15 +136,15 @@ python install.py              # 不给参数就是它；--global 是等价的�
 
 ```bash
 mkdir -p ~/.workbuddy/skills
-cp -r 公用/天信文档skill         ~/.workbuddy/skills/天信文档与报告
+cp -r 公用/天信文档skill         ~/.workbuddy/skills/tianxin-docs
 cp -r 公用/天信实务知识库skill    ~/.workbuddy/skills/tianxin-shiwu-kb
 cp -r 公用/陈版主实务问答skill    ~/.workbuddy/skills/chenyiwei-bbs
-cp -r 审计/天信审计底稿           ~/.workbuddy/skills/天信审计底稿
-cp -r 税务/天信税务申报skill      ~/.workbuddy/skills/天信税务申报
-cp -r 代理记账/天信代账作业skill   ~/.workbuddy/skills/天信代账作业
-cp -r 会计核算/天信会计核算skill   ~/.workbuddy/skills/天信会计核算
-cp -r 评估造价/天信评估造价skill   ~/.workbuddy/skills/天信评估造价
-cp -r 企业咨询/天信企业咨询skill   ~/.workbuddy/skills/天信企业咨询
+cp -r 审计/天信审计底稿           ~/.workbuddy/skills/tianxin-audit
+cp -r 税务/天信税务申报skill      ~/.workbuddy/skills/tianxin-tax
+cp -r 代理记账/天信代账作业skill   ~/.workbuddy/skills/tianxin-bookkeeping
+cp -r 会计核算/天信会计核算skill   ~/.workbuddy/skills/tianxin-accounting
+cp -r 评估造价/天信评估造价skill   ~/.workbuddy/skills/tianxin-appraisal
+cp -r 企业咨询/天信企业咨询skill   ~/.workbuddy/skills/tianxin-consulting
 cp -r 运营/天信日报skill          ~/.workbuddy/skills/tianxin-daily-brief
 ```
 
@@ -207,11 +207,11 @@ python install.py --project /path/to/项目
 ```bash
 P=/path/to/项目
 mkdir -p "$P/.workbuddy/skills"
-cp -r 公用/天信文档skill         "$P/.workbuddy/skills/天信文档与报告"
+cp -r 公用/天信文档skill         "$P/.workbuddy/skills/tianxin-docs"
 cp -r 公用/天信实务知识库skill    "$P/.workbuddy/skills/tianxin-shiwu-kb"
 cp -r 公用/陈版主实务问答skill    "$P/.workbuddy/skills/chenyiwei-bbs"
-cp -r 审计/天信审计底稿           "$P/.workbuddy/skills/天信审计底稿"
-cp -r 税务/天信税务申报skill      "$P/.workbuddy/skills/天信税务申报"
+cp -r 审计/天信审计底稿           "$P/.workbuddy/skills/tianxin-audit"
+cp -r 税务/天信税务申报skill      "$P/.workbuddy/skills/tianxin-tax"
 cp -r 运营/天信日报skill          "$P/.workbuddy/skills/tianxin-daily-brief"
 ```
 

@@ -8,7 +8,7 @@ profession:
   en: "CPA Firm Documentation, Practice & Tax Specialist"
   zh: "天信会计师事务所·文档·实务·税务"
 maxTurns: 80
-skills: [天信文档与报告, tianxin-shiwu-kb, chenyiwei-bbs, 天信审计底稿, 天信税务申报, 天信代账作业, 天信会计核算, 天信评估造价, 天信企业咨询, tianxin-daily-brief]
+skills: [tianxin-docs, tianxin-shiwu-kb, chenyiwei-bbs, tianxin-audit, tianxin-tax, tianxin-bookkeeping, tianxin-accounting, tianxin-appraisal, tianxin-consulting, tianxin-daily-brief]
 ---
 
 # 天信办公专家

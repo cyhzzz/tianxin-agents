@@ -16,7 +16,7 @@
 **--proposal**：你发现了问题，但没直接改文件。交的是一份「该改什么」的说明，
 落到 `待处理改进/`，由合伙人核实后改。适合政策类、拿不准的判断类。
 
-**--from-installed**：你已经把 `~/.workbuddy/skills/天信代账作业/` 里的文件直接改好了
+**--from-installed**：你已经把 `~/.workbuddy/skills/tianxin-bookkeeping/` 里的文件直接改好了
 （这是常见情况——AI 在会话里顺手就把技能文件改了）。这个模式把改过的文件
 复制回仓库对应位置，产生的 PR 是**可以逐行 review 的真实改动**。
 
@@ -123,7 +123,7 @@ def parse_proposal(path):
     for m in re.finditer(r'^\s*\|?\s*\*{0,2}(技能|类型|位置|提交人|日期)\*{0,2}\s*\|?\s*[：:]?\s*\|?\s*(.*?)\s*\|?\s*$',
                          text, re.M):
         k, v = m.group(1), m.group(2).strip()
-        if v and v not in ('（填 frontmatter 的 name，如 `天信代账作业`）',
+        if v and v not in ('（填 frontmatter 的 name，如 `tianxin-bookkeeping`）',
                            '（可选）', '（`references/03-xxx.md` 第 N 行，或 `SKILL.md` 第 X 节）'):
             fields.setdefault(k, v)
     has_now = bool(re.search(r'现在怎么写的', text))
