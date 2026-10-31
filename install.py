@@ -28,6 +28,7 @@
 """
 
 import argparse
+import hashlib
 import json
 import os
 import re
@@ -157,7 +158,8 @@ def detect_user_skills_dir():
     for key, (p, label) in TARGETS.items():
         full = expand(p)
         if os.path.isdir(full):
-            return full, label
+            # 统一成反斜杠，否则打印出来是 C:\Users\x/.workbuddy/skills 这种半拉子
+            return os.path.normpath(full), label
     return None, None
 
 
@@ -185,10 +187,32 @@ def resolve_target(args, want_global=True):
 
 # ── 安装 ──────────────────────────────────────────────────
 
+def same_tree(a, b):
+    """两边是否完全一致（文件名 + 内容）。用来区分「已是最新」和「装了旧版」。"""
+    def snap(root):
+        items = {}
+        for dirpath, _, files in os.walk(root):
+            for fn in files:
+                p = os.path.join(dirpath, fn)
+                rel = os.path.relpath(p, root).replace(os.sep, '/')
+                try:
+                    with open(p, 'rb') as f:
+                        items[rel] = hashlib.sha1(f.read()).hexdigest()
+                except OSError:
+                    items[rel] = '?'
+        return items
+    return snap(a) == snap(b)
+
+
 def copy_skills(dest, force=False, only=None):
-    """把 skills/* 复制到 dest。返回 (已装, 跳过, 覆盖)"""
+    """把 skills/* 复制到 dest。
+
+    返回 (新装, 已是最新, 有待更新, 覆盖)。
+    「已存在」分两种：内容一样（跳过，不用吭声）和内容不一样（旧版，要提示覆盖）——
+    早先不分青红皂白一律跳过，结果用户 clone 了新仓库重跑一遍，看到的还是旧技能。
+    """
     os.makedirs(dest, exist_ok=True)
-    installed, skipped, replaced = [], [], []
+    installed, uptodate, outdated, replaced = [], [], [], []
 
     for name, src, _ in list_skill_dirs():
         if only and name != only:
@@ -196,7 +220,10 @@ def copy_skills(dest, force=False, only=None):
         target = os.path.join(dest, name)
         existed = os.path.isdir(target)
         if existed and not force:
-            skipped.append(name)
+            if same_tree(src, target):
+                uptodate.append(name)
+            else:
+                outdated.append(name)
             continue
         if existed:
             shutil.rmtree(target)
@@ -204,7 +231,7 @@ def copy_skills(dest, force=False, only=None):
         shutil.copytree(src, target)
         if not existed:
             installed.append(name)
-    return installed, skipped, replaced
+    return installed, uptodate, outdated, replaced
 
 
 def write_manifest(dest, names):
@@ -283,32 +310,40 @@ def cmd_install(args, global_scope, tail=True):
 
     scope = '本机全局' if global_scope else f'项目级（{expand(args.project)}）'
     out()
-    out(f'{C_BOLD}安装到{C_OFF}  {dest}')
+    out(f'{C_BOLD}安装到{C_OFF}  {os.path.normpath(dest)}')
     out(f'{C_DIM}范围：{scope} · 平台：{label}{C_OFF}')
     hr()
 
-    installed, skipped, replaced = copy_skills(dest, force=args.force, only=args.only)
+    installed, uptodate, outdated, replaced = copy_skills(
+        dest, force=args.force, only=args.only)
 
     for n in installed:
         out(f'  {C_OK}✓{C_OFF} 装入  {n}')
     for n in replaced:
         out(f'  {C_OK}✓{C_OFF} 覆盖  {n}')
-    for n in skipped:
-        out(f'  {C_WARN}·{C_OFF} 跳过  {n}  {C_DIM}（已存在，要覆盖加 --force）{C_OFF}')
+    if uptodate:
+        # 内容一致的不逐个刷屏，一行带过
+        out(f'  {C_DIM}· 已是最新  {len(uptodate)} 个：{"、".join(uptodate)}{C_OFF}')
+    for n in outdated:
+        out(f'  {C_WARN}↑{C_OFF} 待更新  {n}  {C_DIM}（仓库版本已变，加 --force 覆盖）{C_OFF}')
 
     if not (installed or replaced):
         out()
-        out(f'{C_WARN}没有任何技能被写入。{C_OFF}')
-        if skipped:
-            out(f'{C_DIM}技能都已存在。确认是旧版就重跑并加 --force。{C_OFF}')
-        return 0, len(skipped), dest
+        if outdated:
+            out(f'{C_WARN}已装的是旧版，本次没有覆盖（保护你本地的改动）。{C_OFF}')
+            out(f'{C_DIM}要升级：python install.py --force{C_OFF}')
+        elif uptodate:
+            out(f'{C_OK}全部 {len(uptodate)} 个技能都已是最新，不用重装。{C_OFF}')
+        else:
+            out(f'{C_WARN}没有可装的技能。{C_OFF}')
+        return 0, len(uptodate), len(outdated), dest
 
     write_manifest(dest, installed + replaced)
     n_total = len(installed) + len(replaced)
 
     if not tail:
         # 汇总由调用方统一打，这里不再重复一遍「装好了」
-        return n_total, len(skipped), dest
+        return n_total, len(uptodate), len(outdated), dest
 
     out()
     hr()
@@ -325,7 +360,7 @@ def cmd_install(args, global_scope, tail=True):
     out()
     out(f'{C_DIM}验收：python install.py --verify{" --project " + expand(args.project) if not global_scope else ""}{C_OFF}')
     out()
-    return len(installed) + len(replaced), len(skipped), dest
+    return len(installed) + len(replaced), len(uptodate), len(outdated), dest
 
 
 def expert_plugins_dir():
@@ -387,6 +422,9 @@ def cmd_expert(args, tail=True):
     out(f'  目标：{dest}')
     hr()
 
+    # 注意：专家目录里的 .created-by-session 是平台自己维护的登记信息，
+    # 由 WorkBuddy 在会话里创建/清理，我们既不该复制也不该补写——
+    # 实测手写一个进去，几秒内就被平台删掉，白费劲。
     if os.path.isdir(dest) and not args.force:
         out(f'  {C_WARN}·{C_OFF} 专家目录已存在，只做增量覆盖（加 --force 全量重装）')
 
@@ -455,6 +493,8 @@ def cmd_expert(args, tail=True):
     except Exception as e:
         out(f'  {C_WARN}⚠{C_OFF} 自动注册失败：{e}')
         out(f'{C_DIM}    可在 WorkBuddy 的「专家中心 → 我的专家」里手动加载{C_OFF}')
+
+    # 5) 这一步没别的了：.created-by-session 归平台管，不去碰
 
     if not tail:
         return True, dest
@@ -648,7 +688,7 @@ def cmd_default(args):
         out(f'  {C_DIM}① 全部技能 → 本机全局（{label or "未探测到平台"}）'
             f'   ② 这里不是 WorkBuddy，跳过专家{C_OFF}')
 
-    n_inst, n_skip, dest = cmd_install(args, global_scope=True, tail=False)
+    n_inst, n_up, n_od, dest = cmd_install(args, global_scope=True, tail=False)
 
     expert_dir = None
     if wb and not args.no_expert:
@@ -658,7 +698,13 @@ def cmd_default(args):
     out()
     hr()
     out(f'{C_OK}装完了{C_OFF}')
-    out(f'  {C_BOLD}技能{C_OFF}  {n_inst} 个新装 · {n_skip} 个已存在  {C_DIM}→ {dest}{C_OFF}')
+    tail_txt = f'{n_inst} 个新装 · {n_up} 个已是最新'
+    if n_od:
+        tail_txt += f' · {n_od} 个待更新'
+    out(f'  {C_BOLD}技能{C_OFF}  {tail_txt}  {C_DIM}→ {os.path.normpath(dest)}{C_OFF}')
+    if n_od:
+        out(f'  {C_WARN}仓库里有 {n_od} 个技能内容变了，本次按「不覆盖本地改动」跳过；'
+            f'要升级跑 python install.py --force{C_OFF}')
     if expert_dir:
         out(f'  {C_BOLD}专家{C_OFF}  天信办公专家  {C_DIM}→ {expert_dir}{C_OFF}')
     elif wb:

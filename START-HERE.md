@@ -128,7 +128,7 @@ AI 工具。这时问一句「你平时用哪个 AI 工具」，别猜——装�
 python install.py --global     # 只装技能，不碰专家、不提示日报
 ```
 
-它会做三件事：把技能目录复制到用户级 skills 目录、跳过已存在的同名技能（除非加 `--force`）、逐个校验 `SKILL.md` 的 frontmatter。
+它会做三件事：把技能目录复制到用户级 skills 目录、对已存在的同名技能先比内容（一样就跳过，**不一样会明确告诉你「待更新」并提示加 `--force`**，不会闷声装个旧版）、逐个校验 `SKILL.md` 的 frontmatter。
 
 注意安装后的目录名取自 `SKILL.md` 的 `name`，不是源目录名——`天信文档skill/` 装出来是 `tianxin-docs/`。
 
