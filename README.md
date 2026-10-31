@@ -5,7 +5,7 @@
 > **不想读文档？** 把这句话粘给任何能跑命令的 AI，它会替你装好：
 >
 > ```
-> 克隆 https://github.com/cyhzzz/tianxin-agents 到本地，进仓库根目录读 START-HERE.md，按里面的默认方式把全部技能装到本机全局，装完跑 python install.py --verify 验收，最后告诉我另外两种装法分别在什么时候该换成。
+> 克隆 https://github.com/cyhzzz/tianxin-agents 到本地，进仓库根目录读 START-HERE.md，按里面的默认装法装好（全部技能装全局 + WorkBuddy 下加装专家），装完跑 python install.py --verify 验收，最后告诉我另外几种装法分别在什么时候该换成。
 > ```
 >
 > 更多说法（对方不能跑命令、已想好装哪种、只想先看看）见 [`一句话启用.md`](一句话启用.md)。
@@ -71,24 +71,26 @@
 
 ---
 
-## 三种启用方式：默认装全局
+## 三种启用方式：默认一把装完
 
-**不给参数就装全局**（方式一）——所有目录、所有对话都能用，覆盖绝大多数情况：
+**不给参数就跑默认装法**——一条命令做完三件：全部技能装本机全局 → 检测到 WorkBuddy 再加装专家 → 提示要不要开日报定时任务：
 
 ```bash
 python install.py
 ```
 
-另外两种按需换：
+还想自己挑，就加参数：
 
-| | 方式一 · 全局技能 **(默认)** | 方式二 · 专家包 | 方式三 · 项目级 |
-|---|---|---|---|
-| **命令** | `python install.py` | `python install.py --expert` | `python install.py --project <目录>` |
-| **什么时候换** | —— | 想要固定入口，打开就是「天信办公专家」 | 只想在某一个项目里用 |
-| **装到哪** | `~/.workbuddy/skills/` | `~/.workbuddy/plugins/marketplaces/my-experts/plugins/` | `<项目>/.workbuddy/skills/` |
-| **装几个** | 仓库里全部技能 | 只装 `plugin.json` 声明的 | 仓库里全部技能 |
-| **生效范围** | 这台机器上所有对话 | 被选为该专家的每一个会话 | 那个目录下的对话 |
-| **限制** | 无 | 只对 WorkBuddy 有效 | 每个项目装一遍 |
+| | 默认装法 · 全局技能 + 专家 **(推荐)** | 只要技能 | 只要专家 | 项目级 |
+|---|---|---|---|---|
+| **命令** | `python install.py` | `python install.py --global` | `python install.py --expert` | `python install.py --project <目录>` |
+| **什么时候用** | 不知道选哪个，或者想一次装齐 | 用 Claude Code / Cursor 等非 WorkBuddy 环境 | 已有全局技能，只想加个专家入口 | 只想在某一个项目里用 |
+| **装到哪** | `~/.workbuddy/skills/` + `~/.workbuddy/plugins/marketplaces/my-experts/plugins/` | `~/.workbuddy/skills/` | `~/.workbuddy/plugins/marketplaces/my-experts/plugins/` | `<项目>/.workbuddy/skills/` |
+| **装几个** | 全部技能 + 一个专家 | 仓库里全部技能 | 只装 `plugin.json` 声明的 | 仓库里全部技能 |
+| **生效范围** | 所有对话都能用技能；专家在被选中的会话里生效 | 这台机器上所有对话 | 被选为该专家的每一个会话 | 那个目录下的对话 |
+| **限制** | 专家部分只对 WorkBuddy 有效 | 无固定入口，要靠触发词 | 只对 WorkBuddy 有效 | 每个项目装一遍 |
+
+默认装法里专家装不上不影响技能（比如不是 WorkBuddy），会自动跳过并说明。加 `--no-expert` / `--no-daily` 可分别跳过专家与日报提示，`--yes` 不询问。
 
 三种方式装的是同一批技能，差别只在生效范围。全局装完再装专家包也不冲突
 （专家包里是副本，两者共用同一份仓库）。
@@ -108,18 +110,21 @@ cd tianxin-agents
 python install.py --list          # 看有哪些技能、装到哪
 ```
 
-然后这条就够了（默认装到本机全局）：
+然后这条就够了（默认装法：全局技能 + 专家 + 日报提示）：
 
 ```bash
 python install.py
 ```
 
-要换成另外两种就加参数：
+只想装其中一样，加参数：
 
 ```bash
-python install.py --expert                    # 装成 WorkBuddy 专家
+python install.py --global                    # 只装技能
+python install.py --expert                    # 只装成 WorkBuddy 专家
 python install.py --project /path/to/项目      # 只装进某个项目
 ```
+
+**最后一件要你定的事：日报定时任务。** 装完会提示一句——「天信日报」需要每天定时跑，说一句「每天早上 8:00 生成天信日报」就会建好；不建也可以，当天想看说一句「出今天的日报」。
 
 验证：
 

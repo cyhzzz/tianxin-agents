@@ -23,7 +23,7 @@
 ├── README.md                    ← 给人看：有什么、怎么装
 ├── START-HERE.md                ← 给 AI 看：拿到仓库后的执行说明书
 ├── 一句话启用.md                 ← 可直接粘给别的 agent 的 prompt（含四种变体）
-├── install.py                   ← 安装器：--list / --global / --project / --expert / --verify
+├── install.py                   ← 安装器：默认一把装完（全局技能 + 专家 + 日报提示），另有 --list/--global/--expert/--project/--verify
 ├── check.py                     ← 仓库自检：链接断没断、专家包一不一致（改完跑一遍）
 ├── contribute.py                ← 改进回传：--from-installed / --proposal / --check
 ├── CONTRIBUTING.md              ← 贡献指南（对外：怎么用、怎么提改进）
@@ -305,16 +305,23 @@ done
 ## 4. 安装与验证
 
 ```bash
+python install.py                 # 默认装法：全部技能装全局 + WorkBuddy 下加装专家 + 提示日报定时任务
 python install.py --list          # 认出了哪些技能、各自属于哪条业务线
-python install.py --global        # 方式一：装到 ~/.workbuddy/skills/
-python install.py --expert        # 方式二：装成 WorkBuddy 专家
-python install.py --project <目录> # 方式三：装到项目级
+python install.py --global        # 只要技能（--no-expert / --no-daily / --yes 可细分）
+python install.py --expert        # 只要专家
+python install.py --project <目录> # 项目级
 python install.py --verify        # 验收（可配 --project）
 
 python check.py                   # 仓库自检（改完目录/文档后跑，见第 8 节）
 ```
 
-三种方式都实测通过。安装名一律取 `SKILL.md` 的 `frontmatter.name`，所以：
+**默认动作是「一把装完」，改它之前先想清楚。** 早先默认只装全局技能，专家和日报要靠用户自己知道才会装——实测下来不知道的人就一直没装过。所以默认走三步：技能全局 → 专家（仅 WorkBuddy）→ 日报定时任务提示。三条纪律：
+
+- **专家装不上不能算失败**。非 WorkBuddy 环境自动跳过并说明原因，不许硬装。
+- **日报定时任务只提示、不代建**。定时任务每天消耗模型调用，建不建由人定；安装器只打印建法（`--no-daily` 可静音）。
+- **`--global` / `--expert` 必须保留**，它们是「只装一样」的退路，不能因为有了默认动法就合并掉。
+
+安装名一律取 `SKILL.md` 的 `frontmatter.name`，所以：
 - 目录叫 `天信文档skill`，装出来是 `tianxin-docs`
 - 目录叫 `天信日报skill`，装出来是 `tianxin-daily-brief`
 

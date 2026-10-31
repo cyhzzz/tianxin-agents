@@ -2,18 +2,27 @@
 """
 天信办公专家 · 安装器
 
-四种用法，一次只用一个：
+不带参数跑就是默认装法（推荐，九成人用这个）：
+
+    python install.py                            ① 全部技能装到本机全局
+                                                 ② 检测到 WorkBuddy 就顺手装成「天信办公专家」
+                                                 ③ 提示要不要开日报定时任务
+
+其余模式，一次只用一个：
 
     python install.py --list                     看仓库里有什么
-    python install.py --global                   装到本机所有对话可用
+    python install.py --global                   只装技能（不碰专家）
     python install.py --project /path/to/dir     装到某个项目目录
-    python install.py --expert                   装成 WorkBuddy 专家（一个专家挂全部技能）
+    python install.py --expert                   只装成 WorkBuddy 专家（一个专家挂全部技能）
     python install.py --verify                   检查装好了没有
 
 可选：
     --target workbuddy|claude-code|<路径>   指定目标平台（默认自动探测）
     --force                                 覆盖已存在的同名技能 / 专家
-    --only 天信日报                         只装某一个
+    --only tianxin-daily-brief              只装某一个
+    --no-expert                             默认动作里跳过专家安装
+    --no-daily                              默认动作里不再提示日报定时任务
+    --yes                                   无人值守：不问，直接按默认走
 
 不依赖任何第三方库。Python 3.8+。
 """
@@ -200,18 +209,24 @@ def copy_skills(dest, force=False, only=None):
 
 def write_manifest(dest, names):
     """在目标目录留一份来源说明，避免以后忘了这批技能从哪来"""
+    # 清单从仓库实时生成，不写死——业务线加了技能，这里跟着变
+    rows = []
+    for name, path, src in list_skill_dirs():
+        fm = read_frontmatter(os.path.join(path, 'SKILL.md'))
+        desc = re.sub(r'\s+', ' ', fm.get('description', ''))
+        # description 首句就是「是什么」，取到第一个句号为止
+        brief = re.split(r'[。；]', desc)[0][:40] if desc else ''
+        rows.append(f'| `{name}` | {src} | {brief} |')
+
     lines = [
         '# 天信办公专家 · 技能清单',
         '',
         '本目录下的技能来自 https://github.com/cyhzzz/tianxin-agents',
         '**不要在这里直接改**——下次同步会覆盖。要改回仓库改，再重新安装。',
         '',
-        '| 技能 | 作用 |',
-        '|---|---|',
-        '| 天信文档与报告 | Word / A4 PDF / 网页长页 / 演示 deck 四轨出版 |',
-        '| 天信日报 | 每日行业热点与本地商机情报 |',
-        '| 天信实务知识库 | 12 张会计审计实务判断卡 |',
-        '| 陈版主实务问答 | 视野论坛实务答疑与准则原文检索 |',
+        '| 安装名 | 仓库位置 | 作用 |',
+        '|---|---|---|',
+        *rows,
         '',
         f'安装时间：{__import__("datetime").datetime.now():%Y-%m-%d %H:%M}',
         f'本次安装：{"、".join(names) if names else "（无新增）"}',
@@ -220,7 +235,7 @@ def write_manifest(dest, names):
         '',
         '```bash',
         'cd tianxin-agents && git pull',
-        'python install.py --global --force      # 或 --project <本目录>',
+        'python install.py --force      # 默认装法：全局技能 + 专家（WorkBuddy）',
         '```',
     ]
     with open(os.path.join(dest, 'README.md'), 'w', encoding='utf-8') as f:
@@ -260,7 +275,8 @@ def cmd_list():
     out()
 
 
-def cmd_install(args, global_scope):
+def cmd_install(args, global_scope, tail=True):
+    """装技能。tail=False 时不打「下一步」，留给调用方统一收尾。返回 (装入数, 跳过数, 目标目录)"""
     dest, label = resolve_target(args, want_global=global_scope)
     if not dest:
         die('没找到可装的目录。用 --target 指定，例如 --target ~/.workbuddy/skills')
@@ -285,13 +301,19 @@ def cmd_install(args, global_scope):
         out(f'{C_WARN}没有任何技能被写入。{C_OFF}')
         if skipped:
             out(f'{C_DIM}技能都已存在。确认是旧版就重跑并加 --force。{C_OFF}')
-        return
+        return 0, len(skipped), dest
 
     write_manifest(dest, installed + replaced)
+    n_total = len(installed) + len(replaced)
+
+    if not tail:
+        # 汇总由调用方统一打，这里不再重复一遍「装好了」
+        return n_total, len(skipped), dest
 
     out()
     hr()
-    out(f'{C_OK}装好了{C_OFF}  {len(installed) + len(replaced)} 个技能')
+    out(f'{C_OK}装好了{C_OFF}  {n_total} 个技能')
+
     out()
     out(f'{C_BOLD}下一步{C_OFF}')
     if global_scope:
@@ -303,6 +325,7 @@ def cmd_install(args, global_scope):
     out()
     out(f'{C_DIM}验收：python install.py --verify{" --project " + expand(args.project) if not global_scope else ""}{C_OFF}')
     out()
+    return len(installed) + len(replaced), len(skipped), dest
 
 
 def expert_plugins_dir():
@@ -349,13 +372,14 @@ def register_in_marketplace(expert_dir):
     return market_file
 
 
-def cmd_expert(args):
+def cmd_expert(args, tail=True):
+    """装成 WorkBuddy 专家。tail=False 时只装不说怎么用，返回 (是否装上, 专家目录)"""
     src_meta = os.path.join(EXPERT_SRC, 'plugin.json')
     if not os.path.isfile(src_meta):
         die(f'找不到专家包：{EXPERT_SRC}')
 
     plugins_dir = expand(args.target) if args.target else expert_plugins_dir()
-    dest = os.path.join(plugins_dir, EXPERT_NAME)
+    dest = os.path.normpath(os.path.join(plugins_dir, EXPERT_NAME))
 
     out()
     out(f'{C_BOLD}装成 WorkBuddy 专家{C_OFF}')
@@ -372,7 +396,7 @@ def cmd_expert(args):
     shutil.copy2(src_meta, os.path.join(meta_dest, 'plugin.json'))
     out(f'  {C_OK}✓{C_OFF} plugin.json')
 
-    # 2) 人设与头像
+    # 2) 人设与头像（专家校验器还要求有 README，一起带上）
     for sub in ('agents', 'avatars'):
         s = os.path.join(EXPERT_SRC, sub)
         if os.path.isdir(s):
@@ -381,6 +405,11 @@ def cmd_expert(args):
             for fn in os.listdir(s):
                 shutil.copy2(os.path.join(s, fn), os.path.join(d, fn))
             out(f'  {C_OK}✓{C_OFF} {sub}/  {C_DIM}{len(os.listdir(s))} 个文件{C_OFF}')
+
+    readme = os.path.join(EXPERT_SRC, 'README.md')
+    if os.path.isfile(readme):
+        shutil.copy2(readme, os.path.join(dest, 'README.md'))
+        out(f'  {C_OK}✓{C_OFF} README.md')
 
     # 3) 技能：**只装 plugin.json 声明的那几个**。
     #    仓库按业务线分了 seven 个目录，全装会把还没做完的线也塞进专家。
@@ -427,9 +456,13 @@ def cmd_expert(args):
         out(f'  {C_WARN}⚠{C_OFF} 自动注册失败：{e}')
         out(f'{C_DIM}    可在 WorkBuddy 的「专家中心 → 我的专家」里手动加载{C_OFF}')
 
+    if not tail:
+        return True, dest
+
     out()
     hr()
     out(f'{C_OK}装好了{C_OFF}')
+
     out()
     out(f'{C_BOLD}怎么用{C_OFF}')
     out('  打开 WorkBuddy → 左侧「专家」→ 我的专家 → 选「天信办公专家」')
@@ -439,6 +472,7 @@ def cmd_expert(args):
     out()
     out(f'{C_DIM}如果专家中心里没看到，重启 WorkBuddy 再进一次。{C_OFF}')
     out()
+    return True, dest
 
 
 def find_duplicate_skills(dest):
@@ -546,16 +580,115 @@ def cmd_verify(args):
     return 1
 
 
+# ── 默认装法（不带参数） ──────────────────────────────────
+
+DAILY_PROMPT = ('抓取今天的天信每日行业与商机日报：审计行业热点，以及台州天台及浙江范围内的'
+                '财务咨询、代理记账、审计选聘、会计服务采购商机，按 tianxin-daily-brief 技能的'
+                '信源清单与筛选逻辑出日报正文和 HTML 看板。')
+
+
+def detect_workbuddy():
+    """本机是不是 WorkBuddy：先看技能目录探测到谁，再看配置目录在不在"""
+    base, label = detect_user_skills_dir()
+    if label == 'WorkBuddy':
+        return True
+    cfg = os.environ.get('WORKBUDDY_CONFIG_DIR') or os.path.expanduser('~/.workbuddy')
+    return os.path.isdir(cfg)
+
+
+def daily_brief_tip(args, wb=True):
+    """装完提醒一句：日报要不要每天自动跑。不替用户建，建不建由人定。"""
+    if args.no_daily:
+        return
+    out()
+    hr()
+    out(f'{C_BOLD}还剩一件：日报要不要每天自己跑{C_OFF}')
+    out('  「天信日报」技能不会自己醒——它需要一个定时任务，到点把这句话送进去：')
+    out(f'  {C_DIM}{DAILY_PROMPT}{C_OFF}')
+    out()
+    if wb:
+        out(f'  建法：在这个会话里说一句「每天早上 8:00 生成天信日报」即可；')
+        out(f'        也可以左侧「自动化」→ 新建 → 每天 08:00 → 粘贴上面这句。')
+    else:
+        out(f'  当前环境不是 WorkBuddy，没有内置定时任务：用系统的定时执行（cron / 任务计划）')
+        out(f'  每天 08:00 把上面这句交给你的 agent，或者到点自己说一句「出今天的日报」。')
+    out(f'  {C_DIM}不建也能用：想看的当天说一句「出今天的日报」，跑得一模一样。{C_OFF}')
+
+    if args.yes or not (sys.stdin and sys.stdin.isatty()):
+        out()
+        out(f'{C_DIM}（无人值守模式，不询问。要建就照上面的建法操作。）{C_OFF}')
+        return
+    out()
+    try:
+        ans = input('  现在就想试？(y/N) ').strip().lower()
+    except (EOFError, KeyboardInterrupt):
+        out()
+        return
+    if ans in ('y', 'yes', '是', '要', '好'):
+        out()
+        out(f'  {C_OK}好{C_OFF} 复制这一句给 WorkBuddy，它会自己把定时任务建起来：')
+        out(f'  {C_BOLD}每天早上 8:00 生成天信日报{C_OFF}')
+        out(f'  {C_DIM}建完在「自动化」里能看到，第一次跑完记得核一眼信源抓没抓全。{C_OFF}')
+        out()
+    else:
+        out(f'  {C_DIM}好，先不建。随时可以说「每天早上 8:00 生成天信日报」。{C_OFF}')
+        out()
+
+
+def cmd_default(args):
+    """不带参数时的动作：全部技能装全局 → WorkBuddy 下加装专家 → 提示日报定时任务"""
+    wb = detect_workbuddy()
+    base, label = detect_user_skills_dir()
+
+    out()
+    out(f'{C_BOLD}默认装法{C_OFF}')
+    if wb:
+        out(f'  {C_DIM}① 全部技能 → 本机全局   ② 再装成「天信办公专家」   ③ 问一句日报定时任务{C_OFF}')
+    else:
+        out(f'  {C_DIM}① 全部技能 → 本机全局（{label or "未探测到平台"}）'
+            f'   ② 这里不是 WorkBuddy，跳过专家{C_OFF}')
+
+    n_inst, n_skip, dest = cmd_install(args, global_scope=True, tail=False)
+
+    expert_dir = None
+    if wb and not args.no_expert:
+        out()
+        _, expert_dir = cmd_expert(args, tail=False)
+
+    out()
+    hr()
+    out(f'{C_OK}装完了{C_OFF}')
+    out(f'  {C_BOLD}技能{C_OFF}  {n_inst} 个新装 · {n_skip} 个已存在  {C_DIM}→ {dest}{C_OFF}')
+    if expert_dir:
+        out(f'  {C_BOLD}专家{C_OFF}  天信办公专家  {C_DIM}→ {expert_dir}{C_OFF}')
+    elif wb:
+        out(f'  {C_BOLD}专家{C_OFF}  {C_DIM}本次跳过（--no-expert）{C_OFF}')
+    else:
+        out(f'  {C_BOLD}专家{C_OFF}  {C_DIM}未装：没检测到 WorkBuddy，专家只在 WorkBuddy 里有意义{C_OFF}')
+
+    out()
+    out(f'{C_BOLD}下一步{C_OFF}')
+    out('  1. 新开一个会话，技能才会被加载')
+    out('  2. 说一句试试：「用天信文档规范，把这篇 Markdown 出一份 Word」')
+    if expert_dir:
+        out('  3. 左侧「专家」→ 我的专家 → 选「天信办公专家」，六条业务线的作业都在里面')
+    out(f'{C_DIM}  验收：python install.py --verify{C_OFF}')
+    out()
+
+    daily_brief_tip(args, wb=wb)
+
+
 # ── 入口 ──────────────────────────────────────────────────
 
 def main():
     ap = argparse.ArgumentParser(
         description='天信办公专家安装器',
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog='不写模式就默认装全局（方式一），这是大多数人的选择。\n'
+        epilog='不写模式就是默认装法：全部技能装全局 → WorkBuddy 环境再加装专家 → 提示日报定时任务。\n'
                '例子：\n'
-               '  python install.py                      默认：装到本机全局\n'
-               '  python install.py --expert             装成 WorkBuddy 专家\n'
+               '  python install.py                      默认：全局技能 + 专家 + 日报提示\n'
+               '  python install.py --global             只装技能，不碰专家\n'
+               '  python install.py --expert             只装成 WorkBuddy 专家\n'
                '  python install.py --project D:/客户/某某尽调项目\n'
                '  python install.py --list               先看有什么\n'
                '  python install.py --verify             验收',
@@ -563,17 +696,23 @@ def main():
     g = ap.add_mutually_exclusive_group(required=False)
     g.add_argument('--list', action='store_true', help='看仓库里有什么、装到哪')
     g.add_argument('--global', dest='global_scope', action='store_true',
-                   help='装到本机全局（默认方式，不写任何模式就是它）')
+                   help='只装到本机全局（不装专家）。什么都不写时走默认装法')
     g.add_argument('--project', metavar='DIR', help='装到某个项目目录')
     g.add_argument('--expert', action='store_true',
-                   help='装成 WorkBuddy 专家：一个专家挂 plugin.json 声明的全部技能')
+                   help='只装成 WorkBuddy 专家：一个专家挂 plugin.json 声明的全部技能')
     # --verify 单独放：它要能配合 --project / --target 用
     ap.add_argument('--verify', action='store_true',
                     help='检查装好了没有（可配 --project 指定目录）')
 
     ap.add_argument('--target', help='指定平台或目录（workbuddy / claude-code / 自定义路径）')
-    ap.add_argument('--only', help='只处理某一个技能')
+    ap.add_argument('--only', help='只处理某一个技能（写 frontmatter 里的 name）')
     ap.add_argument('--force', action='store_true', help='覆盖已存在的同名技能')
+    ap.add_argument('--no-expert', dest='no_expert', action='store_true',
+                    help='默认装法里跳过专家安装（只想装技能时用）')
+    ap.add_argument('--no-daily', dest='no_daily', action='store_true',
+                    help='默认装法里不再提示日报定时任务')
+    ap.add_argument('--yes', action='store_true',
+                    help='无人值守：不询问，直接按默认走（脚本 / CI 里用）')
 
     args = ap.parse_args()
 
@@ -584,19 +723,13 @@ def main():
         except Exception:
             pass
 
-    # 没给任何模式 = 默认装全局。
-    # 早先这里报「至少给一个模式」，但实测下来九成的人就是要装全局——
-    # 先卡一道问「你想装哪种」，多数人只会回一句「随便/都行」，白问。
-    # 改成默认全局，把另外两种作为选项说出来，想换的人自己会换。
+    # 没给任何模式 = 默认装法：技能装全局 + WorkBuddy 下加装专家 + 日报提示。
+    # 早先这里是「只装全局」。实测下来九成人要的就是「全都装上」，还要第三样
+    # （日报定时任务）却根本不知道有——所以默认一路装到底，再问一句日报。
+    # 想只装技能的人用 --global，想只装专家的人用 --expert，都还在。
     if not any([args.list, args.global_scope, args.project, args.expert, args.verify]):
-        args.global_scope = True
-        out(f'{C_DIM}没指定装法，默认装到本机全局（方式一）：'
-            f'所有目录、所有对话都能用。{C_OFF}')
-        out(f'{C_DIM}另外两种：--expert（装成 WorkBuddy 专家） / '
-            f'--project <目录>（只装进某个项目）{C_OFF}')
-        out()
-
-    if args.verify:
+        cmd_default(args)
+    elif args.verify:
         sys.exit(cmd_verify(args))
     elif args.list:
         cmd_list()

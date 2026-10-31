@@ -1,6 +1,6 @@
 {
   "name": "tianxin-office-expert",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "Tianxin CPA Office Expert — one expert covering the firm's shared capabilities (document production, accounting practice judgment, standards retrieval, daily briefs) plus six business lines: bookkeeping, accounting services (statements/notes/consolidation/analysis), audit working papers and report writing, tax filing and advisory, management consulting (strategy/organization/HR/process/marketing/business improvement), and asset appraisal. This file declares which skills the expert loads.",
   "author": {
     "name": "天台天信会计师事务所",
@@ -28,32 +28,32 @@
     "zh": "天信办公专家"
   },
   "profession": {
-    "en": "CPA Firm Documentation, Practice & Tax Specialist",
-    "zh": "天信会计师事务所·文档·实务·税务"
+    "en": "CPA Firm Practice: Audit, Tax, Bookkeeping, Accounting, Appraisal, Consulting",
+    "zh": "天信会计师事务所·审计·税务·代账·会计核算·评估造价·企业咨询"
   },
   "displayDescription": {
-    "en": "Tianxin CPA assistant: produces reports, builds audit working papers, computes and files taxes, judges accounting treatments, retrieves standards.",
-    "zh": "天信所实务助手：出报告、编审计底稿、算税报税查发票风险、判会计处理、检索准则原文。"
+    "en": "Tianxin CPA assistant: audit working papers, bookkeeping and tax filing, statements and notes, appraisal and consulting.",
+    "zh": "天信所实务助手：出审计底稿与报告、代理记账与报税、编报表附注、评估造价、管理咨询、检索准则原文。"
   },
   "avatar": "avatars/tianxin-office-expert.png",
   "categoryId": "08-FinanceInvestment",
   "defaultInitPrompt": {
-    "zh": "这家小规模客户三季度普票 24 万、专票 8 万，帮我算该缴多少税、申报表怎么填。",
-    "en": "This small-scale client issued 240k in ordinary invoices and 80k in special invoices last quarter — compute the tax due and show me how to file."
+    "en": "This small-scale client issued 240k in ordinary invoices and 80k in special invoices last quarter — compute the tax due and show me how to file.",
+    "zh": "这家小规模客户三季度普票 24 万、专票 8 万，帮我算该缴多少税、申报表怎么填。"
   },
   "plugin": "tianxin-office-expert",
   "tags": [
     {
-      "en": "Audit Working Papers",
-      "zh": "审计底稿与程序"
+      "en": "Audit & Working Papers",
+      "zh": "审计底稿与报告"
     },
     {
-      "en": "Tax Filing & Compliance",
-      "zh": "税务申报与合规"
+      "en": "Tax & Bookkeeping",
+      "zh": "税务申报与代理记账"
     },
     {
-      "en": "Document & Practice",
-      "zh": "文档出版与实务判断"
+      "en": "Statements, Appraisal & Consulting",
+      "zh": "报表附注·评估·咨询"
     }
   ],
   "quickPrompts": [
@@ -62,12 +62,12 @@
       "zh": "这家小规模客户三季度普票 24 万、专票 8 万，帮我算该缴多少税、申报表怎么填。"
     },
     {
-      "en": "Lay out this due-diligence draft as a Tianxin-branded Word file, with correct header, footer and three-line tables.",
-      "zh": "把这份尽调稿按天信的规范出一份 Word，页眉页脚和三线表都要对。"
+      "en": "New client just signed — set up the books from scratch: chart of accounts, opening entries, monthly closing, and what to collect from them each month.",
+      "zh": "新签一家小规模客户，从建账到每月结账该怎么做？期初怎么录、每月要客户给什么材料。"
     },
     {
-      "en": "A client's supplier went missing — what do I do with the input VAT already deducted?",
-      "zh": "客户的一个供应商走逃了，已经抵扣的进项该怎么处理？"
+      "en": "Year-end trial balance needs statements and notes — build the four statements and draft the notes that changed.",
+      "zh": "这套年末试算平衡表要出报表和附注，帮我把四张表和变动附注搭出来。"
     }
   ]
 }
