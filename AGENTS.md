@@ -79,7 +79,7 @@
 ```
 ① 在所属业务线目录下建 <名称>skill/SKILL.md
      frontmatter 的 name 决定安装后的目录名，不取源目录名
-     例：源目录 天信文档skill/ → name: 天信文档与报告 → 装成 天信文档与报告/
+     例：源目录 天信文档skill/ → name: tianxin-docs → 装成 tianxin-docs/
 ② 专家/plugin.json 的 skills 数组加一行 ./skills/<安装名>
      不加这行，专家装上了也带不动这个技能，而且 WorkBuddy 不报错
 ③ 更新三处清单：README.md、START-HERE.md、所属业务线 README.md
@@ -87,6 +87,31 @@
 ```
 
 **装完必须跑 `python install.py --verify`。** 它会报三件安装器不报的事：frontmatter 缺 name、缺 description（装上了但不会触发）、以及**同一技能装了两份**（历史改名留下的僵尸目录）。
+
+### frontmatter 只能有这五个键
+
+官方规范（`~/.workbuddy/skills/skill-creator/scripts/quick_validate.py`）只认 `name` / `description` / `license` / `allowed-tools` / `metadata`：
+
+- **`name` 必须是 kebab-case 英文**：`^[a-z0-9-]+$`，≤64 字符，与安装目录名一致。中文技能名写进 `description` 首句与各处清单，**不写进 `name`**——2026-10-31 查出来 7 个技能用中文 name，官方校验器直接判不合格。
+- **`version` 不是允许键**，写 `metadata:` 下：
+
+  ```yaml
+  metadata:
+    version: 1.0.0
+  ```
+
+- `description` 里不能出现尖括号 `< >`，长度 ≤1024 字符。
+
+改完必须过官方校验器，10 个技能逐个跑：
+
+```bash
+for d in 代理记账/*/ 会计核算/*/ 审计/*/ 税务/*/ 企业咨询/*/ 评估造价/*/ 公用/*/ 运营/*/; do
+  printf "%-32s " "$d"
+  python3 ~/.workbuddy/skills/skill-creator/scripts/quick_validate.py "$d"
+done
+```
+
+缺 `pyyaml` 时先 `python3 -m pip install pyyaml`。输出必须全部是 `Skill is valid!`。
 
 ## 3.1 从外部专家收能力：只加 SKILL.md，不许写"改写层"
 
@@ -183,7 +208,7 @@
 
 ### 独立运行：绝不写"去读某某技能"
 
-技能装到别人机器上时，仓库里其他业务线的目录**根本不存在**——`税务/天信税务申报skill/references/01` 在 `~/.workbuddy/skills/天信代账作业/` 下是死路径。写这种指针，AI 只会临场发挥，等于没有。
+技能装到别人机器上时，仓库里其他业务线的目录**根本不存在**——`税务/天信税务申报skill/references/01` 在 `~/.workbuddy/skills/tianxin-bookkeeping/` 下是死路径。写这种指针，AI 只会临场发挥，等于没有。
 
 **规矩：能自己做完的写全，做不了的写清转给谁。**
 
@@ -290,7 +315,7 @@ python check.py                   # 仓库自检（改完目录/文档后跑，�
 ```
 
 三种方式都实测通过。安装名一律取 `SKILL.md` 的 `frontmatter.name`，所以：
-- 目录叫 `天信文档skill`，装出来是 `天信文档与报告`
+- 目录叫 `天信文档skill`，装出来是 `tianxin-docs`
 - 目录叫 `天信日报skill`，装出来是 `tianxin-daily-brief`
 
 **`--force` 会先清空 `skills/` 再复制。** 只覆盖同名目录是不够的——上一版装过、这一版改名的技能会留成僵尸，看着像装好了，实际是死文件。
@@ -346,7 +371,7 @@ python "$HOME/AppData/Local/Programs/WorkBuddy/resources/app.asar.unpacked/resou
 
 ### 触发器在每个 SKILL.md 末尾，不在这里
 
-装出去的是**副本**：AI 拿到 `~/.workbuddy/skills/天信代账作业/`，读不到本仓库的
+装出去的是**副本**：AI 拿到 `~/.workbuddy/skills/tianxin-bookkeeping/`，读不到本仓库的
 任何文件。写在这里的规则它看不见。**只有跟着副本走的 SKILL.md 才有效**，
 所以每个技能末尾都嵌了一节「反馈与改进」，写明：
 
@@ -408,6 +433,7 @@ python check.py
 | Windows 文件锁导致 `mv`/`rm` 失败 | 目录被拆成两半，一半在旧路径一半在新路径 | 先 `git ls-tree` 对清单，合并后再删；被锁的目录加进 `.gitignore` 等重启 |
 | 硬编码"四个技能"这类数量 | 加一条业务线就全部自相矛盾 | 从 `plugin.json` 动态读 |
 | 封面的日期取"今天" | 6 月编的报告 10 月排版，封面印成 10 月 | 从正文抓「编制日期」，或显式传 `--date` |
+| `name` 用中文、`version` 写在顶层 | 官方校验器判不合格（2026-10-31 实测 10 个里 9 个不过）；技能装了也可能调不起来 | `name` 用 kebab-case 英文、版本放 `metadata.version`，改完跑 `quick_validate.py` |
 
 ---
 

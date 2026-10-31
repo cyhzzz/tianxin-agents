@@ -10,15 +10,15 @@
     "./agents/tianxin-office-expert.md"
   ],
   "skills": [
-    "./skills/天信文档与报告",
+    "./skills/tianxin-docs",
     "./skills/tianxin-shiwu-kb",
     "./skills/chenyiwei-bbs",
-    "./skills/天信审计底稿",
-    "./skills/天信税务申报",
-    "./skills/天信代账作业",
-    "./skills/天信会计核算",
-    "./skills/天信评估造价",
-    "./skills/天信企业咨询",
+    "./skills/tianxin-audit",
+    "./skills/tianxin-tax",
+    "./skills/tianxin-bookkeeping",
+    "./skills/tianxin-accounting",
+    "./skills/tianxin-appraisal",
+    "./skills/tianxin-consulting",
     "./skills/tianxin-daily-brief"
   ],
   "expertType": "agent",

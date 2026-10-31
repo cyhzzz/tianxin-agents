@@ -11,7 +11,7 @@
 
 触发器**不在仓库里，在每个 `SKILL.md` 的末尾**。
 
-因为装出去的是副本：AI 拿到的是 `~/.workbuddy/skills/天信代账作业/`，
+因为装出去的是副本：AI 拿到的是 `~/.workbuddy/skills/tianxin-bookkeeping/`，
 它读不到这个仓库的任何文件。写在 CONTRIBUTING.md 里的规则它看不见。
 所以每个 `SKILL.md` 末尾都嵌了一节「反馈与改进」，随副本一起走。
 
@@ -39,7 +39,7 @@
 
 ```bash
 # 改了装好的技能，把改动回传
-python contribute.py --from-installed ~/.workbuddy/skills/天信代账作业
+python contribute.py --from-installed ~/.workbuddy/skills/tianxin-bookkeeping
 
 # 只发现了问题，交一份说明
 python contribute.py --proposal _待提交改进/天信代账作业-票据审核.md

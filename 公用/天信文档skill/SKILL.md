@@ -1,5 +1,5 @@
 ---
-name: 天信文档与报告
+name: tianxin-docs
 description: >
   天台天信会计师事务所的文档与报告生产规范：判文书性质（法定业务文书 / 咨询尽调报告 / 汇报演示）
   → 选轨道（Word / A4 报告 / 网页长页 / 演示 deck）→ 套模板与品牌规范出版。
@@ -8,6 +8,8 @@ description: >
   触发词：天信报告、天信Word、报告排版、审计报告排版、评估报告排版、尽调报告排版、专项报告、
   公文格式、GB/T 9704、天信PPT、天信模板、封面、页眉页脚、排版、
   天信Excel、xlsx、底稿表、勾稽表、抽样表、税费测算表。
+metadata:
+  version: 1.0.0
 ---
 
 # 天信文档与报告
@@ -317,11 +319,11 @@ python scripts/build_xlsx.py --verify 勾稽校验表.xlsx
 ### 优先：能改就直接改文件，再回传
 
 AI 遇到技能有问题，默认做法是临场绕过——这次能用，下次还是错的。
-**更好的做法是直接改 `~/.workbuddy/skills/天信文档与报告/` 下的文件**，然后告诉用户：
+**更好的做法是直接改 `~/.workbuddy/skills/tianxin-docs/` 下的文件**，然后告诉用户：
 
 > 我改了「天信文档与报告」里的 `references/xx-yyy`，改动还没回仓库。
 > 克隆 https://github.com/cyhzzz/tianxin-agents 后跑这一条就能提 PR：
-> `python contribute.py --from-installed ~/.workbuddy/skills/天信文档与报告`
+> `python contribute.py --from-installed ~/.workbuddy/skills/tianxin-docs`
 
 这条路径最有用——它产生的是**可以逐行 review 的真实改动**，不是一段描述。
 
