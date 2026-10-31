@@ -1,21 +1,21 @@
 # AGENTS.md — 天信日报skill（天台天信会计师事务所 · 所内赋能子项目）
 
 > 本目录是天信「所内赋能」的一个独立子项目：**天信每日行业与商机日报** Skill。
-> 它服务事务所自身（行业情报 + 商机捕捉 + 每日推送），**不对应某个付费客户**，归 `天信本身/运营/`。
+> 它服务事务所自身（行业情报 + 商机捕捉 + 每日推送），**不对应某个付费客户**，归 `运营/`。
 
 ---
 
 ## 1. 项目身份
 
 - **性质**：WorkBuddy Skill（自动化情报采集 + 三通道推送），是天信内部日常运营工具。
-- **归属**：`天信本身/`（所内赋能），非 `企业咨询/`（客户项目）。
-- **物理位置**：`D:/AIproject/爸爸/天信本身/运营/天信日报skill/`。
+- **归属**：`运营/`（所内赋能），非 `企业咨询/`（客户项目）。
+- **物理位置**：`D:/project/天信/运营/天信日报skill/`（仓库内相对路径 `运营/天信日报skill/`）。
 - **加载方式**：由仓库根的 `install.py` **复制**到 `~/.workbuddy/skills/tianxin-daily-brief/`
  （目录名取 frontmatter 的 `name`）。**是复制，不是 junction**——早先的 junction 方案在
  Windows 下会被文件锁卡住，已废弃。改了本目录内容后要重跑 `--global --force` 才生效。
 - **版本控制 / 双仓发布**：本目录随 `cyhzzz/tianxin-agents` 仓库走（本目录不再有独立 `.git`），**同时镜像发布到独立仓 `cyhzzz/tianxin-daily-brief`**（作为日报线上发布仓 / 每日产出归档）。
   - 改了本目录内容后两件事都要做：① 提交 `tianxin-agents`；② 跑 `./sync-daily-brief.sh` 把 skill 子树镜像到本地 `tianxin-daily-brief` 克隆并推送 GitHub（脚本位置见本目录 `sync-daily-brief.sh`）。
-  - 本地 daily-brief 克隆位置：`爸爸/tianxin-daily-brief/`（`D:/AIproject/爸爸/tianxin-daily-brief/`）。
+  - 本地 daily-brief 克隆位置：`D:/project/tianxin-daily-brief/`（脚本按 `仓库根/../tianxin-daily-brief` 定位，不存在会自动克隆）。
   - ⚠️ 同步**只覆盖 skill 代码**（SKILL.md / references / templates / assets / examples），**不碰** daily-brief 仓里的根级 `tianxin-dashboard.html`、`日报-*.md` 与 `daily/` 产出——那些由日报生成流程另写，避免覆盖某天归档。
 
 ---

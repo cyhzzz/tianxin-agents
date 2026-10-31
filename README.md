@@ -156,7 +156,7 @@ python install.py --verify --project /path/to/项目     # 验收项目级
 │   ├── 天信实务知识库skill/        → tianxin-shiwu-kb
 │   └── 陈版主实务问答skill/        → chenyiwei-bbs
 ├── 审计/                         已建：天信审计底稿/（含上游 cpa + AI 审计大师）
-├── 税务/                         已建：天信税务申报skill/（含上游 tax-compliance-team + 银橙）
+├── 税务/                         已建：天信税务申报skill/（含上游 银橙税务师）
 ├── 代理记账/                      已建：天信代账作业skill/（含上游 记账账 + 东纳荣 + 飞猫）
 ├── 会计核算/                      已建：天信会计核算skill/（含上游 AI 会计主管）
 ├── 企业咨询/                      已建：天信企业咨询skill/（含上游 管理咨询实战专家 + 企效通）

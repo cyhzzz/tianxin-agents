@@ -1,6 +1,6 @@
 # AGENTS.md — 陈版主实务问答 Skill（天信所内赋能）
 
-> 本目录是 **陈版主实务问答** Skill 的单一物理落点（`天信本身/公用/` 下），供天信（县城会计所）审计 / 会计实务答疑、准则原文与监管处罚检索使用。
+> 本目录是 **陈版主实务问答** Skill 的单一物理落点（仓库 `公用/` 下），供天信（县城会计所）审计 / 会计实务答疑、准则原文与监管处罚检索使用。
 > 安装由仓库根的 `install.py` 复制完成，**不是 junction**——见下方「加载方式」。
 
 ## 身份与来源（重要）
@@ -13,7 +13,7 @@
 
 ## 加载方式
 
-- 源目录（开发位置，本目录）：`D:/AIproject/爸爸/天信本身/公用/陈版主实务问答skill/`
+- 源目录（开发位置，本目录）：`D:/project/天信/公用/陈版主实务问答skill/`
 - 安装目标：`~/.workbuddy/skills/chenyiwei-bbs/` —— **目录名取 frontmatter 的 `name`，不是源目录名**
 - 安装命令（仓库根执行）：`python install.py --global`
 - **是复制，不是 junction。** 早先的 junction 方案在 Windows 下会被文件锁卡住，已废弃。
@@ -42,4 +42,4 @@
 
 ---
 
-> **上下文**：规则以本 `AGENTS.md` 为准；本层无独立 memory；跨项目偏好见 `~/.workbuddy/MEMORY.md`。弃用 `CLAUDE.md`。
+> **上下文**：规则以本 `AGENTS.md` 为准；本层无独立 memory；跨项目偏好见 `~/.workbuddy/MEMORY.md`。弃用 `AGENTS.md`。

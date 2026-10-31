@@ -31,7 +31,7 @@ description: >
 
 | 轨道 | 产出 | 用哪套东西 |
 |---|---|---|
-| **A · Word 交付** | `.docx`，要打印、要盖章、要归档 | `assets/tianxin-report.docx`（咨询报告）/ `tianxin-gongwen.docx`（公文）+ `scripts/md2docx.py` |
+| **A · Word 交付** | `.docx`，要打印、要盖章、要归档 | `assets/tianxin-report.docx`（咨询报告）/ `assets/tianxin-gongwen.docx`（公文）+ `scripts/md2docx.py` |
 | **B · A4 报告** | 单文件 HTML + PDF，排版讲究、可直接发链接 | `assets/report.css` + `scripts/md2html.py` + `scripts/html2pdf.js` |
 | **B2 · 网页长页** | 单文件 HTML，滚动阅读，手机电脑都能看 | `assets/web.css` + `scripts/md2web.py` |
 | **C · 网页演示** | 单文件 HTML，横翻页，投影用 | `assets/deck.css` + `scripts/md2deck.py` |
@@ -128,7 +128,7 @@ python scripts/md2deck.py --input 汇报.md --output 汇报-deck.html \
 
 交互：← → 翻页、ESC 索引、滚轮、触屏滑动、Home/End 跳首尾。
 
-模板分两套版式，参数在 `build_template.py` 的 `FORMATS` 里，改一处全链路生效：
+模板分两套版式，参数在 `scripts/build_template.py` 的 `FORMATS` 里，改一处全链路生效：
 
 | | 咨询报告 `report` | 公文 `gongwen` |
 |---|---|---|
@@ -193,7 +193,7 @@ python scripts/md2deck.py --input 汇报.md --output 汇报-deck.html \
 
 ## 交付前自检
 
-机械能查的（跑 `lint_docx.py`）：
+机械能查的（跑 `scripts/lint_docx.py`）：
 
 - OOXML schema 顺序（错了 Word 会提示文件损坏，人眼看不出来）
 - 占位符残留：`{{}}` / `TODO` / `×××` / `【待填】`

@@ -5,6 +5,12 @@
 
 ---
 
+> ⚠ **本仓实际资产对不上本文档的一处**：本文档要求的单一矢量 `assets/logo.svg` **并未随包提供**
+> （本目录 `assets/` 下只有 `logo-horizontal-color.png`）。现行 logo 资产是 `assets/brand/` 的六件套 PNG
+> （横版 color / navy / white + 印章三色）。生成网页物料时用 `assets/brand/logo-horizontal-color.png`；
+> 深色底用 white 版或其 CSS `filter` 反相，**不要自造 SVG**。原文保留不改，仅此一处以本注为准。
+
+
 ## 1. Where to start
 
 Open `DESIGN.md` end-to-end. It is the **single source of truth** — every

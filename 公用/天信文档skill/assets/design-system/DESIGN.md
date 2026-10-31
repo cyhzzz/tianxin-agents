@@ -6,6 +6,12 @@
 
 ---
 
+> ⚠ **本仓实际资产对不上本文档的一处**：本文档要求的单一矢量 `assets/logo.svg` **并未随包提供**
+> （本目录 `assets/` 下只有 `logo-horizontal-color.png`）。现行 logo 资产是 `assets/brand/` 的六件套 PNG
+> （横版 color / navy / white + 印章三色）。生成网页物料时用 `assets/brand/logo-horizontal-color.png`；
+> 深色底用 white 版或其 CSS `filter` 反相，**不要自造 SVG**。原文保留不改，仅此一处以本注为准。
+
+
 ## 1. Visual Theme & Atmosphere
 
 The Tianxin brand reads as **institutional, restrained, and quietly authoritative** — a twenty-four-year-old local accounting firm should not look like a 2020 SaaS landing page, and it should not look like a cold law firm either. The visual gravity sits between the two: more polished than a 2001 storefront, more grounded than a 2024 startup.

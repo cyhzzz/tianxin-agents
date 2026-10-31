@@ -113,11 +113,11 @@ version: 1.0.0
 2. 文件中**不含任何 `{{` 占位残留**（检索 `{{` 应为 0 命中）。
 3. 文件中**不含 `历史参考`**（已移除该区）。
 4. 速览区三个数字 == 实际卡片数 / 天台县条目数 / 热点条目数（数字由数据算出，不硬编码）。
-5. logo 已内联为 data URI（未内联会 WARN 提示去跑 `inline-logo.js`）。
-6. **短信字数 ≤ 480**（跑 `push-notify.js` 时会在控制台回显，超出会自动降档，留意别把关键条目挤掉）。
+5. logo 已内联为 data URI（未内联会 WARN 提示去跑 `references/inline-logo.js`）。
+6. **短信字数 ≤ 480**（跑 `references/push-notify.js` 时会在控制台回显，超出会自动降档，留意别把关键条目挤掉）。
 
 **视觉规范**：严格套用天信设计规范令牌（navy `#00338D` / 亮蓝 `#0F62FE` / 金 `#B8860B` / 0 圆角 / Noto Sans SC / tabular-nums / 单屏金≤2 / 禁 emoji·紫·渐变 hero）。模板 CSS **不要改**，只填内容。
-- **logo 与视觉依据（重要）**：看板页眉/页脚使用**官网原版红色印章 logo**——`assets/tianxin-logo.svg`，系 `天信本身/tianxin-cpa-website-gh-pages/assets/logo.svg` 的**逐字节复制**（MD5 `204782fa7e60739961528848a6499108`）。
+- **logo 与视觉依据（重要）**：看板页眉/页脚使用**官网原版红色印章 logo**——`assets/tianxin-logo.svg`，系 原官网仓 tianxin-cpa-website-gh-pages 的 `assets/logo.svg`（该仓不在本仓库内） 的**逐字节复制**（MD5 `204782fa7e60739961528848a6499108`）。
   - 🔴 **红线：不得重绘、不得精简、不得改 opacity，只能复制引用**。该文件由 imagetracer 导出，含 16 条 opacity 0.0078/0 的不可见废路径（占约 174KB），真实渲染的是 4 条深红 `#A42325` 路径。此前自绘 navy 印章与"精简版"均已被否，勿再尝试。
   - 红章压在 navy 页眉/深色页脚上会发闷，故给 `<img>` 加**白色浅底衬**（padding + `background:#ffffff`，0 圆角），且必须写成**内联 style**（推送版会剥离 `<style>`，只有内联样式在邮件里同样生效）。
 
