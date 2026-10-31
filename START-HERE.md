@@ -58,7 +58,7 @@ ls -d .workbuddy/skills 2>/dev/null
 仓库分三层，共十个技能：
 
 公用能力（三条，跨业务线都用）
-1. 天信文档与报告 —— 出 Word / PDF / 网页报告和演示，带天信品牌格式
+1. 天信文档与报告 —— 出 Word / PDF / 网页报告、演示和 **Excel 表**（底稿/勾稽/抽样/测算），带天信品牌格式
 2. 天信实务知识库 —— 12 张会计审计实务判断卡
 3. 陈版主实务问答 —— 检索视野论坛的实务答疑和准则原文
 
@@ -229,7 +229,7 @@ python install.py --verify
 
 ```
   ✓ tianxin-shiwu-kb  tianxin-shiwu-kb · 12 张能力卡
-  ✓ 天信文档与报告  天信文档与报告 · 10 份 references · 11 个脚本
+  ✓ 天信文档与报告  天信文档与报告 · 11 份 references · 12 个脚本
   ✓ chenyiwei-bbs  chenyiwei-bbs
   ✓ 天信审计底稿  天信审计底稿 · 7 份 references
   ✓ 天信税务申报  天信税务申报 · 5 份 references

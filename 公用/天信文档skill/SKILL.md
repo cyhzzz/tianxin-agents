@@ -6,7 +6,8 @@ description: >
   **只管格式与出版，不管内容对错**：数从哪来、依据哪个文号、意见怎么表述由对应业务线负责，
   本技能负责版式、页眉页脚、目录、字体与品牌一致性。
   触发词：天信报告、天信Word、报告排版、审计报告排版、评估报告排版、尽调报告排版、专项报告、
-  公文格式、GB/T 9704、天信PPT、天信模板、封面、页眉页脚、排版。
+  公文格式、GB/T 9704、天信PPT、天信模板、封面、页眉页脚、排版、
+  天信Excel、xlsx、底稿表、勾稽表、抽样表、税费测算表。
 ---
 
 # 天信文档与报告
@@ -29,7 +30,7 @@ description: >
 
 详细要素清单见 `references/01-文书分轨.md`。
 
-## 三条轨道
+## 五条轨道
 
 | 轨道 | 产出 | 用哪套东西 |
 |---|---|---|
@@ -37,10 +38,13 @@ description: >
 | **B · A4 报告** | 单文件 HTML + PDF，排版讲究、可直接发链接 | `assets/report.css` + `scripts/md2html.py` + `scripts/html2pdf.js` |
 | **B2 · 网页长页** | 单文件 HTML，滚动阅读，手机电脑都能看 | `assets/web.css` + `scripts/md2web.py` |
 | **C · 网页演示** | 单文件 HTML，横翻页，投影用 | `assets/deck.css` + `scripts/md2deck.py` |
+| **D · Excel 表** | `.xlsx`，底稿 / 勾稽 / 抽样 / 测算，要复核、要算 | `scripts/build_xlsx.py` + `references/11-Excel表样与公式.md` |
 
-四条轨道共用同一套 Markdown 解析器（`parse_blocks`），同一份稿子能出四种产物，不会各写一版。
+前四条共用同一套 Markdown 解析器（`parse_blocks`），同一份稿子能出四种产物，不会各写一版；D 轨走表样 + 公式，不经过 Markdown。
 
-**怎么选**：要签字盖章 → A；要发 PDF 给人看 → B；要发个链接让对方在手机上读 → B2；要站着讲 → C。
+**怎么选**：要签字盖章 → A；要发 PDF 给人看 → B；要发个链接让对方在手机上读 → B2；要站着讲 → C；**列多、要核数、要给客户填 → D**。
+
+> 判据一句话：**文字进 Word，数字进 Excel，报告附 Excel。** 正文只放结论与关键表，完整表作附件。
 
 ### A 轨命令（Word）
 
@@ -120,6 +124,21 @@ python scripts/md2deck.py --input 汇报.md --output 汇报-deck.html \
 一页一个结论，`---` 分页，`##` 写结论句。数据页用 `:::kpi` 块：
 
 ```markdown
+### D 轨命令（Excel 表）
+
+```bash
+# 内置表样：勾稽校验表 / 底稿索引表 / 抽样表 / 税负测算表
+python scripts/build_xlsx.py --template 勾稽校验表 --output 勾稽校验表.xlsx
+
+# 自定义表：写 JSON 规格（title / sheets / columns / rows / total）
+python scripts/build_xlsx.py --spec my.json --output 自定义.xlsx
+
+# 交付前自检（行列数、公式数、冻结位置）
+python scripts/build_xlsx.py --verify 勾稽校验表.xlsx
+```
+
+缺 `openpyxl` 会直接报错退出，**不会产出半成品**。样式（深蓝表头 `#1D3A5E`、宋体、边框、冻结、A4 横向缩宽、重复表头、页脚页码）已内置，不用手工调。
+
 ## 前五大客户占 63.7%，单一客户依赖是最大风险
 
 :::kpi
@@ -166,6 +185,7 @@ python scripts/md2deck.py --input 汇报.md --output 汇报-deck.html \
 | 颜色字体标志怎么用 | `references/00-品牌规范.md` |
 | 脚本报错、格式不对、页眉错位 | `references/05`~`07`（三条流水线的实现细节） |
 | 拿真实材料跑出怪问题 | `references/09-真实项目复盘.md`（八个已踩的坑 + 判据怎么定） |
+| 要出 Excel（底稿/勾稽/抽样/测算），或表格样式不统一 | `references/11-Excel表样与公式.md`（五轨判据 + 四个内置表样 + 十二个必会公式 + 六个高频错误） |
 
 ## Markdown 写法约定
 
@@ -237,7 +257,9 @@ python scripts/md2deck.py --input 汇报.md --output 汇报-deck.html \
 │   ├── 05-Word流水线.md          模板结构、脚本实现细节、踩过的坑
 │   ├── 06-报告PDF流水线.md        HTML 报告与 PDF 导出、分页与页眉的实现限制
 │   ├── 07-网页长页与演示.md       滚动长页与横翻页 deck 的取值与坑
-│   └── 08-图表规范.md             表型选择、三线表、配色、三个改变结论的陷阱
+│   ├── 08-图表规范.md             表型选择、三线表、配色、三个改变结论的陷阱
+│   ├── 09-真实项目复盘.md         八个已踩的坑 + 判据怎么定
+│   └── 11-Excel表样与公式.md      D 轨：四类表样、12 个必会公式、6 个高频错误
 ├── scripts/
 │   ├── build_template.py         生成 Word 空壳模板
 │   ├── md2docx.py                Markdown → Word
@@ -249,7 +271,8 @@ python scripts/md2deck.py --input 汇报.md --output 汇报-deck.html \
 │   ├── docx_helpers.py           schema 顺序安全插入
 │   ├── lint_docx.py              docx 机械自检
 │   ├── lint_pdf.py               pdf 机械自检（页码、墨水量）
-│   └── preview_docx.py           docx 近似预览
+│   ├── preview_docx.py           docx 近似预览
+│   └── build_xlsx.py             Excel 表样生成（D 轨，需 openpyxl）
 └── examples/
     ├── 样例-尽调报告.md / .docx / .html / .pdf / -web.html
     ├── 样例-汇报deck.md / .html
