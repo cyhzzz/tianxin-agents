@@ -28,7 +28,7 @@ pwd                      # 必须能看到 install.py。看不到就 cd 到仓�
 ls install.py
 python --version         # 或 python3 --version；没有 Python 就记下来
 # 技能散在业务线目录下，要递归找（根目录直接 ls 是找不到的）
-find . -name SKILL.md -not -path './.git/*' | sort    # 应看到七条
+find . -name SKILL.md -not -path './.git/*' | sort    # 应看到十条
 ```
 
 同时查一下这台机器上已有的 skill 目录：
@@ -55,25 +55,26 @@ ls -d .workbuddy/skills 2>/dev/null
 先看清仓库的分层，再报给用户。**不要展开讲原理**：
 
 ```
-仓库分三层，共七个技能：
+仓库分三层，共十个技能：
 
 公用能力（三条，跨业务线都用）
 1. 天信文档与报告 —— 出 Word / PDF / 网页报告和演示，带天信品牌格式
 2. 天信实务知识库 —— 12 张会计审计实务判断卡
 3. 陈版主实务问答 —— 检索视野论坛的实务答疑和准则原文
 
-业务线（五条，已建三条）
+业务线（六条，已建六条）
 4. 天信审计底稿 —— 审计计划 / 风险评估 / 四程序 / 抽样 / 报告质控 / 底稿索引
 5. 天信税务申报 —— 算税 / 申报 / 勾稽 / 风险自查 / 发票审查
 6. 天信代账作业 —— 建账 / 票据 / 凭证 / 月结 / 报表 / 申报 / 交接（弹性编排）
-   企业咨询、评估造价两条线仍是骨架，
-   要建什么、缺什么材料，见各自目录下的 README.md
+7. 天信会计核算 —— 凭证复核 / 报表 / 附注 / 合并 / 会计政策 / 财务分析（会计师团队）
+8. 天信评估造价 —— 三大评估方法 / 价值类型 / 参数 / 现场核查 / 报告审核 / 准则原文检索（工程造价待建）
+9. 天信企业咨询 —— 战略 / 组织 / 人力 / 制度流程 / 品牌营销 / 经营改善 / 中小企业经营诊断（管理建议，不做鉴证结论）
 
 运营（一条）
-7. 天信日报 —— 每日行业与商机情报
+10. 天信日报 —— 每日行业与商机情报
 ```
 
-**报完补一句**：五条业务线里建好了审计、税务和代理记账。审计那份的底稿格式是通用框架，还没用所里真实底稿换过；企业咨询、评估造价两条线是空的。这不是漏装，是还没建。
+**报完补一句**：六条业务线现在都建好了——审计、税务、代理记账、会计核算、评估造价、企业咨询。还空着的是**工程造价咨询**（评估造价线只收了资产评估两个包）和**审计底稿的真实格式**（现在是通用框架，还没用所里真实底稿换过）。这不是漏装，是还没材料。
 
 ---
 
@@ -140,6 +141,10 @@ cp -r 公用/天信实务知识库skill    ~/.workbuddy/skills/tianxin-shiwu-kb
 cp -r 公用/陈版主实务问答skill    ~/.workbuddy/skills/chenyiwei-bbs
 cp -r 审计/天信审计底稿           ~/.workbuddy/skills/天信审计底稿
 cp -r 税务/天信税务申报skill      ~/.workbuddy/skills/天信税务申报
+cp -r 代理记账/天信代账作业skill   ~/.workbuddy/skills/天信代账作业
+cp -r 会计核算/天信会计核算skill   ~/.workbuddy/skills/天信会计核算
+cp -r 评估造价/天信评估造价skill   ~/.workbuddy/skills/天信评估造价
+cp -r 企业咨询/天信企业咨询skill   ~/.workbuddy/skills/天信企业咨询
 cp -r 运营/天信日报skill          ~/.workbuddy/skills/tianxin-daily-brief
 ```
 
@@ -220,7 +225,7 @@ python install.py --verify
 
 它会逐个报告：目录在不在、`SKILL.md` 在不在、frontmatter 的 name/description 能不能解析、技能自带的脚本依赖是否满足。
 
-看到七个对勾才算装完（下面是一台已装好的机器上的真实输出）：
+看到十个对勾才算装完（下面是一台已装好的机器上的真实输出）：
 
 ```
   ✓ tianxin-shiwu-kb  tianxin-shiwu-kb · 12 张能力卡
@@ -229,6 +234,9 @@ python install.py --verify
   ✓ 天信审计底稿  天信审计底稿 · 7 份 references
   ✓ 天信税务申报  天信税务申报 · 5 份 references
   ✓ 天信代账作业  天信代账作业 · 13 份 references
+  ✓ 天信会计核算  天信会计核算
+  ✓ 天信评估造价  天信评估造价
+  ✓ 天信企业咨询  天信企业咨询
   ✓ tianxin-daily-brief  tianxin-daily-brief · 8 份 references
 ```
 

@@ -1,6 +1,6 @@
 # 上游原文（只读）
 
-**这里不是天信写的。** 是平台 `tax-compliance-team`（企业税务合规团队）的能力原文，9 个文件原样收录、内容一字未改。
+**这里不是天信写的。** 是两个上游包的能力原文，共 **14 个文件** 原样收录、内容一字未改：`tax-compliance-team`（企业税务合规团队，9 个）与 `tax-advisor-expert`（银橙税务师，5 个，见文末「第二个上游包」）。
 
 **税率表不在这里。** 上游那份是 2023 年快照，且修正后仍次于天信自己那份（少 6 类内容、留抵退税公式已作废），两份并存只会选错。现只留 `references/01-税率与优惠速查.md` 一份，上游原文未收，理由与修正留痕见下。
 
@@ -95,6 +95,46 @@
 | 各角色卡的 frontmatter（`name` / `maxTurns`） | 专家包的角色声明 | 忽略。技能不是专家包，这些字段在这里没有作用 |
 
 **真正可用的**：六阶段分工、易混淆场景判定（发票真伪找票务 / 发票背后的合规风险找审计）、各税种计算要点、税费汇总表与合规报告模板、科目表。
+
+## 第二个上游包：银橙税务师（`tax-advisor-expert`）
+
+除 `tax-compliance-team` 外，另收一个税务专家包，能力互补：**甲（tax-compliance-team）强在分工与科目表，乙（银橙）强在"一笔业务同时给会计+税务处理"与 Word 报告成文**。
+
+| 项 | 内容 |
+|---|---|
+| 上游包 | `tax-advisor-expert`（专家市场显示名：**银橙AI**·银橙税务师，CPA + CTA） |
+| 版本 | 1.0.0 |
+| 作者 | chung（yincheng@yinchengai.cn） |
+| 许可 | **包内无 LICENSE，`plugin.json` 无 license 字段** → 保留所有权利，**仅限所内使用** |
+| 抓取位置 | `~/.workbuddy/plugins/marketplaces/experts/plugins/tax-advisor-expert/` |
+| 原始下载时间 | `2026-10-31T09:14:35.597Z`（取自包内 `.downloaded_at`） |
+| 收录日期 | 2026-10-31 |
+| 收录方式 | 原样复制，仅重命名、去层级 |
+
+### 收录完整性：原包 8 个文件，收 5 个
+
+| 原包文件 | 收了没 | 说明 |
+|---|---|---|
+| `README.md` | ✅ `taxadv-0-能力总览.md` | 包级总览：六类咨询、四类响应模式、所需资料、输出规范 |
+| `agents/tax-advisor-expert.md` | ✅ `taxadv-1-人设与能力声明.md` | 能力主体：财税一体定位 + 六类咨询方向 + 四模式判定 + 四类报告结构 + 红线 |
+| `skills/tax-report/SKILL.md` | ✅ `taxadv-2-报告生成技能.md` | Word 报告成文：三类报告章节结构 + 内容 JSON 定义 + python-docx 脚本用法 |
+| `skills/tax-report/references/tax-checklists.md` | ✅ `taxadv-3-分税种核查清单.md` | 分税种核查清单 + 汇算调整项目表结构 + 常见风险点 |
+| `skills/tax-report/scripts/build_tax_report.py` | ✅ `taxadv-4-报告生成脚本.py` | python-docx 生成器（封面/多级标题/表格边框/页脚页码），字段类型错误跳过并汇总 |
+| `.codebuddy-plugin/plugin.json` | ❌ | 包元数据 |
+| `avatars/expert.png` | ❌ | 头像，与能力无关 |
+| `.downloaded_at` | ❌ | 时间戳，已记入上表 |
+
+### 文件对照
+
+| 这里 | 上游原名 | 行数 | sha256 前 16 位 | 用法 |
+|---|---|---|---|---|
+| `taxadv-0-能力总览.md` | `README.md` | 93 | `733a104e85bd4c25` | 先读，建全貌 |
+| `taxadv-1-人设与能力声明.md` | `agents/tax-advisor-expert.md` | 130 | `491643b536423de5` | **直接可用**，财税一体 + 四模式 + 红线 |
+| `taxadv-2-报告生成技能.md` | `skills/tax-report/SKILL.md` | 156 | `43996625431c6543` | 三类报告章节结构 + JSON 定义；脚本用法见 `taxadv-4` |
+| `taxadv-3-分税种核查清单.md` | `skills/tax-report/references/tax-checklists.md` | 129 | `acf7bde8449aa5cd` | 分税种核查 + 汇算调整项 + 风险点 |
+| `taxadv-4-报告生成脚本.py` | `skills/tax-report/scripts/build_tax_report.py` | 379 | `949aeddec24c39aa` | `python taxadv-4-报告生成脚本.py <content.json> <out.docx>`，需 `pip install python-docx` |
+
+> 与 `references/01-税率与优惠速查.md` 的关系：银橙**不含税率表**（只在范例里出现个别比率），税率仍以 `references/01` 为唯一源，不冲突。
 
 ## 只读纪律
 

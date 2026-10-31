@@ -1,7 +1,7 @@
 {
   "name": "tianxin-office-expert",
-  "version": "1.3.0",
-  "description": "Tianxin CPA Office Expert — one expert covering the firm's shared capabilities (document production, accounting practice judgment, standards retrieval, daily briefs) plus three business lines: bookkeeping, audit working papers and tax filing. Advisory and valuation lines are being added; this file declares which skills the expert loads.",
+  "version": "1.5.0",
+  "description": "Tianxin CPA Office Expert — one expert covering the firm's shared capabilities (document production, accounting practice judgment, standards retrieval, daily briefs) plus six business lines: bookkeeping, accounting services (statements/notes/consolidation/analysis), audit working papers and report writing, tax filing and advisory, management consulting (strategy/organization/HR/process/marketing/business improvement), and asset appraisal. This file declares which skills the expert loads.",
   "author": {
     "name": "天台天信会计师事务所",
     "email": ""
@@ -16,6 +16,9 @@
     "./skills/天信审计底稿",
     "./skills/天信税务申报",
     "./skills/天信代账作业",
+    "./skills/天信会计核算",
+    "./skills/天信评估造价",
+    "./skills/天信企业咨询",
     "./skills/tianxin-daily-brief"
   ],
   "expertType": "agent",

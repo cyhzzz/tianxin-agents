@@ -57,6 +57,9 @@ SKIP_PATHS = {'天信文档skill'}
 # 文档里 extension → 视为「路径引用」的反引号内容
 PATH_EXT = ('.md', '.py', '.json', '.js', '.sh', '.png', '.jpg', '.jpeg', '.css', '.yaml', '.yml')
 
+# 上游清单里可以比对行数的文本类型（docx/xlsx/png 数行数没有意义）
+TEXT_EXT = ('.md', '.py', '.txt', '.json', '.yaml', '.yml', '.csv')
+
 # 装在 ~/.workbuddy/skills 下的产物，不该被仓库追踪
 PRODUCED_EXT = {'.docx', '.pdf', '.xlsx'}
 
@@ -492,7 +495,7 @@ def check_docs(rep, skills):
         rep.ok('无分层重构前的失效命令（cp -r skills/* 、cp expert/）')
 
     # 业务线 README 是否存在
-    for line in ['审计', '税务', '代理记账', '企业咨询', '评估造价']:
+    for line in ['审计', '税务', '代理记账', '会计核算', '企业咨询', '评估造价']:
         d = os.path.join(HERE, line)
         if not os.path.isdir(d):
             rep.err(f'缺业务线目录 {line}/')
@@ -640,7 +643,9 @@ def check_upstream(rep):
                 rep.err(f'{tag}/{rp} 被改过了（校验和对不上）。'
                         f'上游原文只读——要补要改，写到 references/ 下的天信适配层')
             got = sum(1 for _ in open(ap, encoding='utf-8', errors='ignore'))
-            if got != n:
+            # docx/xlsx/png 这类二进制没有"行数"可言，按字节数数出来的是垃圾数，
+            # 只对文本文件比对行数；二进制由上面的 sha256 保证没被改。
+            if got != n and ap.lower().endswith(TEXT_EXT):
                 rep.warn(f'{tag}/{rp} 行数与清单不符（记 {n}，实际 {got}）')
         for rp in sorted(set(actual) - set(declared)):
             rep.err(f'{tag}/{rp} 不在 README.md 清单里。'
@@ -653,7 +658,7 @@ def check_upstream(rep):
 # ── 11. 技能自包含 ──────────────────────────────────────
 
 # 仓库里的业务线目录。技能内部若以这些为路径起点，就是跨技能引用。
-LINE_DIRS = {'公用', '审计', '税务', '代理记账', '企业咨询', '评估造价', '运营', 'docs', '专家'}
+LINE_DIRS = {'公用', '审计', '税务', '代理记账', '会计核算', '企业咨询', '评估造价', '运营', 'docs', '专家'}
 
 
 def check_self_contained(rep):
@@ -666,13 +671,17 @@ def check_self_contained(rep):
     只查两类特征，误报少：
       · 路径首段是业务线目录名
       · 以 ../ 开头（跳出技能根）
+
+    **`上游/` 不查**：那是别人专家包的原文，只读、一字不改（第 10 项守着）。
+    原文自带的相对链接（指向原包内部的其他资料）属于原文内容，为过检查去改它，
+    等于改造上游。上游死链由本技能 `SKILL.md` 说明，不在此处判。
     """
     bad_skills = 0
     for name, rel in find_skills():
         root = os.path.join(HERE, rel)
         hits = []
         for dp, dns, fns in os.walk(root):
-            dns[:] = [d for d in dns if not d.startswith('.')]
+            dns[:] = [d for d in dns if not d.startswith('.') and d != '上游']
             for fn in fns:
                 if not fn.endswith('.md'):
                     continue
