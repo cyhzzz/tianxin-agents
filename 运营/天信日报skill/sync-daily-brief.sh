@@ -8,7 +8,7 @@
 #        ./sync-daily-brief.sh
 #
 # 约定：
-#   - 本地 daily-brief 克隆位于 爸爸/tianxin-daily-brief/（脚本自动克隆若不存在）
+#   - 本地 daily-brief 克隆与仓库同级（../tianxin-daily-brief/，脚本自动克隆若不存在）
 #   - 只镜像 skill 代码：SKILL.md / references / templates / assets / examples
 #   - 绝不碰 daily-brief 仓里的根级游离文件（tianxin-dashboard.html、日报-*.md）
 #     与 daily/ 每日产出（那些由日报生成流程另写，避免覆盖某天归档）
@@ -16,7 +16,7 @@ set -euo pipefail
 
 SRC="$(cd "$(dirname "$0")" && pwd)"            # 本 skill 目录
 ROOT="$(cd "$SRC/../.." && pwd)"               # 天信本身/
-DST="$ROOT/../tianxin-daily-brief"             # 爸爸/tianxin-daily-brief
+DST="$ROOT/../tianxin-daily-brief"             # 与仓库同级
 REMOTE="git@github.com:cyhzzz/tianxin-daily-brief.git"
 
 # 1) 确保本地克隆存在（首次或换机器时自动建）
