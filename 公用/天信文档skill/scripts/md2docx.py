@@ -10,8 +10,12 @@ Markdown → 天信 Word 文档（基于空壳模板）
 
 用法：
   python md2docx.py --input 报告.md --output 报告.docx \
-      [--format report|gongwen] [--docno "天信咨字〔2026〕第 012 号"] \
+      [--format plain|report|gongwen] [--docno "天信咨字〔2026〕第 012 号"] \
       [--marks] [--title "文档主标题"]
+
+  plain   过程稿：无 logo 页眉、四边等距，写作与复核时用
+  report  咨询 / 尽调报告：logo 页眉 + 报告编号，对外交付
+  gongwen 正式公文：GB/T 9704 版式，仿宋三号固定 28 磅，页码单右双左，可带 :::sign 落款
 """
 
 import argparse
@@ -29,13 +33,14 @@ from docx.shared import Pt, RGBColor, Mm
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 from docx_helpers import (  # noqa: E402
-    add_paragraph_border, repeat_table_header, set_cell_borders, set_rfonts,
-    set_table_three_line, shade_cell, shade_run,
+    add_paragraph_border, insert_ordered, repeat_table_header, set_cell_borders,
+    set_rfonts, set_table_grid, set_table_three_line, shade_cell, shade_run,
 )
 
 SKILL = os.path.dirname(HERE)
 ASSETS = os.path.join(SKILL, 'assets')
 TEMPLATES = {
+    'plain': os.path.join(ASSETS, 'tianxin-plain.docx'),
     'report': os.path.join(ASSETS, 'tianxin-report.docx'),
     'gongwen': os.path.join(ASSETS, 'tianxin-gongwen.docx'),
 }
@@ -154,6 +159,19 @@ def parse_blocks(md):
             i += 1
             continue
 
+        # 落款（公文专用）：机关名称 + 成文日期，右对齐、右空 2 字。
+        # 国标要求成文日期用「YYYY年M月D日」且月日不补零——所以这里不替你格式化
+        # 日期，写什么印什么，改字的风险大于省事的收益。
+        if re.fullmatch(r'\s*:::sign\s*', raw):
+            body, i = [], i + 1
+            while i < len(lines) and not re.fullmatch(r'\s*:::\s*', lines[i]):
+                if lines[i].strip():
+                    body.append(lines[i].strip())
+                i += 1
+            i += 1
+            blocks.append(('sign', body))
+            continue
+
         # 水平分隔线：只是视觉分隔，不换页。
         # 紧跟在章标题前面的那一条直接丢掉——章本来就另起一页，
         # 在上一页末尾留一条灰线纯属噪音（真实报告里 15/16 条都属这种）。
@@ -255,7 +273,28 @@ def _fit_title(para, text, max_pt=24, min_pt=17):
             run.font.size = Pt(size)
 
 
-def render(doc, blocks, mark_shade=False, page_break_style='page', chapter_break=False):
+def add_sign(doc, lines):
+    """公文落款：机关名称与成文日期右对齐、右空 2 字（GB/T 9704 §8.3）。
+
+    右空用 rightChars 而不是固定磅值——公文正文字号会随版式变，写死 32pt
+    换个字号就不是「右空 2 字」了。firstLineChars 必须显式归零，否则会
+    继承正文的 2 字符首行缩进，落款就跑到中间去了。
+    """
+    for ln in lines:
+        p = doc.add_paragraph(ln, style='Normal')
+        p.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+        ppr = p._p.get_or_add_pPr()
+        for old in ppr.findall(qn('w:ind')):
+            ppr.remove(old)
+        ind = OxmlElement('w:ind')
+        ind.set(qn('w:rightChars'), '200')
+        ind.set(qn('w:firstLineChars'), '0')
+        ind.set(qn('w:firstLine'), '0')
+        insert_ordered(ppr, ind, 'pPr')
+
+
+def render(doc, blocks, mark_shade=False, page_break_style='page', chapter_break=False,
+           table_grid=False):
     seen_h2 = False
     for kind, payload in blocks:
         if kind == 'h1':
@@ -275,6 +314,9 @@ def render(doc, blocks, mark_shade=False, page_break_style='page', chapter_break
             doc.add_paragraph(payload, style='Heading 2')
         elif kind == 'h4':
             doc.add_paragraph(payload, style='Heading 3')
+
+        elif kind == 'sign':
+            add_sign(doc, payload)
 
         elif kind == 'p':
             p = doc.add_paragraph(style='Normal')
@@ -340,7 +382,8 @@ def render(doc, blocks, mark_shade=False, page_break_style='page', chapter_break
                 p = cell.paragraphs[0]
                 p.style = doc.styles['天信表格文字']
                 add_inline(p, txt, False, base_bold=True)
-                shade_cell(cell, HEAD_FILL)
+                if not table_grid:          # 公文/过程稿不用底纹，黑白打印才不糊
+                    shade_cell(cell, HEAD_FILL)
             for row in rows:
                 cells = table.add_row().cells
                 for k in range(ncol):
@@ -348,9 +391,12 @@ def render(doc, blocks, mark_shade=False, page_break_style='page', chapter_break
                     p = cells[k].paragraphs[0]
                     p.style = doc.styles['天信表格文字']
                     add_inline(p, txt, mark_shade)
-            set_table_three_line(table)
-            for cell in table.rows[0].cells:
-                set_cell_borders(cell, bottom=('single', 4, '1D3A5E'))
+            if table_grid:
+                set_table_grid(table)
+            else:
+                set_table_three_line(table)
+                for cell in table.rows[0].cells:
+                    set_cell_borders(cell, bottom=('single', 4, '1D3A5E'))
             repeat_table_header(table)
             # 表后留白
             trailing = doc.add_paragraph(style='Normal')
@@ -420,7 +466,10 @@ def convert(input_md, output_docx, fmt='report', docno=None, marks=False, title=
     if chapter_break is None:
         n_h2 = sum(1 for k, _ in blocks if k == 'h2')
         chapter_break = n_h2 >= 6 and len(md) >= 8000
-    render(doc, blocks, mark_shade=marks, chapter_break=chapter_break)
+    # 三线表是咨询报告的专业语言；公文与过程稿用全线表——那两档的读者要
+    # 在纸上逐格填数、逐行核对，靠线分格比靠留白可靠。
+    render(doc, blocks, mark_shade=marks, chapter_break=chapter_break,
+           table_grid=(fmt != 'report'))
 
     # 去掉尾部空段
     body = doc.element.body

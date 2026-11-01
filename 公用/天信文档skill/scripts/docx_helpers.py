@@ -148,6 +148,27 @@ def set_table_three_line(table, color='1D3A5E'):
     insert_ordered(tblpr, borders, 'tblPr')
 
 
+def set_table_grid(table, color='000000', sz=4):
+    """全线表：四边与内部横竖线全画。
+
+    公文与过程稿用这个而不是三线表——三线表是咨询报告的专业语言，公文表格
+    的读者要在纸上逐格填数、逐行核对，靠细线分格比靠留白可靠。
+    """
+    tbl = table._tbl
+    tblpr = tbl.tblPr
+    for old in tblpr.findall(qn('w:tblBorders')):
+        tblpr.remove(old)
+    borders = OxmlElement('w:tblBorders')
+    for edge in ('top', 'left', 'bottom', 'right', 'insideH', 'insideV'):
+        el = OxmlElement(f'w:{edge}')
+        el.set(qn('w:val'), 'single')
+        el.set(qn('w:sz'), str(sz))
+        el.set(qn('w:space'), '0')
+        el.set(qn('w:color'), color)
+        borders.append(el)
+    insert_ordered(tblpr, borders, 'tblPr')
+
+
 def repeat_table_header(table, rows=1):
     """表头跨页重复。
 

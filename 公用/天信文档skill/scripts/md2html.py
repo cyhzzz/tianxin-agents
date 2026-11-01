@@ -26,7 +26,10 @@ from md2docx import parse_blocks  # noqa: E402  两条轨道共用同一套解�
 import chart  # noqa: E402
 
 SKILL = os.path.dirname(HERE)
-CSS = os.path.join(SKILL, 'assets', 'report.css')
+CSS_MAP = {
+    'report': os.path.join(SKILL, 'assets', 'report.css'),   # 咨询 / 尽调报告：思源 10.5pt
+    'gongwen': os.path.join(SKILL, 'assets', 'gongwen.css'),  # 正式公文：仿宋三号 28 磅
+}
 LOGO = os.path.join(SKILL, 'assets', 'brand', 'logo-horizontal-color.png')
 SEAL = os.path.join(SKILL, 'assets', 'brand', 'seal-mark-color.png')
 
@@ -92,6 +95,10 @@ def render_block(kind, payload, marks, charts=None):
         return f'<p>{inline(payload, marks)}</p>'
     if kind == 'quote':
         return f'<blockquote><p>{inline(payload, marks)}</p></blockquote>'
+    if kind == 'sign':
+        # 公文落款：机关名称与成文日期右对齐、右空 2 字（GB/T 9704 §8.3）
+        body = ''.join(f'<p>{esc(ln)}</p>' for ln in payload)
+        return f'<div class="sign">{body}</div>'
     if kind == 'code':
         lang, body = payload
         # 代码块内保留原始换行与空格，不能走 esc（它会把 \n 变成 <br>）
@@ -168,7 +175,7 @@ def auto_chapter_break(blocks, md_text):
 
 
 def build(md_text, docno=None, cover=False, marks=False, css_text=None, date=None,
-          chapter_break=None):
+          chapter_break=None, fmt='report'):
     md_text, charts = chart.extract(md_text)
     blocks = parse_blocks(md_text)
     title = next((p for k, p in blocks if k == 'h1'), '')
@@ -242,7 +249,10 @@ def build(md_text, docno=None, cover=False, marks=False, css_text=None, date=Non
   </div>
 </section>'''
 
-    doc_pt = fit_font_pt(title or '', 24, 17)
+    # 标题字号：咨询报告按字数收（24pt 在 156mm 版心里只放得下约 16 字，
+    # 再长会把末字挤成孤行）；公文固定二号，长标题靠换行——国标里标题本来就
+    # 允许回行成梯形/菱形，缩字号反而成了不合规。
+    doc_pt = 22 if fmt == 'gongwen' else fit_font_pt(title or '', 24, 17)
     title_html = (f'<h1 class="doc-title" style="font-size:{doc_pt:.1f}pt">{esc(title)}</h1>'
                   if title else '')
 
@@ -274,6 +284,8 @@ if __name__ == '__main__':
     ap.add_argument('--input', required=True)
     ap.add_argument('--output', required=True)
     ap.add_argument('--docno', default=None)
+    ap.add_argument('--format', default='report', choices=list(CSS_MAP),
+                    help='report 咨询报告（思源 10.5pt）/ gongwen 正式公文（仿宋三号 28 磅）')
     ap.add_argument('--cover', action='store_true')
     ap.add_argument('--marks', action='store_true')
     ap.add_argument('--date', default=None,
@@ -287,10 +299,20 @@ if __name__ == '__main__':
 
     with open(a.input, encoding='utf-8') as f:
         md = f.read()
-    with open(CSS, encoding='utf-8') as f:
+    with open(CSS_MAP[a.format], encoding='utf-8') as f:
         css = f.read()
 
-    out = build(md, a.docno, a.cover, a.marks, css, date=a.date, chapter_break=a.cb)
+    # assets/fonts/ 里放了字体就注册成 TX-Gongwen-*，公文 CSS 的字体栈首位会用上；
+    # 没放就是空串，样式原样，不报错。
+    if a.format == 'gongwen':
+        from check_fonts import font_face_css
+        extra = font_face_css()
+        if extra:
+            css = extra + '\n' + css
+            print('   字体：已注册 assets/fonts/ 中的字体')
+
+    out = build(md, a.docno, a.cover, a.marks, css, date=a.date, chapter_break=a.cb,
+                fmt=a.format)
     with open(a.output, 'w', encoding='utf-8') as f:
         f.write(out)
     kb = len(out.encode('utf-8')) / 1024

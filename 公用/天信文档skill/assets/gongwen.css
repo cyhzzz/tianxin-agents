@@ -1,0 +1,245 @@
+/* ============================================================
+   天信 · 公文版 A4 版式（PDF 轨）
+   ------------------------------------------------------------
+   依据 GB/T 9704-2012《党政机关公文格式》。与 report.css 的分工：
+
+     report.css    咨询 / 尽调报告：思源，10.5pt／1.75 倍行距，45-25-28-26
+     gongwen.css   正式公文：仿宋，16pt／固定 28 磅行距，37-35-28-26
+
+   同一条流水线（md2html → html2pdf），换的只是这份 CSS 与页边距。
+   四个硬约束（改一个就不是公文了，依据见 references/12-公文排版规格.md）：
+     · 版心 156mm × 225mm（210−28−26 = 156）
+     · 正文三号 16pt，固定行距 28 磅
+     · 每行 28 字、每页 22 行
+     · 层次序数 一、／（一）／1.／（1），标题一律不顶格、首行缩进 2 字
+
+   ⚠ 两处 PDF 轨做不到、只能降级的地方，写在这里免得以后又当成 bug：
+     1. 页码做不到「单页右、双页左」——Chromium 打印没有奇偶页概念，
+        footerTemplate 是全局的。这里统一居中。（Word 轨做到了，见
+        build_template.py 的 footer_style='gongwen'。）
+     2. 方正小标宋简体是商业字体，回退到宋体。要严格版式请在装有该字体的
+        机器上出 PDF，或改 --title-font。
+   ============================================================ */
+
+:root {
+  /* ── 字体栈：规范名在前，兼容名在后，CSS 天然支持逐级降级 ──
+     TX-Gongwen-* 是给 assets/fonts/ 留的槽位：使用者把自己合法取得的字体
+     放进去，md2html.py 会自动注入 @font-face，这里就能直接命中。
+     没有那个文件时这些族名不匹配任何东西，自动落到后面的系统字体，不报错。 */
+  --gw-fangsong: "TX-Gongwen-Body", "仿宋_GB2312", "FangSong_GB2312",
+                 "仿宋", "FangSong", "STFangsong", serif;
+  --gw-heiti:    "SimHei", "黑体", "Microsoft YaHei", sans-serif;
+  --gw-kaiti:    "TX-Gongwen-Sub", "楷体_GB2312", "KaiTi_GB2312",
+                 "楷体", "KaiTi", "STKaiti", "Kaiti SC", serif;
+  --gw-songti:   "SimSun", "宋体", "STSong", serif;
+  /* 标题：方正小标宋（国标指定，商业字体）→ 华文中宋 → 宋体。
+     实测本机装了方正小标宋，用上了；没装的机器会一路降到宋体，观感
+     「字重偏实、字面偏方」，不违规但与小标宋有差别。 */
+  --gw-xbs:      "TX-Gongwen-Title", "方正小标宋简体", "FZXiaoBiaoSong-B05S",
+                 "华文中宋", "STZhongsong", "SimSun", "宋体", serif;
+
+  --gw-fg:   #000000;   /* 公文全文纯黑，不用品牌色 */
+  --gw-rule: #000000;
+
+  --gw-fs-body:    16pt;   /* 三号 */
+  --gw-lh-body:    28pt;   /* 固定行距 28 磅 */
+  --gw-fs-title:   22pt;   /* 二号 */
+  --gw-fs-table:   14pt;   /* 四号 */
+  --gw-fs-caption: 14pt;
+
+  /* 版心 156×225mm：上 37 / 下 35 / 左 28（订口）/ 右 26 */
+  --gw-mt: 37mm; --gw-mb: 35mm; --gw-ml: 28mm; --gw-mr: 26mm;
+}
+
+/* ── 承重：页面 ─────────────────────────────────────── */
+@page {
+  size: A4;
+  margin: var(--gw-mt) var(--gw-mr) var(--gw-mb) var(--gw-ml);
+}
+
+html, body {
+  margin: 0; padding: 0;
+  background: #ffffff;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+body {
+  font-family: var(--gw-fangsong);
+  font-size: var(--gw-fs-body);
+  line-height: var(--gw-lh-body);
+  color: var(--gw-fg);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── 承重：分页与防粘连（与 report.css 同源，不许动） ── */
+h1, h2, h3, h4 { break-after: avoid; page-break-after: avoid; break-inside: avoid; }
+p { orphans: 2; widows: 2; margin: 0; }
+figure, .table-block { break-inside: avoid; page-break-inside: avoid; }
+table { break-inside: auto; page-break-inside: auto; }
+table thead { display: table-header-group; }
+.chapter { break-before: page; page-break-before: always; }
+.chapter:first-of-type { break-before: auto; page-break-before: auto; }
+
+/* 公文的章不空行——层次序数就是正文段，段前段后一律 0（§7.3.3.2） */
+h2, h3, h4, p { margin-top: 0; margin-bottom: 0; }
+
+/* ── 版面 ───────────────────────────────────────────── */
+/* 屏幕上给纸张感；打印时 doc 不再加内边距，边距交给 @page */
+@media screen {
+  body { background: #8a8a8a; padding: 24px 0; }
+  .doc {
+    width: 210mm; margin: 0 auto; background: #fff;
+    padding: var(--gw-mt) var(--gw-mr) var(--gw-mb) var(--gw-ml);
+    box-shadow: 0 2px 18px rgba(0,0,0,.18);
+  }
+}
+@media print {
+  .doc { padding: 0; }
+  /* 公文每页只有页码，没有 logo 页眉（版头属首页要素，不进页眉） */
+  .page-head { display: none !important; }
+}
+
+/* ── 标题 ───────────────────────────────────────────── */
+/* 总标题：二号方正小标宋，居中，不加粗 */
+.doc-title {
+  font-family: var(--gw-xbs);
+  font-size: var(--gw-fs-title);
+  font-weight: normal;
+  line-height: var(--gw-lh-body);
+  text-align: center;
+  color: var(--gw-fg);
+  margin: 0 0 28pt;
+  text-indent: 0;
+}
+
+/* 各层标题都是「正文段」，一律首行缩进 2 字、固定 28 磅行距 */
+h2, h3, h4 { text-indent: 2em; line-height: var(--gw-lh-body); }
+
+/* 一级「一、」黑体三号 */
+h2 {
+  font-family: var(--gw-heiti);
+  font-size: var(--gw-fs-body);
+  font-weight: normal;
+  color: var(--gw-fg);
+}
+
+/* 二级「（一）」楷体三号 */
+h3 {
+  font-family: var(--gw-kaiti);
+  font-size: var(--gw-fs-body);
+  font-weight: normal;
+  color: var(--gw-fg);
+}
+
+/* 三级「1.」与四级「（1）」仿宋三号 */
+h4 {
+  font-family: var(--gw-fangsong);
+  font-size: var(--gw-fs-body);
+  font-weight: normal;
+  color: var(--gw-fg);
+}
+
+/* 正文：首行缩进 2 字、两端对齐。表格与列表里的 p 不缩进。
+   ⚠ 特异性陷阱：`.body p`（类+元素，0-1-1）比 `.table-title`（0-1-0）高，
+   下面那条 text-align:justify 会把表题的居中覆盖掉。所以表题要用
+   `.body p.table-title`（0-2-1）压回去——这个 bug 实测出现过：表题跑到
+   版心左边，看着像忘了居中。 */
+.body p { text-indent: 2em; text-align: justify; }
+td p, th p, li p, blockquote p, .table-source, figcaption { text-indent: 0; }
+.body p.table-title { text-align: center; text-indent: 0; }
+.body p.table-source { text-align: left; text-indent: 0; }
+
+/* 引用块：公文里通常用于「附件说明」或口径提示，不加左侧色线，只缩进对齐 */
+blockquote {
+  margin: 0;
+  padding: 0;
+  border: none;
+  color: var(--gw-fg);
+}
+blockquote p { text-indent: 2em; }
+
+/* ── 列表 ───────────────────────────────────────────── */
+/* 公文不用项目符号（§7.3.3.2 只认一、／（一）／1.／（1））。列表按正文段排，
+   符号由 markdown 自带；要严格合规就在 md 里直接写层次序数。 */
+ul, ol { margin: 0; padding-left: 2em; }
+li { margin: 0; text-indent: 0; line-height: var(--gw-lh-body); }
+ul { list-style: none; padding-left: 2em; }
+ul > li { position: relative; }
+ul > li::before { content: "·"; position: absolute; left: -1em; }
+
+/* ── 表格（全线表） ─────────────────────────────────── */
+.table-block { margin: 0; }
+
+.table-title {
+  font-family: var(--gw-fangsong);
+  font-size: var(--gw-fs-caption);
+  font-weight: normal;
+  color: var(--gw-fg);
+  text-align: center;
+  margin: 0;
+  line-height: var(--gw-lh-body);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: var(--gw-fs-table);
+  line-height: 1.5;
+  border: 1pt solid var(--gw-rule);
+}
+
+th {
+  background: transparent;         /* 公文表格不用底纹：复印后成灰块 */
+  font-family: var(--gw-heiti);
+  font-weight: normal;
+  text-align: center;
+  padding: 2pt 4pt;
+  border: 0.5pt solid var(--gw-rule);
+  text-indent: 0;
+}
+
+td {
+  font-family: var(--gw-fangsong);
+  padding: 2pt 4pt;
+  border: 0.5pt solid var(--gw-rule);
+  vertical-align: top;
+  text-indent: 0;
+  word-break: break-word;
+}
+
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+.table-source {
+  font-family: var(--gw-fangsong);
+  font-size: var(--gw-fs-caption);
+  color: var(--gw-fg);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ── 图与图注 ───────────────────────────────────────── */
+figure { margin: 0; }
+figure img { width: 100%; display: block; }
+figcaption {
+  font-family: var(--gw-fangsong);
+  font-size: var(--gw-fs-caption);
+  color: var(--gw-fg);
+  text-align: center;
+  line-height: 1.5;
+}
+
+/* ── 落款（:::sign） ───────────────────────────────── */
+/* 右对齐、右空 2 字。月日不补零由作者在 md 里写对，CSS 不改字。 */
+.sign { margin: 28pt 0 0; text-align: right; padding-right: 2em; }
+.sign p { text-indent: 0; text-align: right; }
+
+/* ── 三级标记（公文里按黑白处理，只留底纹不差太多） ── */
+.mark { padding: 0 .1em; }
+.mark-fact { background: #F4F4F4; }
+.mark-industry { background: #EDF5FF; }
+.mark-infer { background: #FDF3DA; }
+
+/* ── 封面（公文一般不做封面，保留以免流水线报错） ──── */
+.cover { display: none; }

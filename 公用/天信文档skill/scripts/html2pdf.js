@@ -18,10 +18,66 @@
  *        [--cover] [--logo 路径]
  */
 const EMPTY_HDR = '<div></div>';
-const { chromium } = require('C:/Users/cyhzz/AppData/Roaming/npm/node_modules/playwright');
 const fs = require('fs');
 const path = require('path');
 const { execFileSync } = require('child_process');
+
+/* Playwright 的安装位置随机器变（全局 npm / 局部 node_modules / 用户目录），
+   写死绝对路径换台机器就崩——原来这里就是写死的。按顺序找，全找不到才报错。 */
+function loadPlaywright() {
+  const tries = [
+    'playwright',
+    /* npm 全局装的位置：node.exe 同级的 node_modules（WorkBuddy 自带的 node 就是这种布局） */
+    path.join(path.dirname(process.execPath), 'node_modules', 'playwright'),
+    path.join(process.env.APPDATA || '', 'npm', 'node_modules', 'playwright'),
+    path.join(process.env.LOCALAPPDATA || '', 'npm', 'node_modules', 'playwright'),
+    path.join(__dirname, '..', 'node_modules', 'playwright'),
+  ];
+  for (const c of tries) {
+    if (!c) continue;
+    try { return require(c); } catch (e) { /* 换下一个 */ }
+  }
+  throw new Error(
+    '未找到 playwright。装一次即可：npm i -g playwright\n' +
+    '   浏览器可复用已下载的 ~/AppData/Local/ms-playwright（设 PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1）');
+}
+const { chromium } = loadPlaywright();
+
+/* Playwright 版本与已下载的浏览器版本对不上时会直接崩（新装 playwright 要
+   chromium_headless_shell-1248，本机只有 1208）。把「找一个能用的 Chromium」
+   做成回退链，比让每个人去 npx playwright install 一次省事。 */
+function findChromiumExe() {
+  const base = path.join(process.env.LOCALAPPDATA || '', 'ms-playwright');
+  try {
+    const dirs = fs.readdirSync(base).filter(d => d.startsWith('chromium-')).sort().reverse();
+    for (const d of dirs) {
+      for (const sub of ['chrome-win64', 'chrome-win', 'chrome-linux']) {
+        const p = path.join(base, d, sub, sub.startsWith('chrome-win') ? 'chrome.exe' : 'chrome');
+        if (fs.existsSync(p)) return p;
+      }
+    }
+  } catch (e) { /* 目录不存在就走系统浏览器 */ }
+  for (const p of [
+    'C:/Program Files/Google/Chrome/Application/chrome.exe',
+    'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe',
+    'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',
+    'C:/Program Files/Microsoft/Edge/Application/msedge.exe',
+  ]) {
+    if (fs.existsSync(p)) return p;
+  }
+  return null;
+}
+
+async function launchBrowser() {
+  try {
+    return await chromium.launch();
+  } catch (e) {
+    const exe = findChromiumExe();
+    if (!exe) throw e;
+    console.log('   ⚠ Playwright 自带浏览器不可用，改用 ' + exe);
+    return await chromium.launch({ executablePath: exe });
+  }
+}
 
 const argv = process.argv.slice(2);
 const input = argv[0];
@@ -33,14 +89,21 @@ const opt = (name, dflt) => {
 };
 
 if (!input || !output) {
-  console.error('用法: node html2pdf.js 输入.html 输出.pdf [--docno ...] [--cover]');
+  console.error('用法: node html2pdf.js 输入.html 输出.pdf [--docno ...] [--cover] [--format report|gongwen]');
   process.exit(1);
 }
 
 const docno = opt('--docno', '');
 const hasCover = flag('--cover');
+/* 版式：report 咨询报告 / gongwen 正式公文（GB/T 9704）。
+   两档的差别只有三处：页边距、页眉有无、页码字号——版式本体在 CSS 里。
+   公文页眉留空：版头（红头）是首页要素，不能塞进每页页眉重复。 */
+const fmt = opt('--format', 'report');
+const isGw = fmt === 'gongwen';
 const logoPath = opt('--logo', path.join(__dirname, '..', 'assets', 'brand', 'logo-horizontal-color.png'));
-const MARGIN = { top: '45mm', bottom: '25mm', left: '26mm', right: '26mm' };
+const MARGIN = isGw
+  ? { top: '37mm', bottom: '35mm', left: '28mm', right: '26mm' }  /* 版心 156×225mm */
+  : { top: '45mm', bottom: '25mm', left: '26mm', right: '26mm' };
 /* 封面没有页眉，不需要给页眉让出 45mm，用自己的上边距 */
 const COVER_MARGIN = { top: '25mm', bottom: '25mm', left: '26mm', right: '26mm' };
 
@@ -81,10 +144,16 @@ const headerTpl = `<div style="margin:21mm 26mm 0 28mm;">
 const footerTpl = `<div style="width:100%;text-align:center;font-size:8pt;color:#525252;
   font-family:'Noto Serif SC',SimSun,serif;">— <span class="pageNumber"></span> —</div>`;
 
+/* 公文页码：宋体四号 14pt，纯黑，一字线夹页码（GB/T 9704 §7.3.5）。
+   ⚠ Chromium 打印没有奇偶页概念，footerTemplate 是全局的，做不到「单页右、双页左」。
+     这里统一居中。要严格单右双左只能走 Word 轨——那边的 gongwen 页脚做到了。 */
+const footerTplGw = `<div style="width:100%;text-align:center;font-size:14pt;line-height:1.2;
+  font-family:'SimSun','宋体',serif;color:#000000;">— <span class="pageNumber"></span> —</div>`;
+
 const EMPTY = '<div></div>';
 
 (async () => {
-  const browser = await chromium.launch();
+  const browser = await launchBrowser();
   const page = await browser.newPage();
   const errors = [];
   page.on('pageerror', e => errors.push(e.message));
@@ -125,7 +194,10 @@ const EMPTY = '<div></div>';
   }
 
   const bodyPdf = path.join(tmpDir, `_${base}-body.pdf`);
-  await page.pdf({ path: bodyPdf, ...pdfOpts(headerTpl) });
+  await page.pdf({
+    path: bodyPdf,
+    ...pdfOpts(isGw ? EMPTY_HDR : headerTpl, isGw ? footerTplGw : null, MARGIN),
+  });
   parts.push(bodyPdf);
 
   const info = await page.evaluate(() => ({

@@ -117,16 +117,31 @@ def check_placeholders(doc, rep):
         print('  ✓ 占位符：无残留')
 
 
+def _needs_logo(doc):
+    """只有咨询报告轨（report）要 logo 页眉。
+
+    过程稿（plain）故意不设，公文（gongwen）版头属首页要素也不设——
+    若一律要求 logo，这两档每次都被误报成缺件。
+    判据用正文号：report 是宋体 10.5pt，另两档是 11pt / 仿宋 16pt。
+    """
+    n = doc.styles['Normal']
+    pt = n.font.size.pt if n.font.size else None
+    return pt is not None and abs(pt - 10.5) < 0.5 and (_ea(n) or '') == '宋体'
+
+
 def check_requirements(doc, rep):
     sec = doc.sections[0]
     hxml = sec.header._element.xml
     fxml = sec.footer._element.xml
     has_pic = 'graphicData' in hxml or 'blip' in hxml
     has_page = 'PAGE' in fxml
-    print(f'  {"✓" if has_pic else "✗"} 页眉 logo：{"有" if has_pic else "没有"}')
+    if _needs_logo(doc):
+        print(f'  {"✓" if has_pic else "✗"} 页眉 logo：{"有" if has_pic else "没有"}')
+        if not has_pic:
+            rep.err('页眉没有 logo')
+    else:
+        print('  ✓ 页眉：该版式（过程稿 / 公文）不设 logo，符合预期')
     print(f'  {"✓" if has_page else "✗"} 页脚页码域：{"有" if has_page else "没有"}')
-    if not has_pic:
-        rep.err('页眉没有 logo')
     if not has_page:
         rep.err('页脚没有页码域')
 
@@ -233,6 +248,98 @@ def check_code_blocks(doc, rep):
              '框图在 Word 里换字体、换纸张、转 PDF 都可能错位，且无法被检索')
 
 
+GW_MARGIN = (37, 35, 28, 26)   # 上 下 左 右 mm，GB/T 9704 §6.1
+GW_TABLE_PT = 14               # 四号
+
+
+def _ea(style):
+    """取样式声明的东亚字体名。python-docx 的 font.name 只给 ascii 那个，
+    中文实际用什么全看 w:rFonts/@eastAsia——这也是「设置了字体但不生效」的根因。"""
+    rpr = style.element.find(qn('w:rPr'))
+    if rpr is None:
+        return None
+    rf = rpr.find(qn('w:rFonts'))
+    return rf.get(qn('w:eastAsia')) if rf is not None else None
+
+
+def _ind(style, attr='firstLineChars'):
+    ppr = style.element.find(qn('w:pPr'))
+    if ppr is None:
+        return None
+    ind = ppr.find(qn('w:ind'))
+    return ind.get(qn('w:' + attr)) if ind is not None else None
+
+
+def _is_gongwen(doc):
+    """靠正文样式判版式，不靠文件名——谁都能把文件叫「公文.docx」。
+
+    判据：正文东亚字体是仿宋且三号 16pt。report/plain 轨是宋体，一判就分开。
+    """
+    n = doc.styles['Normal']
+    pt = n.font.size.pt if n.font.size else None
+    return (_ea(n) or '').startswith('仿宋') and pt == 16
+
+
+def check_gongwen(doc, rep):
+    """公文合规：五项「错了但 Word 不报错」的硬约束。
+
+    非公文版式直接跳过，不打扰 report/plain 轨。查的是结果不是过程——
+    模板参数怎么设不管，落到 docx 里的值必须对。
+    """
+    if not _is_gongwen(doc):
+        return False
+
+    s = doc.sections[0]
+    got = tuple(round(x.mm) for x in
+                (s.top_margin, s.bottom_margin, s.left_margin, s.right_margin))
+    if any(abs(a - b) > 1 for a, b in zip(got, GW_MARGIN)):
+        rep.err(f'公文页边距应为 {GW_MARGIN[0]}/{GW_MARGIN[1]}/{GW_MARGIN[2]}/{GW_MARGIN[3]} mm'
+                f'（上/下/左/右），实际 {got[0]}/{got[1]}/{got[2]}/{got[3]}')
+    else:
+        print(f'  ✓ 公文页面：边距 {got[0]}/{got[1]}/{got[2]}/{got[3]} mm')
+
+    normal = doc.styles['Normal']
+    ls = normal.paragraph_format.line_spacing
+    ls_pt = ls.pt if hasattr(ls, 'pt') else ls
+    rule = str(normal.paragraph_format.line_spacing_rule)
+    if ls_pt is not None and abs(float(ls_pt) - 28) < 0.6 and 'EXACT' in rule:
+        print(f'  ✓ 公文正文：{_ea(normal)} 三号 16pt，固定 28 磅行距')
+    else:
+        rep.err(f'公文正文应为固定行距 28 磅，实际 {ls_pt} / {rule}')
+
+    title = doc.styles['Title']
+    t_pt = title.font.size.pt if title.font.size else None
+    if t_pt is not None and abs(t_pt - 22) < 0.5:
+        print(f'  ✓ 公文标题：二号 22pt（{_ea(title)}，缺字体时回退宋体）')
+    else:
+        rep.err(f'公文标题应为二号 22pt，实际 {t_pt}')
+
+    for name, want in (('Heading 1', '黑体'), ('Heading 2', '楷体'), ('Heading 3', '仿宋')):
+        st = doc.styles[name]
+        if _ind(st) != '200':
+            rep.err(f'{name} 应首行缩进 2 字（firstLineChars=200），实际 {_ind(st)}')
+        if not (_ea(st) or '').startswith(want):
+            rep.warn(f'{name} 常规用{want}，实际 {_ea(st)}')
+
+    bad_tbl = 0
+    for t in doc.tables:
+        for row in t.rows:
+            for cell in row.cells:
+                for p in cell.paragraphs:
+                    for r in p.runs:
+                        if r.font.size and abs(r.font.size.pt - GW_TABLE_PT) > 0.6:
+                            bad_tbl += 1
+                            break
+    if bad_tbl:
+        rep.warn(f'公文表格字号常规为四号 {GW_TABLE_PT}pt，{bad_tbl} 处不符（表内可缩到小四）')
+
+    if not doc.settings.element.find(qn('w:evenAndOddHeaders')) is None:
+        print('  ✓ 公文页码：奇偶页不同页脚已开（单页右、双页左）')
+    else:
+        rep.warn('公文页码应单页右、双页左（需 evenAndOddHeaders + 偶数页页脚），当前未开启')
+    return True
+
+
 def check_stats(doc):
     chars = sum(len(p.text) for p in doc.paragraphs)
     tables = len(doc.tables)
@@ -251,6 +358,7 @@ def main(path, strict=False):
     check_forbidden_colors(doc, rep)
     check_code_blocks(doc, rep)
     check_table_titles(doc, rep)
+    check_gongwen(doc, rep)
     check_stats(doc)
 
     print()

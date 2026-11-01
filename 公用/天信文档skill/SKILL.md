@@ -2,14 +2,17 @@
 name: tianxin-docs
 description: >
   天台天信会计师事务所的文档与报告生产规范：判文书性质（法定业务文书 / 咨询尽调报告 / 汇报演示）
-  → 选轨道（Word / A4 报告 / 网页长页 / 演示 deck）→ 套模板与品牌规范出版。
+  → 选轨道（Word 三档：过程稿 plain / 咨询报告 report / 正式公文 gongwen；A4 报告；网页长页；演示 deck）
+  → 套模板与品牌规范出版。
   **只管格式与出版，不管内容对错**：数从哪来、依据哪个文号、意见怎么表述由对应业务线负责，
   本技能负责版式、页眉页脚、目录、字体与品牌一致性。
+  公文版式按 GB/T 9704-2012：A4、版心 156×225mm、正文三号仿宋固定 28 磅行距、
+  标题二号小标宋居中、层次序数首行缩进 2 字、页码宋体四号单页右双页左。
   触发词：天信报告、天信Word、报告排版、审计报告排版、评估报告排版、尽调报告排版、专项报告、
-  公文格式、GB/T 9704、天信PPT、天信模板、封面、页眉页脚、排版、
+  公文格式、公文排版、GB/T 9704、正式行文、过程稿、天信PPT、天信模板、封面、页眉页脚、排版、
   天信Excel、xlsx、底稿表、勾稽表、抽样表、税费测算表。
 metadata:
-  version: 1.0.0
+  version: 1.1.0
 ---
 
 # 天信文档与报告
@@ -36,8 +39,8 @@ metadata:
 
 | 轨道 | 产出 | 用哪套东西 |
 |---|---|---|
-| **A · Word 交付** | `.docx`，要打印、要盖章、要归档 | `assets/tianxin-report.docx`（咨询报告）/ `assets/tianxin-gongwen.docx`（公文）+ `scripts/md2docx.py` |
-| **B · A4 报告** | 单文件 HTML + PDF，排版讲究、可直接发链接 | `assets/report.css` + `scripts/md2html.py` + `scripts/html2pdf.js` |
+| **A · Word 交付** | `.docx`，要打印、要盖章、要归档 | 三档版式：`plain`（过程稿）/ `report`（咨询报告）/ `gongwen`（正式公文）+ `scripts/md2docx.py` |
+| **B · A4 报告** | 单文件 HTML + PDF，排版讲究、可直接发链接 | `assets/report.css`（咨询报告）+ `assets/gongwen.css`（公文）+ `scripts/md2html.py` + `scripts/html2pdf.js` |
 | **B2 · 网页长页** | 单文件 HTML，滚动阅读，手机电脑都能看 | `assets/web.css` + `scripts/md2web.py` |
 | **C · 网页演示** | 单文件 HTML，横翻页，投影用 | `assets/deck.css` + `scripts/md2deck.py` |
 | **D · Excel 表** | `.xlsx`，底稿 / 勾稽 / 抽样 / 测算，要复核、要算 | `scripts/build_xlsx.py` + `references/11-Excel表样与公式.md` |
@@ -48,24 +51,54 @@ metadata:
 
 > 判据一句话：**文字进 Word，数字进 Excel，报告附 Excel。** 正文只放结论与关键表，完整表作附件。
 
+### Word 分两档（选错档就是不合规，不是不好看）
+
+| 档 | 什么时候用 | 页眉 | 表格 | 判据一句话 |
+|---|---|---|---|---|
+| `plain` 过程稿 | 还在写、还要改、只给自己和同事看 | 无 | 全线 | 出错也不外传，排版别添乱 |
+| `report` 咨询报告 | 对外交付，但不承担鉴证责任 | logo + 编号 | 三线 | 署名是项目组，不签注师名 |
+| `gongwen` 正式公文 | 对外正式行文、报主管部门、要归档 | 无（版头属首页） | 全线 | **要签字盖章、进档案** |
+
+拿不准问一句：**这份要不要签字盖章对外出具？** 要 → `gongwen`。
+
+`gongwen` 是 GB/T 9704 版式：A4、版心 156×225mm、正文三号仿宋、**固定行距 28 磅**、
+标题二号小标宋居中、层次序数（一、／（一）／1.）一律首行缩进 2 字、页码宋体四号
+「— N —」单页右双页左。参数全表与判据见 `references/12-公文排版规格.md`。
+
+**PDF 也分两档**，与 Word 一一对应：`report.css` 出咨询报告（思源 10.5pt／1.75 倍），
+`gongwen.css` 出公文（仿宋三号／28 磅／37-35-28-26）。对外正式交付的 PDF 走 `gongwen`。
+
 ### A 轨命令（Word）
 
 ```bash
-# 首次或改了模板参数后，重建空壳模板
-python scripts/build_template.py            # 咨询报告版式
-python scripts/build_template.py --format gongwen   # 公文版式
+# 首次或改了模板参数后，重建空壳模板（三档各一份）
+python scripts/build_template.py                     # 咨询报告版式
+python scripts/build_template.py --format plain      # 过程稿版式
+python scripts/build_template.py --format gongwen    # 公文版式
 
-# Markdown → Word
+# 公文模板的两个开关
+#   --gb2312                强制用 _GB2312 规范字体名（旧政务环境）
+#   --compat                强制用通用字体名（仿宋 / 楷体），不探测
+#   --title-font 华文中宋     覆盖标题字体（本机没有方正小标宋时的保底）
+#   不给任何开关 = 自动探测本机字体，优先规范名
+
+# 字体核验：本机有哪些公文字体、会降级到哪个
+python scripts/check_fonts.py
+
+# Markdown → Word：--format 不给就是 report
 # 章是否另起页自动判断（≥6 章且 ≥8000 字才算正式报告）；要强制写
 #   --chapter-break / --no-chapter-break
 python scripts/md2docx.py \
   --input 报告.md --output 报告.docx \
   --docno "天信咨字〔2026〕第 012 号"
 
+python scripts/md2docx.py --input 草稿.md --output 草稿.docx --format plain
+python scripts/md2docx.py --input 专项报告.md --output 专项报告.docx --format gongwen
+
 # 复核版：给【事实】【行业】【推演】加底色，复核时一眼看出哪句没确认
 python scripts/md2docx.py --input 报告.md --output 报告-复核.docx --marks
 
-# 机械自检（每次交付前必跑）
+# 机械自检（每次交付前必跑；公文版式会自动多查五项国标硬约束）
 python scripts/lint_docx.py 报告.docx
 
 # 没有 Word 时看版式（近似预览，不是真实渲染）
@@ -80,9 +113,14 @@ python scripts/preview_docx.py 报告.docx
 python scripts/md2html.py --input 报告.md --output 报告.html \
   --docno "天信咨字〔2026〕第 012 号" --cover
 
+# 公文版：换 CSS 而已，稿件不用改
+python scripts/md2html.py --input 专项报告.md --output 专项报告.html --format gongwen
+
 # HTML → PDF（分封面/正文两趟渲染再合并，封面不带页眉）
 node scripts/html2pdf.js 报告.html 报告.pdf \
   --docno "天信咨字〔2026〕第 012 号" --cover
+
+node scripts/html2pdf.js 专项报告.html 专项报告.pdf --format gongwen
 
 # PDF 体检：页码连续、内容填充率（抓半页空白，章末页不算错）、页眉对齐
 python scripts/lint_pdf.py 报告.pdf
@@ -184,6 +222,7 @@ python scripts/build_xlsx.py --verify 勾稽校验表.xlsx
 | 怎么写、措辞拿不准、不知道标不标【推演】 | `references/04-行文与口径.md` |
 | 该画图还是该列表、图怎么画 | `references/08-图表规范.md` |
 | 这份东西要不要签字盖章、要素齐不齐 | `references/01-文书分轨.md` |
+| **要出正式公文（报政府/主管部门/归档）** | `references/12-公文排版规格.md`（三档判据 + 国标参数全表 + 本机字体现实 + 五项必查） |
 | 颜色字体标志怎么用 | `references/00-品牌规范.md` |
 | 脚本报错、格式不对、页眉错位 | `references/05`~`07`（三条流水线的实现细节） |
 | 拿真实材料跑出怪问题 | `references/09-真实项目复盘.md`（八个已踩的坑 + 判据怎么定） |
@@ -207,6 +246,7 @@ python scripts/build_xlsx.py --verify 勾稽校验表.xlsx
 | `> 文字` | 引用块（左侧 1.5pt 灰线），用于免责说明与口径提示 |
 | `---` | 水平分隔线，**不换页** |
 | `:::pagebreak` | 强制分页 |
+| `:::sign` 块 | 公文落款：块内每行右对齐、右空 2 字（机关名 + 成文日期） |
 | ` ``` ` 围栏 | 代码块 / ASCII 架构图（等宽、灰底、保原样） |
 | 单元格里写 `<br>` | 格内换行 |
 
@@ -241,13 +281,16 @@ python scripts/build_xlsx.py --verify 勾稽校验表.xlsx
 天信文档skill/
 ├── SKILL.md
 ├── assets/
+│   ├── tianxin-plain.docx        过程稿空壳模板
 │   ├── tianxin-report.docx       咨询报告空壳模板
-│   ├── tianxin-gongwen.docx      公文空壳模板
-│   ├── report.css                A4 报告版式（承重段 + 调味段）
+│   ├── tianxin-gongwen.docx      正式公文空壳模板（GB/T 9704）
+│   ├── report.css                A4 报告版式（咨询报告：思源 10.5pt／1.75）
+│   ├── gongwen.css               A4 报告版式（公文：仿宋三号／固定 28 磅）
 │   ├── web.css                   网页长页版式
 │   ├── deck.css                  演示 deck 版式
 │   ├── doc-tokens.css            文档排版令牌
-│   ├── brand/                    logo 六件套 + 验收页 + 使用说明
+│   ├── brand/                    logo 六件套 + 验收页 + 使用说明（含 wanxin/ 万信版）
+│   ├── fonts/                    字体放置目录（空，字体不入库；放进去自动注册）
 │   ├── design-system/            官网等网页物料的设计系统（原 tianxin-cpa）
 │   └── brand-guide.html          品牌规范网页版
 ├── references/
@@ -256,22 +299,24 @@ python scripts/build_xlsx.py --verify 勾稽校验表.xlsx
 │   ├── 02-报告骨架.md             三种报告原型的章节组件、篇幅基线、附录规则
 │   ├── 03-研究深度.md             三层增值、分析层次、报告里不写什么
 │   ├── 04-行文与口径.md           结论摘要、数据源行、方法论四件事、措辞禁忌
-│   ├── 05-Word流水线.md          模板结构、脚本实现细节、踩过的坑
+│   ├── 05-Word流水线.md           三档版式、模板结构、脚本实现细节、踩过的坑
 │   ├── 06-报告PDF流水线.md        HTML 报告与 PDF 导出、分页与页眉的实现限制
 │   ├── 07-网页长页与演示.md       滚动长页与横翻页 deck 的取值与坑
 │   ├── 08-图表规范.md             表型选择、三线表、配色、三个改变结论的陷阱
 │   ├── 09-真实项目复盘.md         八个已踩的坑 + 判据怎么定
-│   └── 11-Excel表样与公式.md      D 轨：四类表样、12 个必会公式、6 个高频错误
+│   ├── 11-Excel表样与公式.md      D 轨：四类表样、12 个必会公式、6 个高频错误
+│   └── 12-公文排版规格.md         三档判据、GB/T 9704 参数全表、本机字体现实、五项必查
 ├── scripts/
-│   ├── build_template.py         生成 Word 空壳模板
-│   ├── md2docx.py                Markdown → Word
-│   ├── md2html.py                Markdown → 单文件 HTML（A4）
+│   ├── build_template.py         生成三档 Word 空壳模板（公文自动探测本机字体）
+│   ├── check_fonts.py            公文字体探测：规范名 / 兼容名 / 降级到哪个
+│   ├── md2docx.py                Markdown → Word（plain / report / gongwen）
+│   ├── md2html.py                Markdown → 单文件 HTML（report / gongwen 两套 CSS）
 │   ├── md2web.py                 Markdown → 网页长页
 │   ├── md2deck.py                Markdown → 演示 deck
 │   ├── chart.py                  内联 SVG 图表（bar/column/line/grouped）
-│   ├── html2pdf.js               HTML → PDF（封面/正文分趟渲染后合并）
-│   ├── docx_helpers.py           schema 顺序安全插入
-│   ├── lint_docx.py              docx 机械自检
+│   ├── html2pdf.js               HTML → PDF（封面/正文分趟渲染后合并，支持 --format gongwen）
+│   ├── docx_helpers.py           schema 顺序安全插入、三线表与全线表
+│   ├── lint_docx.py              docx 机械自检（公文版式自动加查五项国标硬约束）
 │   ├── lint_pdf.py               pdf 机械自检（页码、墨水量）
 │   ├── preview_docx.py           docx 近似预览
 │   └── build_xlsx.py             Excel 表样生成（D 轨，需 openpyxl）
@@ -297,10 +342,41 @@ python scripts/build_xlsx.py --verify 勾稽校验表.xlsx
 
 `references/00-品牌规范.md` 写正文用 Noto Sans SC，那是给屏幕定的。Word 文档要发给客户、交到政府部门、打印装订归档，字体必须保底——目标机器没有思源会静默回退，排版就散了。所以：
 
-- **印刷文档**：宋体正文 + 黑体标题 + Times New Roman 数字
-- **屏幕物料**：思源宋体 / 思源黑体
+| 场景 | 正文 | 标题 |
+|---|---|---|
+| 印刷文档（plain / report） | 宋体 | 黑体 |
+| **正式公文（gongwen）** | **仿宋 三号** | **方正小标宋 二号**（缺字体回退宋体） |
+| 屏幕物料（HTML 轨） | 思源宋体 / 思源黑体 | 同左 |
 
-两者不冲突，因为介质不同。品牌感靠颜色、留白、细线维持，不靠字体。
+**公文那一行不是审美选择，是国标。** GB/T 9704 规定正文仿宋体、标题小标宋体，
+不是「推荐」。换成宋体就不叫公文了——这也是本技能把公文单列一档的原因。
+
+**「仿宋_GB2312」这个字体名要当心。** Win7 之后系统不再自带，但不少机关用电脑
+自己装过；写这个名字而目标机器没有，Word 会**静默回退成宋体**（不报错，打印才发现）。
+
+所以本技能不写死字体名，而是**探测 + 降级**：
+
+```bash
+python scripts/check_fonts.py      # 看本机有哪些公文字体、会降级到哪个
+```
+
+| 用途 | 优先 | 降级 |
+|---|---|---|
+| 公文正文 | 仿宋_GB2312 | 仿宋 |
+| 公文二级标题 | 楷体_GB2312 | 楷体 |
+| 公文标题 | 方正小标宋简体 | 华文中宋 → 宋体 |
+
+Word 的 `w:rFonts` 只能写一个名字（没有 CSS 那种降级链），所以按探测结果选；
+PDF 用字体栈，天然逐级降级。强制切换用 `--gb2312` / `--compat` / `--title-font`。
+
+**字体文件不入库**（方正小标宋 `fsType=783` 禁止嵌入，GB2312 字库版权受限，
+且单个 5–15MB）。要规范版式就把自己合法取得的字体放进 `assets/fonts/`，
+脚本自动注册，Word 与 PDF 都跟着用。详见 `references/12-公文排版规格.md` 第三节。
+
+**要保证收件人看到的就是你看到的，交 PDF 不交 Word**——PDF 里字形已固化，
+Word 在没装字体的机器上仍会回退。
+
+三者不冲突，因为介质不同。品牌感靠颜色、留白、细线维持，不靠字体。
 
 
 ---
