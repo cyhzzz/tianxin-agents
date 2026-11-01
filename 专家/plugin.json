@@ -1,7 +1,7 @@
 {
   "name": "tianxin-office-expert",
-  "version": "1.6.0",
-  "description": "Tianxin CPA Office Expert — one expert covering the firm's shared capabilities (document production, accounting practice judgment, standards retrieval, daily briefs) plus six business lines: bookkeeping, accounting services (statements/notes/consolidation/analysis), audit working papers and report writing, tax filing and advisory, management consulting (strategy/organization/HR/process/marketing/business improvement), and asset appraisal. This file declares which skills the expert loads.",
+  "version": "1.7.0",
+  "description": "Tianxin CPA Office Expert — one expert covering the firm's shared capabilities (document production, accounting practice judgment, standards retrieval, daily briefs) plus seven business lines: bookkeeping, accounting services (statements/notes/consolidation/analysis), audit working papers and report writing, tax filing and advisory, management consulting (strategy/organization/HR/process/marketing/business improvement), performance evaluation (budget performance, project post-evaluation, government acceptance), and asset appraisal. This file declares which skills the expert loads.",
   "author": {
     "name": "天台天信会计师事务所",
     "email": ""
@@ -19,6 +19,7 @@
     "./skills/tianxin-accounting",
     "./skills/tianxin-appraisal",
     "./skills/tianxin-consulting",
+    "./skills/tianxin-performance",
     "./skills/tianxin-daily-brief"
   ],
   "expertType": "agent",
@@ -28,12 +29,12 @@
     "zh": "天信办公专家"
   },
   "profession": {
-    "en": "CPA Firm Practice: Audit, Tax, Bookkeeping, Accounting, Appraisal, Consulting",
-    "zh": "天信会计师事务所·审计·税务·代账·会计核算·评估造价·企业咨询"
+    "en": "CPA Firm Practice: Audit, Tax, Bookkeeping, Accounting, Appraisal, Performance Evaluation, Consulting",
+    "zh": "天信会计师事务所·审计·税务·代账·会计核算·资产评估·绩效评价·企业咨询"
   },
   "displayDescription": {
-    "en": "Tianxin CPA assistant: audit working papers, bookkeeping and tax filing, statements and notes, appraisal and consulting.",
-    "zh": "天信所实务助手：出审计底稿与报告、代理记账与报税、编报表附注、评估造价、管理咨询、检索准则原文。"
+    "en": "Tianxin CPA assistant: audit working papers, bookkeeping and tax filing, statements and notes, appraisal and performance evaluation, consulting.",
+    "zh": "天信所实务助手：审计底稿、代理记账报税、报表附注、资产评估、绩效评价、管理咨询、准则检索。"
   },
   "avatar": "avatars/tianxin-office-expert.png",
   "categoryId": "08-FinanceInvestment",
@@ -52,8 +53,8 @@
       "zh": "税务申报与代理记账"
     },
     {
-      "en": "Statements, Appraisal & Consulting",
-      "zh": "报表附注·评估·咨询"
+      "en": "Statements, Appraisal, Performance & Consulting",
+      "zh": "报表附注·评估·绩效·咨询"
     }
   ],
   "quickPrompts": [

@@ -498,7 +498,7 @@ def check_docs(rep, skills):
         rep.ok('无分层重构前的失效命令（cp -r skills/* 、cp expert/）')
 
     # 业务线 README 是否存在
-    for line in ['审计', '税务', '代理记账', '会计核算', '企业咨询', '评估造价']:
+    for line in ['审计', '税务', '代理记账', '会计核算', '企业咨询', '资产评估', '绩效评价']:
         d = os.path.join(HERE, line)
         if not os.path.isdir(d):
             rep.err(f'缺业务线目录 {line}/')
@@ -661,7 +661,7 @@ def check_upstream(rep):
 # ── 11. 技能自包含 ──────────────────────────────────────
 
 # 仓库里的业务线目录。技能内部若以这些为路径起点，就是跨技能引用。
-LINE_DIRS = {'公用', '审计', '税务', '代理记账', '会计核算', '企业咨询', '评估造价', '运营', 'docs', '专家'}
+LINE_DIRS = {'公用', '审计', '税务', '代理记账', '会计核算', '企业咨询', '资产评估', '绩效评价', '运营', 'docs', '专家'}
 
 
 def check_self_contained(rep):
