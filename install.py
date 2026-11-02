@@ -717,7 +717,7 @@ def cmd_default(args):
     out('  1. 新开一个会话，技能才会被加载')
     out('  2. 说一句试试：「用天信文档规范，把这篇 Markdown 出一份 Word」')
     if expert_dir:
-        out('  3. 左侧「专家」→ 我的专家 → 选「天信办公专家」，六条业务线的作业都在里面')
+        out('  3. 左侧「专家」→ 我的专家 → 选「天信办公专家」，七条业务线的作业都在里面')
     out(f'{C_DIM}  验收：python install.py --verify{C_OFF}')
     out()
 
