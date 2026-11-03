@@ -30,7 +30,7 @@ pwd                      # 必须能看到 install.py。看不到就 cd 到仓�
 ls install.py
 python --version         # 或 python3 --version；没有 Python 就记下来
 # 技能散在业务线目录下，要递归找（根目录直接 ls 是找不到的）
-find . -name SKILL.md -not -path './.git/*' | sort    # 应看到十条
+find . -name SKILL.md -not -path './.git/*' | sort    # 应看到十一条
 ```
 
 同时查一下这台机器上已有的 skill 目录：
@@ -77,7 +77,7 @@ ls -d .workbuddy/skills 2>/dev/null
 11. 天信日报 —— 每日行业与商机情报
 ```
 
-**报完补一句**：七条业务线现在都建好了——审计、税务、代理记账、会计核算、资产评估、绩效评价、企业咨询。还空着的是**审计底稿的真实格式**（现在是通用框架，还没用所里真实底稿换过）。这不是漏装，是还没材料。
+**报完补一句**：七条业务线现在都建好了——审计、税务、代理记账、会计核算、资产评估、绩效评价、企业咨询。其中审计、会计核算、绩效评价三条已用本所真实报告校准（复现测试记录见 `测试/2026-11-01-复现测试/`），但都还没在真实项目上端到端跑过；整体底稿格式也还是通用框架，没拿所里真实底稿整体换过。这不是漏装，是还没材料。
 
 ---
 
@@ -260,14 +260,15 @@ python install.py --verify
 ```
   ✓ tianxin-bookkeeping  tianxin-bookkeeping · 3 份 references
   ✓ tianxin-consulting  tianxin-consulting · 3 份 references
-  ✓ tianxin-accounting  tianxin-accounting · 4 份 references
+  ✓ tianxin-accounting  tianxin-accounting · 5 份 references
   ✓ tianxin-shiwu-kb  tianxin-shiwu-kb · 12 张能力卡
-  ✓ tianxin-docs  tianxin-docs · 11 份 references · 12 个脚本
+  ✓ tianxin-docs  tianxin-docs · 12 份 references · 13 个脚本
   ✓ chenyiwei-bbs  chenyiwei-bbs
-  ✓ tianxin-audit  tianxin-audit · 10 份 references
+  ✓ tianxin-audit  tianxin-audit · 11 份 references
   ✓ tianxin-tax  tianxin-tax · 7 份 references
+  ✓ tianxin-performance  tianxin-performance · 3 份 references
   ✓ tianxin-appraisal  tianxin-appraisal · 1 份 references
-  ✓ tianxin-daily-brief  tianxin-daily-brief · 7 份 references
+  ✓ tianxin-daily-brief  tianxin-daily-brief · 8 份 references
 
   ✓ 专家包 天信办公专家  11 个技能 · 元数据就位
 ```
