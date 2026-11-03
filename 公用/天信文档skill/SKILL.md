@@ -1,6 +1,6 @@
 ---
 name: tianxin-docs
-description: >
+description: |-
   天台天信会计师事务所的文档与报告生产规范：判文书性质（法定业务文书 / 咨询尽调报告 / 汇报演示）
   → 选轨道（Word 三档：过程稿 plain / 咨询报告 report / 正式公文 gongwen；A4 报告；网页长页；演示 deck）
   → 套模板与品牌规范出版。

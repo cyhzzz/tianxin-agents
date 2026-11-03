@@ -1,6 +1,6 @@
 ---
 name: chenyiwei-bbs
-description: >
+description: |-
   陈版主实务问答检索。现查「视野论坛·陈版主（陈奕蔚）」的实务答疑、企业会计准则原文与监管处罚
   决定书，直接 curl 公开 REST API 拉取并整理成中文 markdown，不需要 API Key 或 MCP server。
   **给的是可溯源的原文与出处，不是本所结论**：当依据用之前，先看帖子时间与所引准则版本。
