@@ -595,12 +595,33 @@ def cmd_verify(args):
         out(f'{C_DIM}· 专家包是全局装的，与项目目录无关，此处不检查{C_OFF}')
     elif os.path.isdir(exp_dir):
         pj = os.path.join(exp_dir, '.codebuddy-plugin', 'plugin.json')
-        nsk = 0
         sd = os.path.join(exp_dir, 'skills')
+        actual = []
         if os.path.isdir(sd):
-            nsk = len([d for d in os.listdir(sd) if os.path.isdir(os.path.join(sd, d))])
-        out(f'  {C_OK}✓{C_OFF} 专家包 天信办公专家  '
-            f'{C_DIM}{nsk} 个技能 · {"元数据就位" if os.path.isfile(pj) else "缺 plugin.json"}{C_OFF}')
+            actual = sorted(d for d in os.listdir(sd) if os.path.isdir(os.path.join(sd, d)))
+        declared = []
+        if os.path.isfile(pj):
+            try:
+                with open(pj, encoding='utf-8') as f:
+                    declared = sorted(os.path.basename(str(s).rstrip('/\\'))
+                                      for s in json.load(f).get('skills', []))
+            except (ValueError, OSError):
+                pass
+        missing = [d for d in declared if d not in actual]
+        extra = [d for d in actual if d not in declared]
+        if missing or extra or not os.path.isfile(pj):
+            out(f'  {C_WARN}⚠{C_OFF} 专家包 天信办公专家  '
+                f'{C_DIM}声明 {len(declared)} · 实装 {len(actual)}{C_OFF}')
+            if not os.path.isfile(pj):
+                out(f'{C_WARN}  ⚠ 缺 .codebuddy-plugin/plugin.json，专家元数据不完整{C_OFF}')
+            if missing:
+                out(f'{C_WARN}  ⚠ 声明了但没装上：{C_DIM}{"、".join(missing)}{C_OFF}')
+            if extra:
+                out(f'{C_WARN}  ⚠ 装了但未声明（多为改名后的僵尸目录，跑 python install.py --expert --force 清掉）：'
+                    f'{C_DIM}{"、".join(extra)}{C_OFF}')
+        else:
+            out(f'  {C_OK}✓{C_OFF} 专家包 天信办公专家  '
+                f'{C_DIM}{len(actual)} 个技能 · 元数据就位{C_OFF}')
     elif not args.project:
         out(f'  {C_DIM}· 未安装 WorkBuddy 专家（需要的话跑 --expert）{C_OFF}')
 
