@@ -387,6 +387,7 @@ python "$HOME/AppData/Local/Programs/WorkBuddy/resources/app.asar.unpacked/resou
 **工程侧**
 
 - **单一源。** 不在仓库外维护第二份技能副本；不引入单向同步工具。改完直接提交。
+- **日报 skill 双仓单向流（2026-11-03 立）。** 「单一源」的受控例外：skill 代码只在 `运营/天信日报skill/`（本仓）改；合并后在 skill 目录跑 `./sync-daily-brief.sh` 单向下发到 `cyhzzz/tianxin-daily-brief`（镜像发布 + 归档仓），**不在该仓直接改 skill 代码**。发现已在 daily-brief 上改并合并的：先反向手动镜像回本仓（跑 sync 会用旧内容覆盖它），再到 §9 登记。
 - **进仓库前查敏感信息。** 客户名、手机号、邮箱、统一社会信用代码、真实 token 一律不入库。`push-secrets.json` 已被 `.gitignore` 排除——曾经差点把真实的 pushplus token 提交上去。
 - **产物不入库。** docx / pdf / html / png 能用脚本重新生成，只留 `.md` 源和少量示范件。仓库因此只有约 6 MB。
 
