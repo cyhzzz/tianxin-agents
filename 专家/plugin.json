@@ -1,10 +1,10 @@
 {
   "name": "tianxin-office-expert",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "description": "Tianxin CPA Office Expert — one expert covering the firm's shared capabilities (document production, accounting practice judgment, standards retrieval, daily briefs) plus seven business lines: bookkeeping, accounting services (statements/notes/consolidation/analysis), audit working papers and report writing, tax filing and advisory, management consulting (strategy/organization/HR/process/marketing/business improvement), performance evaluation (budget performance, project post-evaluation, government acceptance), and asset appraisal. This file declares which skills the expert loads.",
   "author": {
     "name": "天台天信会计师事务所",
-    "email": ""
+    "email": "245830958@qq.com"
   },
   "agents": [
     "./agents/tianxin-office-expert.md"

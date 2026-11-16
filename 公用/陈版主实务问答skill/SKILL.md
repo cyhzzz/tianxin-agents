@@ -1,4 +1,5 @@
 ---
+version: 1.0.1
 name: chenyiwei-bbs
 description: |-
   陈版主实务问答检索。现查「视野论坛·陈版主（陈奕蔚）」的实务答疑、企业会计准则原文与监管处罚

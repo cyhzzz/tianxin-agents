@@ -1,4 +1,5 @@
 ---
+version: 0.1.2
 name: tianxin-performance
 description: |-
   天台天信会计师事务所的预算绩效评价能力：事前绩效评估、事中运行监控、事后绩效评价
@@ -11,7 +12,7 @@ description: |-
   绩效自评、绩效指标、评分表、指标体系、政府项目验收、后评价、成功度、财政资金、绩效报告、
   抽评、复核、决策过程产出效益。
 metadata:
-  version: 0.1.0
+  version: 0.1.1
 ---
 
 # 天信绩效评价

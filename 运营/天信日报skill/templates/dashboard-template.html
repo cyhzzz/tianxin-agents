@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>天信每日情报看板 · {{DATE}}</title>
+  <title>天信每日日报 · {{DATE}}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet" />
@@ -12,45 +12,31 @@
     :root {
       --bg: #ffffff;
       --surface: #f4f4f4;
-      --surface-warm: #fbfbfb;
       --fg: #161616;
       --fg-2: #525252;
       --muted: #8a8a8a;
       --border: #e0e0e0;
       --border-soft: #e8e8e8;
       --accent: #0f62fe;
-      --accent-on: #ffffff;
-      --accent-hover: #0f62fe;
-      --accent-active: #00338d;
       --accent-deep: #00338d;
       --accent-sky: #4589ff;
       --gold: #b8860b;
-      --gold-hover: #d4a017;
-      --success: #24a148;
-      --warn: #b8860b;
       --danger: #da1e28;
       --font-display: "Noto Serif SC", "Source Han Serif SC", Georgia, "Times New Roman", STSong, SimSun, serif;
       --font-body: "Noto Sans SC", Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
-      --font-mono: ui-monospace, "JetBrains Mono", "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
       --text-xs: 12px;
       --text-sm: 14px;
       --text-base: 15px;
       --text-lg: 22px;
       --text-xl: 32px;
       --leading-body: 1.50;
-      --leading-tight: 1.05;
       --tracking-display: -0.03em;
       --tracking-eyebrow: 0.08em;
       --weight-regular: 400;
       --weight-medium: 500;
       --weight-semibold: 600;
       --space-1: 8px; --space-2: 12px; --space-3: 16px; --space-4: 24px;
-      --space-5: 32px; --space-6: 40px; --space-8: 48px; --space-10: 64px; --space-12: 80px;
-      --radius-sm: 0; --radius-md: 0; --radius-lg: 0; --radius-pill: 0;
-      --elev-flat: none;
-      --elev-ring: 0 0 0 1px var(--border);
-      --elev-raised: 0 8px 24px rgba(0, 0, 0, 0.12);
-      --focus-ring: 0 0 0 2px var(--accent);
+      --space-5: 32px; --space-6: 40px; --space-8: 48px; --space-12: 80px;
       --container-max: 1280px;
       --container-gutter: 24px;
     }
@@ -143,6 +129,16 @@
     .follow { background: var(--surface); padding: var(--space-2); font-size: var(--text-sm); color: var(--fg-2); border-radius: 0; }
     .follow b { color: var(--fg); font-weight: var(--weight-medium); }
     .c-link { display: inline-block; margin-top: var(--space-2); font-size: var(--text-sm); }
+    /* ── 近期已终结线索（商机终结 · 已定标/已签合同，不计活单，仅作归档留痕，不抢视觉） ── */
+    .closed-band { border: 1px dashed var(--border); background: var(--surface); padding: var(--space-4); margin-top: var(--space-5); }
+    .closed-band .closed-head { font-size: var(--text-sm); font-weight: var(--weight-semibold); letter-spacing: 0.02em; color: var(--muted); margin: 0 0 var(--space-3); }
+    .closed-band .closed-head .flag { color: var(--gold); margin-right: 6px; }
+    .closed-item { border-left: 3px solid var(--muted); padding: 0 0 0 var(--space-3); }
+    .closed-item + .closed-item { margin-top: var(--space-3); }
+    .closed-item .closed-title { font-size: var(--text-base); font-weight: var(--weight-semibold); margin: 0 0 var(--space-1); color: var(--fg-2); }
+    .closed-item .closed-meta { font-size: var(--text-xs); color: var(--muted); line-height: 1.75; margin: 0 0 var(--space-1); }
+    .closed-item .closed-note { font-size: var(--text-sm); color: var(--fg-2); line-height: 1.6; margin: 0 0 var(--space-1); }
+    .closed-item .c-link { margin-top: var(--space-1); }
     /* 2026-11-03 热点区链接标记：区块标题「审计热点站 ↗」与每条「源 ↗」——指向热点站首页/条目页，低调不喧宾夺主 */
     .src-link { margin-left: 10px; font-size: 12px; vertical-align: middle; color: var(--fg-2); }
 
@@ -183,7 +179,7 @@
         <div class="brand-text">
           <p class="eyebrow">TIANXIN CPA · DAILY INTELLIGENCE</p>
           <h1 class="wordmark">天台天信会计师事务所</h1>
-          <p class="sub">每日行业与商机情报看板 · 县城所赋能与外联获客</p>
+          <p class="sub">每日行业与商机情报 · 县城所赋能与外联获客</p>
         </div>
       </div>
       <p class="date">{{DATE}}（{{WEEKDAY}}）· 数据抓取于当日</p>
@@ -205,7 +201,7 @@
       <p class="eyebrow-zh">Section 01</p>
       <div class="section-divider"></div>
       <h2 class="section-title">台州本地商机</h2>
-      <p class="section-note">重点关注天台县（本所驻地）。商机取近 7 天发布，近 2 天发布标 NEW、≤7 天截止标 急；已定标 / 已过投标截止的历史单不进看板。仅作情报提示，对外动作须经负责人（及事务所）人工复核。</p>
+      <p class="section-note">重点关注天台县（本所驻地）。按有效性判活单（截止 / 协议期满未过、天信可承接即可，发布日早不排除）；近 2 天发布标 NEW、≤7 天截止标 急；已定标 / 已过投标截止 / 协议期满的失效单不进本日报。仅作情报提示，对外动作须经负责人（及事务所）人工复核。</p>
 
       <!-- 天台县专项：有单列条目；无单则写明"已核查哪几个入口、未检索到"，不得留空 -->
       <div class="tiantai-band">
@@ -248,7 +244,7 @@
     <div class="container">
       <p class="eyebrow-zh">Section 02</p>
       <div class="section-divider"></div>
-      <h2 class="section-title">行业热点<a class="src-link" href="https://hot.auditdog.cn/" target="_blank">审计热点站 ↗</a></h2>
+      <h2 class="section-title">行业热点<a class="src-link" href="https://hot.auditdog.cn/" target="_blank">审计行业资讯 ↗</a></h2>
       <p class="section-note">{{HOTSPOT_NOTE}}</p>
       <!-- 热点条目骨架（已固化，禁止增删字段）：每条 = 标题（旁带「源 ↗」）+ 消息本身 + 底部超链。
            「源 ↗」链到该条在审计热点站的条目页 https://hot.auditdog.cn/items/{id}——抓取时留存条目 URL，
@@ -286,7 +282,7 @@
         <img class="fb-logo" src="../assets/tianxin-logo.svg" alt="天台天信会计师事务所" style="width:60px;height:60px;box-sizing:border-box;padding:6px;background:#ffffff;object-fit:contain" />
         <p class="fb-title">天台天信会计师事务所 · TIANXIN CPA</p>
       </div>
-      <p>本看板由「天信每日日报」Skill 自动生成，数据来源于公开信源（审计热点站、浙江政府采购网、中国政府采购网、台州市公共资源交易浙里招标、台州市中介服务网、台州市阳光采购平台、天台县政府门户公共资源交易栏目与采购意向公开、天台县阳光招采平台、浙江省公共资源交易服务平台），抓取于 {{DATE}}。商机仅作情报提示，所有金额、截止时间与资质门槛以公告原文为准，严禁据此直接承诺投标；对外动作须经负责人（及事务所）人工复核。</p>
+      <p>本日报由「天信每日日报」Skill 自动生成，数据来源于公开信源（审计行业资讯、浙江政府采购网、中国政府采购网、台州市公共资源交易浙里招标、台州市中介服务网、台州市阳光采购平台、天台县政府门户公共资源交易栏目与采购意向公开、天台县阳光招采平台、浙江省公共资源交易服务平台），抓取于 {{DATE}}。商机仅作情报提示，所有金额、截止时间与资质门槛以公告原文为准，严禁据此直接承诺投标；对外动作须经负责人（及事务所）人工复核。</p>
       <p>参考知识库：<a href="https://ima.qq.com/wiki/?shareId=a47a4337b49dfdb1feba7a678e04603d780a02048a7130a429e60731978e4fcd" target="_blank" rel="noopener">信永中和智能专业知识库（公开，可智能问答/查文件）</a></p>
     </div>
   </footer>

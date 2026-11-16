@@ -1,4 +1,5 @@
 ---
+version: 1.0.1
 name: tianxin-audit
 description: |-
   天信审计作业层技能（财务报表审计与鉴证业务）：审计计划、风险评估工作底稿、四程序

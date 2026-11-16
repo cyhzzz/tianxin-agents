@@ -2,7 +2,8 @@
 /**
  * 看板自检助手（天信每日日报）
  * 用途：生成看板后、推送前必跑。把「日期没更新到当日」「模板占位没替换」「历史参考残留」
- *       「速览数字与条目数不符」这四类问题机械拦下。
+ *       「速览数字与条目数不符」「商机有效性证据不足」「常驻框架协议无当日触发（5d，2026-11-07 新增）」
+ *       等问题机械拦下。
  *
  * 用法：node references/check-dashboard.js daily/2026-10-30.html
  * 退出码：0 = 通过（可推送）｜1 = 不通过（禁止推送，先修）
@@ -265,11 +266,56 @@ if (cards.length) {
 if (cards.length && !hollow && !expiredBad && !intentBad)
   ok("商机核验门禁通过（无有效性证据不足卡片、无过期截止、无意向单标进行中）");
 
+// 5d) 有效期门禁（2026-11-16 重构 · 原「触发门禁」按发布日拦截，已废弃）
+//     口径纠偏（负责人 2026-11-16）：日期判据的本意是「避免截止期已过（单子已失效）」，
+//     不是「避免发布期太早」。在「信源能正确及时采集」的前提下，一条商机只要仍在有效期内
+//     （截止/开标未过，或框架协议仍在协议期内可申请），发布日多早都不应被排除。
+//     事故复盘：旧逻辑用「发布日距今 > 7 天」硬杀常驻框架协议，导致仙居 2027-2028
+//     资产评估开放式框架协议（11-05 发布、协议期内可申请）在 11-16 被误排除；而临海
+//     （2024-11-29 发布、2026-12-31 期满）真正的问题从来不是「发布早」，是「协议已到期/
+//     无有效性证据却被当活单」。故门禁改为只拦「确实已失效」，不拦「发布日早」。
+//     - 硬 FAIL：活单卡标「协议期满日/有效期至」且该日期已早于今日（框架协议失效）；
+//       （一次性公告的「截止/开标」过期由 5c b) 负责，不重复）
+//     - 发布日仅作信息展示，不制造 FAIL/WARN。
+{
+  // 只认框架协议卡上明确写出的「协议期满/有效期至/期满日」实值；发布日、征集起始日不参与
+  const EXPIRY_RE = /(?:协议期满|有效期至|期满日|协议到期|协议期至)[^；;。|\d]{0,6}(\d{4})\s*[-/年]\s*(\d{1,2})\s*[-/月]\s*(\d{1,2})/g;
+  let expiredFramework = 0;
+  cards.forEach((c) => {
+    // 判据严格限定在卡片自身（截到 c-link 为止），避免吞入卡外的归档区文本
+    const cut = c.indexOf('class="c-link"');
+    const core = cut > 0 ? c.slice(0, cut) : c.slice(0, 1500);
+    const title = ((core.match(/<h4 class="c-title"[^>]*>([\s\S]*?)<\/h4>/) || [])[1] || "")
+      .replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim().slice(0, 40);
+    if (!title) return; // 空列占位
+    const tags = (core.match(/<span class="tag[^"]*">([\s\S]*?)<\/span>/g) || []).join(" ");
+    const txt = core.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
+    const isLive = /进行中|报名中|有效/.test(tags) || /进行中|报名中/.test(txt);
+    if (!isLive) return;
+    const today0 = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    let em;
+    while ((em = EXPIRY_RE.exec(txt))) {
+      const expiry = new Date(+em[1], +em[2] - 1, +em[3]);
+      if (expiry < today0) {
+        expiredFramework++;
+        fails.push(
+          "商机「" + title + "」标进行中/有效，但协议期满日 " + em[1] + "-" + p(+em[2]) + "-" + p(+em[3]) +
+          " 已早于今日（" + TODAY + "）——协议已失效不得计活单（有效期门禁）"
+        );
+        break;
+      }
+    }
+  });
+  if (!expiredFramework) ok("有效期门禁通过（无协议期满已过的活单；发布日早不再作为排除理由）");
+}
+
 // 6) 服务号看板可生成（全内联、单列、无 style、无换行、三板块齐全）//    依赖 push-notify.js 导出的 wechatBoard；它若被改坏，微信通道会推不出内容
 try {
   const pn = require("./push-notify.js");
-  const built = pn.prepare(pn.absAssets(rawHtml));
-  const wx = pn.wechatBoard(built.html, TODAY);
+  // 服务号看板须基于全量内容构建（与 main() 一致）——wechatBoard 自带收缩档，优先保商机段与今日提示段；
+  // 不可用 prepare 截断版（会在 2 万字处硬切掉整段「今日提示」）。
+  const fullMin = pn.minify(pn.absAssets(rawHtml));
+  const wx = pn.wechatBoard(fullMin, TODAY);
   const problems = [];
   if (wx.len > 19000) problems.push("超 2 万字上限（" + wx.len + "）");
   if (wx.level > 0) warns.push("服务号看板已收缩到第 " + wx.level + " 档（条目多、篇幅紧）");

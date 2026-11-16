@@ -1,4 +1,5 @@
 ---
+version: 1.0.1
 name: tianxin-shiwu-kb
 description: |-
   天信实务知识库——所内审计 / 会计 / 税务实务的"系统判断"能力卡集合（12 张）。给的是

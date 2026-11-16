@@ -1,4 +1,5 @@
 ---
+version: 2.0.1
 name: tianxin-bookkeeping
 description: |-
   天信代理记账业务线技能，面向中小微企业的日常记账报税全链：建账 → 票据查验 → 凭证 → 月结 →

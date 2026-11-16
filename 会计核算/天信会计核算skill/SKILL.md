@@ -1,4 +1,5 @@
 ---
+version: 1.0.1
 name: tianxin-accounting
 description: |-
   天信会计核算与报告服务技能（会计师团队），站在代理记账之上、审计之下：记账凭证与分录复核、

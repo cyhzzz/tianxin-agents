@@ -1,4 +1,5 @@
 ---
+version: 1.1.1
 name: tianxin-docs
 description: |-
   天台天信会计师事务所的文档与报告生产规范：判文书性质（法定业务文书 / 咨询尽调报告 / 汇报演示）

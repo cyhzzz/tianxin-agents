@@ -26,29 +26,11 @@
 | `tianxin-consulting` | 企业咨询 | 战略、组织、人力、流程、经营改善、尽调方案 |
 | `tianxin-daily-brief` | 运营 | 每日行业热点与台州本地商机 |
 
-**七条业务线都是初稿**：底子是外部专家包的原文（一字未改），没一条用所里真实材料校准过。详见仓库根目录 `AGENTS.md` §3.3。
+## 当前状态（如实说明）
 
-## 改这个包时的硬规矩
+- **11 个技能均已建好、可触发**，覆盖审计、税务、代账、会计核算、资产评估、企业咨询、绩效评价七条业务线，外加文档与运营两条支撑线。
+- **已在用**：《天信文档与报告》《天信日报》已在所里真实项目上日常使用。
+- **已用真实报告校准**：审计、会计核算、绩效评价三条已用本所真实样本校准、复现测试达标——但都还没在所里真实项目上端到端整轮跑过。
+- **其余为初稿**：底子基于外部成熟专家包，尚未用所里真实材料校准。
 
-平台的专家校验器会卡这几条，改了不跑一遍就等着装不上：
-
-- `tags` 恰好 **3 个**，`quickPrompts` 恰好 **3 个**，多一个少一个都不行
-- `defaultInitPrompt` 必须与 `quickPrompts[0]` 逐字一致
-- `displayDescription.zh` 要 **40–50 字**（少一个字都报错）
-- `skills` 里的目录名必须等于对应 `SKILL.md` 的 `frontmatter.name`，且人设 frontmatter 的 `skills` 数组要与之一致
-- 改了内容就 bump `version`
-
-跑一遍再提交：
-
-```bash
-python install.py --expert --target /tmp/x        # 先装到临时目录
-python <WorkBuddy 安装目录>/resources/app.asar.unpacked/resources/plugins/\
-workbuddy-builtin/skills/expert-manager/scripts/validate_expert.py \
-  /tmp/x/tianxin-office-expert
-```
-
-除了「专家不在专家目录下」这条（临时目录必然报，正常），其余必须全绿。仓库根目录的 `python check.py` 也会查 `plugin.json` 与仓库技能是否一一对应。
-
-## 本体在哪
-
-技能本体全在仓库里，这个目录只有元数据和人设。装的时候 `install.py` 会按 `plugin.json` 的 `skills` 把技能复制进专家目录——所以**加技能要在这里加一行**，不然后装出来的专家带不动它。
+> 七条业务线目前都还是草稿：审计 / 会计核算 / 绩效评价已用真实报告校准，但都还没在所里真实项目上整轮跑过，其余仍是纯草稿。拿它当“该怎么走”的提示可以用，当成品交出去不行；对外交付前须经注册会计师复核，最终以执业准则和所内质控为准。

@@ -50,10 +50,22 @@ function todayStr() {
   return d.getFullYear() + "-" + p(d.getMonth() + 1) + "-" + p(d.getDate());
 }
 
+/** CSS 安全压缩：仅折叠声明间空白（{}; 周围、逗号、冒号后空格），不动字符串与 calc/url。
+ *  用于把看板压回 pushplus 2 万字内，避免触发热点精简而丢正文；不影响 :root 变量解析。 */
+function compressCss(css) {
+  return css
+    .replace(/\s*([{};])\s*/g, "$1")
+    .replace(/\s*,\s*/g, ",")
+    .replace(/:\s+/g, ":");
+}
+
 function minify(html) {
   return html
     .replace(/<!--[\s\S]*?-->/g, "") // 去 HTML 注释（含 PUSH-TRIM 标记）
     .replace(/\/\*[\s\S]*?\*\//g, "") // 去 CSS 注释（2026-11-03：样式块注释 ~450 字符，曾把看板顶过 2 万字截断线，导致提示板块被整段切掉）
+    .replace(/<style[\s\S]*?<\/style>/gi, function (m) {
+      return "<style>" + compressCss(m.slice(7, -8)) + "</style>";
+    })
     .replace(/>\s+</g, "><")
     .replace(/\s{2,}/g, " ")
     .replace(/\n/g, "")
@@ -581,6 +593,19 @@ function buildWechatBoard(html, dateStr, plan) {
     href: (n.match(/<a class="c-link"[^>]*href="([^"]*)"/i) || [])[1] || "",
   }));
 
+  // 已终结线索（归档区）：2026-11-16 修复——归档区在板块一 </section> 之外，
+  // 不能像 cols 那样只从 oppSec 提取，须从全 html 抓 closed-band，否则服务号漏掉这几张卡片。
+  const closedBand = matchBlocks(html, "closed-band")[0] || "";
+  const closedItems = matchBlocks(closedBand, "closed-item")
+    .map((ci) => ({
+      title: textOf((ci.match(/<p class="closed-title"[^>]*>([\s\S]*?)<\/p>/i) || [])[1] || ""),
+      meta: textOf((ci.match(/<p class="closed-meta"[^>]*>([\s\S]*?)<\/p>/i) || [])[1] || ""),
+      note: textOf((ci.match(/<p class="closed-note"[^>]*>([\s\S]*?)<\/p>/i) || [])[1] || ""),
+      href: (ci.match(/<a class="c-link"[^>]*href="([^"]*)"/i) || [])[1] || "",
+    }))
+    .filter((x) => x.title);
+  const closedHead = textOf((closedBand.match(/<p class="closed-head"[^>]*>([\s\S]*?)<\/p>/i) || [])[1] || "");
+
   const tipSec = (html.match(/<section id="tips"[^>]*>([\s\S]*?)<\/section>/i) || [])[1] || "";
   const tips = (tipSec.match(/<li[^>]*>[\s\S]*?<\/li>/gi) || []).map((li) =>
     richText((li.match(/<span class="t-body"[^>]*>([\s\S]*?)<\/span>/i) || [])[1] || li)
@@ -729,6 +754,32 @@ function buildWechatBoard(html, dateStr, plan) {
       T.push("</div>");
     });
   });
+
+  // 已终结线索（归档卡片）：与活单卡片同列在同板块，纯卡片结构。
+  if (closedItems.length) {
+    T.push('<div style="margin-top:18px">');
+    T.push(
+      '<div style="font-size:12.5px;font-weight:600;color:#6f6f6f;line-height:1.6;margin-bottom:10px">' +
+        esc(closedHead.replace(/^\[[^\]]*\]\s*/, "").trim() || "近期已终结线索（不计活单）") +
+        "</div>"
+    );
+    closedItems.forEach((ci) => {
+      T.push('<div style="border:1px dashed #D8D8D8;background:#FAFAFA;padding:11px 12px;margin-bottom:10px">');
+      T.push('<div style="font-size:13px;font-weight:600;color:#8a6d1f;line-height:1.5">' + esc(ci.title) + "</div>");
+      if (ci.meta)
+        T.push('<div style="font-size:11.5px;color:#6f6f6f;line-height:1.6;margin-top:5px">' + esc(ci.meta) + "</div>");
+      if (ci.note)
+        T.push('<div style="font-size:12px;color:#393939;line-height:1.7;margin-top:5px">' + esc(ci.note) + "</div>");
+      if (ci.href)
+        T.push(
+          '<div style="margin-top:6px"><a href="' +
+            esc(ci.href) +
+            '" style="color:#0F62FE;text-decoration:none;font-size:11.5px">查看原文 ↗</a></div>'
+        );
+      T.push("</div>");
+    });
+    T.push("</div>");
+  }
   T.push("</div>");
 
   // ── Section 02 热点 ──
@@ -799,10 +850,35 @@ function wechatBoard(html, dateStr) {
   return { html: last.slice(0, WX_LIMIT - 60) + "…", level: plans.length, len: WX_LIMIT };
 }
 
+/**
+ * 超限精简：优先从「行业热点」段尾部删减热点条目，保留商机段与今日提示段
+ * （核心情报与提示优先）。每次删最后一条 news，直到回到 limit 内或仅剩 1 条。
+ * 正常日报不超 2 万字，仅极长日报（活单/热点偏多）触发；删减后仍超再整段截断。
+ */
+function shrinkHotspots(html, limit) {
+  const m = html.match(/<section id="hotspots"[\s\S]*?<\/section>/i);
+  if (!m) return html;
+  const sec = m[0];
+  // 取完整 <div class="news">…</div> 块（含标签），避免重拼时丢外层标签导致再抽取归零
+  const blocks = [];
+  const re = /<div class="news">[\s\S]*?<\/div>/gi;
+  let bm;
+  while ((bm = re.exec(sec))) blocks.push(bm[0]);
+  if (blocks.length <= 1) return html;
+  const lastIdx = sec.lastIndexOf(blocks[blocks.length - 1]);
+  const newSec = sec.slice(0, lastIdx) + "</section>";
+  const out = html.slice(0, m.index) + newSec + html.slice(m.index + sec.length);
+  if (out.length > limit) return shrinkHotspots(out, limit);
+  return out;
+}
+
 function prepare(raw) {
   let html = minify(raw);
   if (html.length <= LIMIT) return { html, trimmed: false };
-  // 仍超限：在最后一个 </section> 前硬截断并附说明（模板已移除「历史参考」列，正常不会走到这里）
+  // 仍超限：优先删减「行业热点」尾部条目（保留商机 + 今日提示），回到 2 万字内；
+  // 极端情形（仍超）才整段截断并附说明（模板已移除「历史参考」列，正常不会走到这里）
+  html = shrinkHotspots(html, LIMIT);
+  if (html.length <= LIMIT) return { html, trimmed: true };
   const cut = html.lastIndexOf("</section>", LIMIT - 200);
   const safe = cut > 0 ? cut : LIMIT;
   html =
@@ -865,6 +941,7 @@ async function main() {
   //    看板为单文件自包含（logo 内联为 data URI，约 227KB×2），若先 prepare 会被 2 万字
   //    上限硬截断，正文和短信抽取都会丢。换成公网地址后体积回落到 20KB 级。
   const full = absAssets(raw);
+  const fullMin = minify(full); // 全量（未截断）供服务号看板使用——服务号自带收缩档，必须基于完整内容构建，否则会丢「今日提示」段
   const { html, trimmed } = prepare(full);
   console.log("看板字符数:", html.length, trimmed ? "（已精简至 2 万字内）" : "（原始，未超上限）");
   const inlined = inlineCss(html); // 邮件：CSS 转内联（jsdom 可用且不超上限时才用）
@@ -903,7 +980,9 @@ async function main() {
   console.log(cmcc);
 
   // ④ 服务号：template:"html" 发移动端看板（全内联、单列、零 <style>）
-  const wx = wechatBoard(html, date);
+  //    基于全量内容 fullMin 构建——wechatBoard 自带收缩档，优先保商机段与今日提示段；
+  //    不得用 prepare 截断后的 html（会在 2 万字处硬切掉整段「今日提示」）。
+  const wx = wechatBoard(fullMin, date);
   console.log(
     "服务号版式:",
     "移动端单列 · 全内联",

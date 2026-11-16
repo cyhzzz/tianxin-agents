@@ -1,4 +1,5 @@
 ---
+version: 1.0.1
 name: tianxin-consulting
 description: |-
   天信企业咨询（管理咨询）线技能：战略规划与解码、组织与管控设计、组织发展 OD 与变革、人力资源与
