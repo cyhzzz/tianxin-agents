@@ -1,5 +1,5 @@
 ---
-version: 1.0.1
+version: 1.0.2
 name: tianxin-appraisal
 description: |-
   天信资产评估线技能：评估方法选型与适用性论证、
