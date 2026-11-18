@@ -1,5 +1,5 @@
 ---
-version: 1.0.2
+version: 1.0.3
 name: tianxin-appraisal
 description: |-
   天信资产评估线技能：评估方法选型与适用性论证、
@@ -13,7 +13,7 @@ description: |-
   司法处置评估、国资备案、评估报告审核、评估底稿、评协准则、专家指引、评估依据、问询关注点、
   工程造价、结算审核、工程量清单、招标控制价、造价鉴定。
 metadata:
-  version: 1.0.0
+  version: 1.0.3
 ---
 
 # 天信资产评估
